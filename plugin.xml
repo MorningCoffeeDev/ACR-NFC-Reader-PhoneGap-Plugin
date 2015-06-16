@@ -1,0 +1,39 @@
+<?xml version='1.0' encoding='utf-8'?>
+
+<plugin id="com.frankgreen" version="0.0.1" xmlns="http://apache.org/cordova/ns/plugins/1.0" xmlns:android="http://schemas.android.com/apk/res/android">
+  <name>ACR-NFC-Reader-PhoneGap-Plugin</name>
+  <js-module name="ACR-NFC-Reader-PhoneGap-Plugin" src="www/ACR-NFC-Reader-PhoneGap-Plugin.js">
+    <clobbers target="cordova.plugins.ACR-NFC-Reader-PhoneGap-Plugin" />
+  </js-module>
+  <platform name="android">
+    <config-file parent="/*" target="res/xml/config.xml">
+      <feature name="ACRNFCReaderPhoneGapPlugin">
+        <param name="android-package" value="com.frankgreen.ACRNFCReaderPhoneGapPlugin" />
+      </feature>
+    </config-file>
+    <config-file parent="/*" target="AndroidManifest.xml"></config-file>
+    <source-file src="src/android/ACRNFCReaderPhoneGapPlugin.java" target-dir="src/com/frankgreen" />
+    <source-file src="src/android/apdu/command/Base.java" target-dir="src/com/frankgreen/apdu/command" />
+    <source-file src="src/android/apdu/command/UID.java" target-dir="src/com/frankgreen/apdu/command" />
+    <source-file src="src/android/apdu/command/UpdateBinaryBlock.java" target-dir="src/com/frankgreen/apdu/command" />
+    <source-file src="src/android/apdu/command/ReadBinaryBlock.java" target-dir="src/com/frankgreen/apdu/command" />
+    <source-file src="src/android/apdu/command/Authentication.java" target-dir="src/com/frankgreen/apdu/command" />
+    <source-file src="src/android/apdu/command/LoadAuthentication.java" target-dir="src/com/frankgreen/apdu/command" />
+    <source-file src="src/android/apdu/OnGetResultListener.java" target-dir="src/com/frankgreen/apdu" />
+    <source-file src="src/android/apdu/Result.java" target-dir="src/com/frankgreen/apdu" />
+    <source-file src="src/android/task/ReadTask.java" target-dir="src/com/frankgreen/task" />
+    <source-file src="src/android/task/UIDTask.java" target-dir="src/com/frankgreen/task" />
+    <source-file src="src/android/task/WriteTask.java" target-dir="src/com/frankgreen/task" />
+    <source-file src="src/android/task/WriteParams.java" target-dir="src/com/frankgreen/task" />
+    <source-file src="src/android/task/ReadParams.java" target-dir="src/com/frankgreen/task" />
+    <source-file src="src/android/task/UIDParams.java" target-dir="src/com/frankgreen/task" />
+    <source-file src="src/android/task/AuthParams.java" target-dir="src/com/frankgreen/task" />
+    <source-file src="src/android/task/WriteAuthenticate.java" target-dir="src/com/frankgreen/task" />
+    <source-file src="src/android/task/AuthenticateWithKeyA.java" target-dir="src/com/frankgreen/task" />
+    <source-file src="src/android/task/AuthenticateWithKeyB.java" target-dir="src/com/frankgreen/task" />
+    <source-file src="src/android/NFCReader.java" target-dir="src/com/frankgreen" />
+    <source-file src="src/android/Util.java" target-dir="src/com/frankgreen" />
+    <source-file src="src/android/libs/acssmc-1.1.2.jar" target-dir="libs" />
+  </platform>
+</plugin>
+
