@@ -24,6 +24,8 @@ import com.acs.smartcard.ReaderException;
 import com.frankgreen.NFCReader;
 import com.frankgreen.apdu.OnGetResultListener;
 import com.frankgreen.apdu.Result;
+import com.frankgreen.task.DisplayParams;
+
 import org.apache.cordova.*;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -44,6 +46,8 @@ public class ACRNFCReaderPhoneGapPlugin extends CordovaPlugin {
     private static final String AUTHENTICATE_WITH_KEY_A = "authenticateWithKeyA";
     private static final String AUTHENTICATE_WITH_KEY_B = "authenticateWithKeyB";
     private static final String WRITE_AUTHENTICATE = "writeAuthenticate";
+    private static final String DISPLAY = "display";
+    private static final String CLEAR_LCD = "clearLCD";
 
 
     private CordovaWebView webView;
@@ -155,6 +159,10 @@ public class ACRNFCReaderPhoneGapPlugin extends CordovaPlugin {
             authenticateWithKeyB(callbackContext, data);
         } else if (action.equalsIgnoreCase(WRITE_AUTHENTICATE)) {
             writeAuthenticate(callbackContext, data);
+        } else if (action.equalsIgnoreCase(DISPLAY)) {
+            display(callbackContext, data);
+        } else if (action.equalsIgnoreCase(CLEAR_LCD)) {
+            clearLCD(callbackContext, data);
         } else {
             return false;
         }
@@ -287,6 +295,58 @@ public class ACRNFCReaderPhoneGapPlugin extends CordovaPlugin {
         }
     }
 
+    private void clearLCD(final CallbackContext callbackContext, JSONArray data) {
+        try {
+            DisplayParams displayParams = new DisplayParams(data.getString(0));
+            displayParams.setX(data.getInt(1));
+            displayParams.setY(data.getInt(2));
+            displayParams.setBold(data.getBoolean(3));
+            displayParams.setFont(data.getInt(4));
+            displayParams.setOnGetResultListener(new OnGetResultListener() {
+                @Override
+                public void onResult(Result result) {
+                    Log.w(TAG, "==========Display==========");
+                    Log.w(TAG, result.getCodeString());
+                    Log.w(TAG, "====================");
+                    PluginResult pluginResult = new PluginResult(
+                            result.isSuccess() ? PluginResult.Status.OK : PluginResult.Status.ERROR,
+                            Util.resultToJSON(result));
+                    pluginResult.setKeepCallback(true);
+                    callbackContext.sendPluginResult(pluginResult);
+                }
+            });
+            nfcReader.display(displayParams);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void display(final CallbackContext callbackContext, JSONArray data) {
+        try {
+//            [msg, options.x, options.y, options.bold, options.font]
+            DisplayParams displayParams = new DisplayParams(data.getString(0));
+            displayParams.setX(data.getInt(1));
+            displayParams.setY(data.getInt(2));
+            displayParams.setBold(data.getBoolean(3));
+            displayParams.setFont(data.getInt(4));
+            displayParams.setOnGetResultListener(new OnGetResultListener() {
+                @Override
+                public void onResult(Result result) {
+                    Log.w(TAG, "==========Display==========");
+                    Log.w(TAG, result.getCodeString());
+                    Log.w(TAG, "====================");
+                    PluginResult pluginResult = new PluginResult(
+                            result.isSuccess() ? PluginResult.Status.OK : PluginResult.Status.ERROR,
+                            Util.resultToJSON(result));
+                    pluginResult.setKeepCallback(true);
+                    callbackContext.sendPluginResult(pluginResult);
+                }
+            });
+            nfcReader.display(displayParams);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
     private void listen(final CallbackContext callbackContext) {
 
         nfcReader.listen(

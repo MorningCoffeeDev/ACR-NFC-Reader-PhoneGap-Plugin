@@ -23,6 +23,10 @@ public class Result {
         this.command = command;
     }
 
+    public static Result buildSuccessInstance(String command) {
+        return new Result(command, 2, new byte[]{(byte) 0x90, (byte) 0x00});
+    }
+
     public Result(String command, int byteCount, byte[] receiveBuffer) {
         if (byteCount >= 2) {
             this.size = byteCount - 2;

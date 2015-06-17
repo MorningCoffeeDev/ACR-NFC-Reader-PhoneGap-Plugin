@@ -34,6 +34,12 @@
     <source-file src="src/android/NFCReader.java" target-dir="src/com/frankgreen" />
     <source-file src="src/android/Util.java" target-dir="src/com/frankgreen" />
     <source-file src="src/android/libs/acssmc-1.1.2.jar" target-dir="libs" />
+    <source-file src="src/android/task/DisplayParams.java" target-dir="src/com/frankgreen/task" />
+    <source-file src="src/android/task/DisplayTask.java" target-dir="src/com/frankgreen/task" />
+    <source-file src="src/android/apdu/command/Display.java" target-dir="src/com/frankgreen/apdu/command" />
+    <source-file src="src/android/task/ClearLCDParams.java" target-dir="src/com/frankgreen/task" />
+    <source-file src="src/android/task/ClearLCDTask.java" target-dir="src/com/frankgreen/task" />
+    <source-file src="src/android/apdu/command/ClearCLD.java" target-dir="src/com/frankgreen/apdu/command" />
   </platform>
 </plugin>
 

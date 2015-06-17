@@ -79,6 +79,11 @@ public class NFCReader {
         new AuthenticateWithKeyA().execute(authParams);
     }
 
+    public void display(DisplayParams displayParams) {
+        displayParams.setReader(this);
+        new DisplayTask().execute(displayParams);
+    }
+
     public interface StatusChangeListener {
         void onReady(Reader reader);
 
