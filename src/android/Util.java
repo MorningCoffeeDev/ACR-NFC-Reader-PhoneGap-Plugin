@@ -81,9 +81,20 @@ public class Util {
         return toHexString(buffer, buffer.length);
     }
 
-    public static byte[] toNFCByte(String s,int length) {
+    public final static int BYTE_FILL_NONE = -1;
+
+    public static byte[] toNFCByte(String s,int length){
+        return toNFCByte(s,length,0);
+    }
+    public static byte[] toNFCByte(String s,int length, int fill) {
         if (s == null) {
             s = "";
+        }
+        if(fill == BYTE_FILL_NONE){
+            int l = s.length();
+            if (length > l){
+                length = l;
+            }
         }
         byte[] bytes = new byte[length];
         byte[] ss = s.getBytes();
@@ -91,7 +102,7 @@ public class Util {
             if (i < ss.length) {
                 bytes[i] = ss[i];
             } else {
-                bytes[i] = (byte) 0x0;
+                bytes[i] = (byte) fill;
             }
         }
         return bytes;
