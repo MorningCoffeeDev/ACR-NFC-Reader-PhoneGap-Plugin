@@ -1,5 +1,7 @@
 package com.frankgreen.task;
 
+import android.nfc.NdefMessage;
+import android.nfc.NdefRecord;
 import android.os.AsyncTask;
 import android.util.Log;
 import com.frankgreen.NFCReader;
@@ -21,6 +23,8 @@ public class WriteTask extends AsyncTask<WriteParams, Void, Boolean> {
         if (writeParams == null) {
             return false;
         }
+//        NdefRecord r = new NdefRecord();
+//        NdefMessage msg = new NdefMessage(r);
         int slotNumber = writeParams.getSlotNumber();
         final NFCReader reader = writeParams.getReader();
         UpdateBinaryBlock update = new UpdateBinaryBlock(reader, writeParams.getBlock(), writeParams.getData());

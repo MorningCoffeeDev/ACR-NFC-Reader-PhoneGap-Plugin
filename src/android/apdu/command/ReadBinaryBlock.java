@@ -37,7 +37,13 @@ public class ReadBinaryBlock extends Base {
         Result result;
         try {
             int byteCount = reader.transmit(slotNumber, sendBuffer, sendBuffer.length, receiveBuffer, receiveBuffer.length);
-            result = new Result("ReadBinaryBlock", byteCount, receiveBuffer);
+            int i = 2;
+            for(;i<byteCount;i++){
+                if(receiveBuffer[i+1] == (byte) 0x0){
+                    break;
+                }
+            }
+            result = new Result("ReadBinaryBlock", i, receiveBuffer);
         } catch (ReaderException e) {
             result = new Result("ReadBinaryBlock", e);
             e.printStackTrace();

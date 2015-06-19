@@ -148,10 +148,16 @@ public class Util {
     public static JSONObject resultToJSON(Result result) {
         JSONObject json = new JSONObject();
         try {
-            json.put("data", Util.toHexString(result.getData()));
-            json.put("code", Util.toHexString(result.getCode()));
-            json.put("command", result.getCommand());
-            json.put("size", result.getSize());
+//            json.put("data", Util.toHexString(result.getData()));
+//            json.put("code", Util.toHexString(result.getCode()));
+//            json.put("command", result.getCommand());
+            if(result.getCommand() != null && result.getCommand() == "UID"){
+                json.put("data", Util.toHexString(result.getData()));
+            }else{
+                json.put("data", new String(result.getData()));
+            }
+            json.put("success", result.isSuccess());
+//            json.put("size", result.getSize());
             if (result.getException() != null) {
                 json.put("exception", result.getException().getMessage());
             }
