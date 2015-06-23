@@ -21,21 +21,16 @@ public class AuthenticateWithKeyA extends AsyncTask<AuthParams, Void, Boolean> {
         if (authParams == null) {
             return false;
         }
-        int slotNumber = authParams.getSlotNumber();
-        final NFCReader reader = authParams.getReader();
-        LoadAuthentication load = new LoadAuthentication(reader);
+        LoadAuthentication load = new LoadAuthentication(authParams);
         if (authParams.getKeyA() != null && !"".equals(authParams.getKeyA())) {
             Log.d(TAG, authParams.getKeyA().getClass().getName());
             Log.d(TAG, authParams.getKeyA());
             Log.d(TAG, Util.toHexString(Util.toNFCByte(authParams.getKeyA(), 6)));
-            load.setPassword(authParams.getKeyA());
-            load.setOnGetResultListener(authParams.getOnGetResultListener());
-            if (!load.run(slotNumber)) {
+            if (!load.run()) {
                 return false;
             }
-            Authentication auth = new Authentication(reader, authParams.getBlock(),Authentication.KEY_A);
-            auth.setOnGetResultListener(authParams.getOnGetResultListener());
-            if (!auth.run(slotNumber)) {
+            Authentication auth = new Authentication(authParams);
+            if (!auth.run()) {
                 return false;
             }
         }

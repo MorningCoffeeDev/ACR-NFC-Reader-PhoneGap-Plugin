@@ -1,6 +1,9 @@
 package com.frankgreen;
 
+import android.util.Log;
+
 import com.frankgreen.apdu.Result;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -83,16 +86,17 @@ public class Util {
 
     public final static int BYTE_FILL_NONE = -1;
 
-    public static byte[] toNFCByte(String s,int length){
-        return toNFCByte(s,length,0);
+    public static byte[] toNFCByte(String s, int length) {
+        return toNFCByte(s, length, 0);
     }
-    public static byte[] toNFCByte(String s,int length, int fill) {
+
+    public static byte[] toNFCByte(String s, int length, int fill) {
         if (s == null) {
             s = "";
         }
-        if(fill == BYTE_FILL_NONE){
+        if (fill == BYTE_FILL_NONE) {
             int l = s.length();
-            if (length > l){
+            if (length > l) {
                 length = l;
             }
         }
@@ -151,10 +155,22 @@ public class Util {
 //            json.put("data", Util.toHexString(result.getData()));
 //            json.put("code", Util.toHexString(result.getCode()));
 //            json.put("command", result.getCommand());
-            if(result.getCommand() != null && result.getCommand() == "UID"){
-                json.put("data", Util.toHexString(result.getData()));
-            }else{
-                json.put("data", new String(result.getData()));
+            if(result.isSuccess()) {
+                if (result.getCommand() != null && result.getCommand() == "ReadBinaryBlock") {
+                    int i = 0;
+                    for (; i < result.getSize(); i++) {
+                        if (result.getData()[i] == (byte) 0x0) {
+                            break;
+                        }
+                    }
+                    byte[] data = new byte[i];
+                    Log.d(TAG, "I:" + String.valueOf(i));
+                    System.arraycopy(result.getData(), 0, data, 0, i);
+                    json.put("data", new String(data));
+                } else {
+                    json.put("data", Util.toHexString(result.getData()));
+
+                }
             }
             json.put("success", result.isSuccess());
 //            json.put("size", result.getSize());

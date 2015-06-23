@@ -23,11 +23,7 @@ public class ReadTask extends AsyncTask<ReadParams, Void, Boolean> {
         if (readParams == null) {
             return false;
         }
-        int slotNumber = readParams.getSlotNumber();
-        final NFCReader reader = readParams.getReader();
-
-        ReadBinaryBlock read = new ReadBinaryBlock(reader, readParams.getBlock());
-        read.setOnGetResultListener(readParams.getOnGetResultListener());
-        return read.run(slotNumber);
+        ReadBinaryBlock read = new ReadBinaryBlock(readParams);
+        return read.run();
     }
 }

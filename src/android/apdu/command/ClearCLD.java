@@ -14,26 +14,12 @@ import com.frankgreen.task.DisplayParams;
 /**
  * Created by kevin on 5/27/15.
  */
-public class ClearCLD extends Base {
+public class ClearCLD extends Base<ClearLCDParams> {
 
     private static final String TAG = "ClearCLD";
-    private ClearLCDParams params;
-
-    public ClearCLD(NFCReader nfcReader) {
-        super(nfcReader);
-    }
-
-    public ClearLCDParams getParams() {
-        return params;
-    }
-
-    public void setParams(ClearLCDParams params) {
-        this.params = params;
-    }
 
     public ClearCLD(ClearLCDParams params) {
-        super(params.getReader());
-        this.params = params;
+        super(params);
     }
 
     public boolean run() {
@@ -42,7 +28,7 @@ public class ClearCLD extends Base {
         byte[] receiveBuffer = new byte[16];
         Result result = Result.buildSuccessInstance("ClearCLD");
         Log.d(TAG, Util.toHexString(sendBuffer));
-        Reader reader = getNfcReader().getReader();
+        Reader reader = this.getParams().getReader().getReader();
         try {
             int byteCount = reader.control(0, Reader.IOCTL_CCID_ESCAPE, sendBuffer, sendBuffer.length, receiveBuffer, receiveBuffer.length);
             result = new Result("ClearCLD", byteCount, receiveBuffer);
@@ -51,8 +37,8 @@ public class ClearCLD extends Base {
             e.printStackTrace();
         }
 
-        if (this.params.getOnGetResultListener() != null) {
-            this.params.getOnGetResultListener().onResult(result);
+        if (this.getParams().getOnGetResultListener() != null) {
+            this.getParams().getOnGetResultListener().onResult(result);
         }
         return result.isSuccess();
     }

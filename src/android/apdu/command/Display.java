@@ -9,35 +9,22 @@ import com.frankgreen.Util;
 import com.frankgreen.apdu.OnGetResultListener;
 import com.frankgreen.apdu.Result;
 import com.frankgreen.task.DisplayParams;
+import com.frankgreen.task.Params;
 
 /**
  * Created by kevin on 5/27/15.
  */
-public class Display extends Base {
+public class Display extends Base<DisplayParams> {
 
     private static final String TAG = "Display" ;
-    private DisplayParams params;
-
-    public Display(NFCReader nfcReader) {
-        super(nfcReader);
-    }
-
-    public DisplayParams getParams() {
-        return params;
-    }
-
-    public void setParams(DisplayParams params) {
-        this.params = params;
-    }
 
     public Display(DisplayParams params) {
-        super(params.getReader());
-        this.params = params;
+        super(params);
     }
 
     public boolean run() {
 //       FF 00 68 00 02 31 32
-        byte[] sendBuffer = new byte[]{(byte) 0xFF, params.getOption(), (byte) 0x68, params.getXY(),
+        byte[] sendBuffer = new byte[]{(byte) 0xFF, this.getParams().getOption(), (byte) 0x68, this.getParams().getXY(),
                 (byte) 0x0F,//length
                 (byte) 0x00, (byte) 0x0, (byte) 0x00, (byte) 0x00,
                 (byte) 0x00, (byte) 0x0, (byte) 0x00, (byte) 0x00,
@@ -46,12 +33,12 @@ public class Display extends Base {
         };
         byte[] receiveBuffer = new byte[16];
         Result result = Result.buildSuccessInstance("Display");
-        if (this.params != null && this.params.getMessage() != null) {
+        if (this.getParams().getMessage() != null) {
             byte []  msg = Util.toNFCByte(this.getParams().getMessage(),16);
 
             System.arraycopy(msg, 0, sendBuffer, 5, 16);
             Log.d(TAG, Util.toHexString(sendBuffer));
-            Reader reader = getNfcReader().getReader();
+            Reader reader = this.getParams().getReader().getReader();
             try {
                 int byteCount = reader.control(0,Reader.IOCTL_CCID_ESCAPE, sendBuffer, sendBuffer.length, receiveBuffer, receiveBuffer.length);
                 result = new Result("Display", byteCount, receiveBuffer);
@@ -61,8 +48,8 @@ public class Display extends Base {
             }
         }
 
-        if (this.params.getOnGetResultListener() != null) {
-            this.params.getOnGetResultListener().onResult(result);
+        if (this.getParams().getOnGetResultListener() != null) {
+            this.getParams().getOnGetResultListener().onResult(result);
         }
         return result.isSuccess();
     }

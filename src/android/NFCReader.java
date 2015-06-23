@@ -39,15 +39,13 @@ public class NFCReader {
         this.mReader = new Reader(mManager);
     }
 
-    public void readData(Integer slot, int block, OnGetResultListener listener) {
-        ReadParams readParams = new ReadParams(this, slot, block);
-        readParams.setOnGetResultListener(listener);
+    public void readData(ReadParams readParams) {
+        readParams.setReader(this);
         new ReadTask().execute(readParams);
     }
 
-    public void writeData(Integer slot, int block, String data, OnGetResultListener listener) {
-        WriteParams writeParams = new WriteParams(this, slot, block, data);
-        writeParams.setOnGetResultListener(listener);
+    public void writeData(WriteParams writeParams) {
+        writeParams.setReader(this);
         new WriteTask().execute(writeParams);
     }
 
@@ -55,27 +53,20 @@ public class NFCReader {
     private OnGetResultListener onGetUIDResultlistener;
 
 
-    public void writeAuthenticate(int slot, int block, String keyA, String keyB, OnGetResultListener listener) {
-        AuthParams authParams = new AuthParams(this, slot, block);
-        authParams.setKeyA(keyA);
-        authParams.setKeyB(keyB);
-        authParams.setOnGetResultListener(listener);
+    public void writeAuthenticate(AuthParams authParams) {
+        authParams.setReader(this);
         new WriteAuthenticate().execute(authParams);
     }
 
 
-    public void authenticateWithKeyB(int slot, int block, String keyB, OnGetResultListener listener) {
-        AuthParams authParams = new AuthParams(this, slot, block);
-        authParams.setKeyB(keyB);
-        authParams.setOnGetResultListener(listener);
+    public void authenticateWithKeyB(AuthParams authParams) {
+        authParams.setReader(this);
         new AuthenticateWithKeyB().execute(authParams);
     }
 
 
-    public void authenticateWithKeyA(int slot, int block, String keyA, OnGetResultListener listener) {
-        AuthParams authParams = new AuthParams(this, slot, block);
-        authParams.setKeyA(keyA);
-        authParams.setOnGetResultListener(listener);
+    public void authenticateWithKeyA(AuthParams authParams) {
+        authParams.setReader(this);
         new AuthenticateWithKeyA().execute(authParams);
     }
 
@@ -190,15 +181,10 @@ public class NFCReader {
     private boolean processing = false;
 
     public synchronized void reset(int slotNumber) {
-//        processing = true;
-        UIDParams uidParams = new UIDParams(this, slotNumber);
+        UIDParams uidParams = new UIDParams(slotNumber);
+        uidParams.setReader(this);
         uidParams.setOnGetResultListener(this.onGetUIDResultlistener);
         new UIDTask().execute(uidParams);
-//        ResetParams pp = new ResetParams();
-//        pp.slotNum = slotNumber;
-//        pp.powerAction = Reader.CARD_WARM_RESET;
-//        pp.protocols = Reader.PROTOCOL_T0 | Reader.PROTOCOL_T1;
-//        new ResetTask().execute(new ResetParams());
     }
 
     public boolean isProcessing() {

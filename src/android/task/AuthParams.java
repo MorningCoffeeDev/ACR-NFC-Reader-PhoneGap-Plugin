@@ -6,34 +6,24 @@ import com.frankgreen.apdu.OnGetResultListener;
 /**
  * Created by kevin on 6/10/15.
  */
-public class AuthParams {
-    private NFCReader reader;
+public class AuthParams extends Params {
     private int slotNumber;
     private String keyA;
     private String keyB;
     private int block;
-    private OnGetResultListener onGetResultListener;
+    private boolean A = true;
 
-    public OnGetResultListener getOnGetResultListener() {
-        return onGetResultListener;
-    }
-
-    public void setOnGetResultListener(OnGetResultListener onGetResultListener) {
-        this.onGetResultListener = onGetResultListener;
-    }
-
-    public AuthParams(NFCReader reader, int slotNumber, int block) {
-        this.reader = reader;
+    public AuthParams(int slotNumber, int block) {
         this.slotNumber = slotNumber;
         this.block = block;
     }
 
-    public NFCReader getReader() {
-        return reader;
+    public boolean isA() {
+        return A;
     }
 
-    public void setReader(NFCReader reader) {
-        this.reader = reader;
+    public void setA(boolean a) {
+        A = a;
     }
 
     public int getSlotNumber() {

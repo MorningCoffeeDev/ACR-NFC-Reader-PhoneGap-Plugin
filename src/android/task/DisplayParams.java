@@ -6,32 +6,13 @@ import com.frankgreen.apdu.OnGetResultListener;
 /**
  * Created by kevin on 6/10/15.
  */
-public class DisplayParams {
+public class DisplayParams  extends Params{
     private int x = 0;
     private int y = 0;
     private boolean bold = false;
     private int font = 1;
     private String message;
-    private NFCReader reader;
 
-    public NFCReader getReader() {
-        return reader;
-    }
-
-
-    public void setReader(NFCReader reader) {
-        this.reader = reader;
-    }
-
-    private OnGetResultListener onGetResultListener;
-
-    public OnGetResultListener getOnGetResultListener() {
-        return onGetResultListener;
-    }
-
-    public void setOnGetResultListener(OnGetResultListener onGetResultListener) {
-        this.onGetResultListener = onGetResultListener;
-    }
 
     public byte getOption() {
         byte o = 0;

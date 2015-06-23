@@ -18,8 +18,6 @@ public class WriteAuthenticate extends AsyncTask<AuthParams, Void, Boolean> {
         if (authParams == null) {
             return false;
         }
-        int slotNumber = authParams.getSlotNumber();
-        final NFCReader reader = authParams.getReader();
         int block = 3;
         if (authParams.getBlock() >=4){
            block = (authParams.getBlock() / 4) * 4 + 3;
@@ -38,8 +36,10 @@ public class WriteAuthenticate extends AsyncTask<AuthParams, Void, Boolean> {
 
         System.arraycopy(keyA, 0, data, 0, 6);
         System.arraycopy(keyB, 0, data, 10, 6);
-        UpdateBinaryBlock update = new UpdateBinaryBlock(reader, block, data);
-        update.setOnGetResultListener(authParams.getOnGetResultListener());
-        return update.run(slotNumber);
+        WriteParams writeParams = new WriteParams(authParams.getSlotNumber(),authParams.getBlock(), data);
+        writeParams.setReader(authParams.getReader());
+        writeParams.setOnGetResultListener(authParams.getOnGetResultListener());
+        UpdateBinaryBlock update = new UpdateBinaryBlock(writeParams);
+        return update.run();
     }
 }

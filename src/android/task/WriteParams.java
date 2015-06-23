@@ -6,26 +6,30 @@ import com.frankgreen.apdu.OnGetResultListener;
 /**
  * Created by kevin on 6/8/15.
  */
-public class WriteParams {
-    private NFCReader reader;
-    private int slotNumber;
+public class WriteParams  extends Params{
+    private int slotNumber = 0;
     private String data;
-    private int block;
+    private byte[] bytes;
+    private int block = 4;
 
-    public WriteParams(NFCReader reader, int slotNumber, int block, String data) {
-        this.reader = reader;
+    public WriteParams( int slotNumber, int block, String data) {
         this.slotNumber = slotNumber;
         this.block = block;
         this.data = data;
     }
-    private OnGetResultListener onGetResultListener;
 
-    public OnGetResultListener getOnGetResultListener() {
-        return onGetResultListener;
+    public WriteParams(int slotNumber, int block , byte[] bytes) {
+        this.slotNumber = slotNumber;
+        this.bytes = bytes;
+        this.block = block;
     }
 
-    public void setOnGetResultListener(OnGetResultListener onGetResultListener) {
-        this.onGetResultListener = onGetResultListener;
+    public byte[] getBytes() {
+        return bytes;
+    }
+
+    public void setBytes(byte[] bytes) {
+        this.bytes = bytes;
     }
 
     public int getBlock() {
@@ -34,14 +38,6 @@ public class WriteParams {
 
     public void setBlock(int block) {
         this.block = block;
-    }
-
-    public NFCReader getReader() {
-        return reader;
-    }
-
-    public void setReader(NFCReader reader) {
-        this.reader = reader;
     }
 
     public int getSlotNumber() {

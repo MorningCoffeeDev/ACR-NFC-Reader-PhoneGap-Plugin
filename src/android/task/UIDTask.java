@@ -28,9 +28,8 @@ public class UIDTask extends AsyncTask<UIDParams, Void, Boolean> {
             byte[] atr = reader.getReader().power(slotNumber, Reader.CARD_WARM_RESET);
             if (atr != null) {
                 reader.getReader().setProtocol(slotNumber, Reader.PROTOCOL_T0 | Reader.PROTOCOL_T1);
-                UID uid = new UID(reader);
-                uid.setOnGetResultListener(uidParams.getOnGetResultListener());
-                return uid.run(slotNumber);
+                UID uid = new UID(uidParams);
+                return uid.run();
             }
         } catch (ReaderException e) {
             if (uidParams.getOnGetResultListener() != null) {

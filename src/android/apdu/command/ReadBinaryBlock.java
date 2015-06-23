@@ -8,53 +8,39 @@ import com.frankgreen.NFCReader;
 import com.frankgreen.Util;
 import com.frankgreen.apdu.OnGetResultListener;
 import com.frankgreen.apdu.Result;
+import com.frankgreen.task.ReadParams;
 
 /**
  * Created by kevin on 5/27/15.
  */
-public class ReadBinaryBlock extends Base {
+public class ReadBinaryBlock extends Base<ReadParams> {
     private static final String TAG = "ReadBinaryBlock";
-    private int block = 4;
 
-    public ReadBinaryBlock(NFCReader nfcReader) {
-        super(nfcReader);
+    public ReadBinaryBlock(ReadParams params) {
+        super(params);
     }
 
-    public ReadBinaryBlock(NFCReader nfcReader, int block) {
-        super(nfcReader);
-        this.block = block;
-    }
-
-    public OnGetResultListener listener;
-
-    public boolean run(int slotNumber) {
+    public boolean run() {
 //         FF B0 00 04 10h
         byte[] sendBuffer = new byte[]{(byte) 0xFF, (byte) 0xB0, (byte) 0x0, (byte) 0x04, (byte) 0x10};
         byte[] receiveBuffer = new byte[300];
-        sendBuffer[3] = (byte) this.block;
+        sendBuffer[3] = (byte) this.getParams().getBlock();
         Log.d(TAG, Util.toHexString(sendBuffer));
-        Reader reader = getNfcReader().getReader();
+        Reader reader = this.getParams().getReader().getReader();
         Result result;
         try {
-            int byteCount = reader.transmit(slotNumber, sendBuffer, sendBuffer.length, receiveBuffer, receiveBuffer.length);
-            int i = 2;
-            for(;i<byteCount;i++){
-                if(receiveBuffer[i+1] == (byte) 0x0){
-                    break;
-                }
-            }
-            result = new Result("ReadBinaryBlock", i, receiveBuffer);
+            Log.w(TAG, String.valueOf(this.getParams().getSlotNumber()));
+            int byteCount = reader.transmit(this.getParams().getSlotNumber(), sendBuffer, sendBuffer.length, receiveBuffer, receiveBuffer.length);
+
+            result = new Result("ReadBinaryBlock", byteCount, receiveBuffer);
         } catch (ReaderException e) {
             result = new Result("ReadBinaryBlock", e);
             e.printStackTrace();
         }
-        if (this.listener != null) {
-            this.listener.onResult(result);
+        if (this.getParams().getOnGetResultListener() != null) {
+            this.getParams().getOnGetResultListener().onResult(result);
         }
         return result.isSuccess();
     }
 
-    public void setOnGetResultListener(OnGetResultListener listener) {
-        this.listener = listener;
-    }
 }
