@@ -1,7 +1,27 @@
 var exec = require('cordova/exec');
 
-function ACR(){
+function ACR(){ 
 }
+
+ACR.TagSuccessListener = function(){};
+ACR.TagFailureListener = function(){};
+
+ACR.handleFromIntentFilter = function() {
+    if (cordova.platformId === "android") {
+        setTimeout(
+            function () {
+                cordova.exec( 
+                  function(r){ACR.TagSuccessListener(r)},
+                  function(r){ACR.TagFailureListener(r)},
+                    "ACRNFCReaderPhoneGapPlugin", "listen", []); 
+            }, 10
+        );
+    }
+}
+
+document.addEventListener('deviceready', ACR.handleFromIntentFilter, false);
+
+
 
 ACR.clearLCD = function (success, failure) {
   cordova.exec(success, failure, "ACRNFCReaderPhoneGapPlugin", "clearLCD", []);
@@ -16,8 +36,10 @@ ACR.display = function (msg, opts, success, failure) {
   cordova.exec(success, failure, "ACRNFCReaderPhoneGapPlugin", "display", [msg, options.x, options.y, options.bold, options.font]);
 }
 
-ACR.addTagIdListener = function (success, failure) {
-  cordova.exec(success, failure, "ACRNFCReaderPhoneGapPlugin", "listen", []);
+ACR.addTagListener = function (success, failure) {
+  ACR.TagSuccessListener = success;
+  ACR.TagFailureListener = failure;
+  //cordova.exec(success, failure, "ACRNFCReaderPhoneGapPlugin", "listen", []);
 }
 
 ACR.authenticateWithKeyA = function(block,keyA,success,failure){
@@ -32,6 +54,9 @@ ACR.writeAuthenticate = function(block,keyA, keyB,success,failure){
   cordova.exec(success, failure, "ACRNFCReaderPhoneGapPlugin", "writeAuthenticate", [block,keyA,keyB]);
 }
 
+ACR.readUID = function(success,failure){
+  cordova.exec(success, failure, "ACRNFCReaderPhoneGapPlugin", "readUID",[]);
+}
 ACR.readData = function(block,success,failure){
   cordova.exec(success, failure, "ACRNFCReaderPhoneGapPlugin", "readData", [block]);
 }

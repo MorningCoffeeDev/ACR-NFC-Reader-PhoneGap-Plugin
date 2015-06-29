@@ -29,6 +29,7 @@ import com.frankgreen.task.AuthParams;
 import com.frankgreen.task.ClearLCDParams;
 import com.frankgreen.task.DisplayParams;
 import com.frankgreen.task.ReadParams;
+import com.frankgreen.task.UIDParams;
 import com.frankgreen.task.WriteParams;
 
 import org.apache.cordova.*;
@@ -46,6 +47,7 @@ public class ACRNFCReaderPhoneGapPlugin extends CordovaPlugin {
 
     private static final String TAG = "ACR";
     private static final String LISTEN = "listen";
+    private static final String READ_UID = "readUID";
     private static final String READ_DATA = "readData";
     private static final String WRITE_DATA = "writeData";
     private static final String AUTHENTICATE_WITH_KEY_A = "authenticateWithKeyA";
@@ -154,6 +156,8 @@ public class ACRNFCReaderPhoneGapPlugin extends CordovaPlugin {
         // TODO call error callback if there is no reader
         if (action.equalsIgnoreCase(LISTEN)) {
             listen(callbackContext);
+        } else if (action.equalsIgnoreCase(READ_UID)) {
+            readUID(callbackContext);
         } else if (action.equalsIgnoreCase(READ_DATA)) {
             readData(callbackContext, data);
         } else if (action.equalsIgnoreCase(WRITE_DATA)) {
@@ -172,6 +176,29 @@ public class ACRNFCReaderPhoneGapPlugin extends CordovaPlugin {
             return false;
         }
         return true;
+    }
+
+    private void readUID(final CallbackContext callbackContext) {
+        UIDParams uidParams = new UIDParams(0);
+        uidParams.setOnGetResultListener(new OnGetResultListener() {
+            @Override
+            public void onResult(Result result) {
+                Log.w(TAG, "==========UID==========");
+                Log.w(TAG, result.getCodeString());
+                if (result.getData() != null) {
+                    for (byte b : result.getData()) {
+                        Log.w(TAG, "byte " + b);
+                    }
+                }
+                Log.w(TAG, "====================");
+                PluginResult pluginResult = new PluginResult(
+                        result.isSuccess() ? PluginResult.Status.OK : PluginResult.Status.ERROR,
+                        Util.resultToJSON(result));
+                pluginResult.setKeepCallback(true);
+                callbackContext.sendPluginResult(pluginResult);
+            }
+        });
+        nfcReader.getUID(uidParams);
     }
 
     private void writeAuthenticate(final CallbackContext callbackContext, JSONArray data) {
@@ -356,12 +383,12 @@ public class ACRNFCReaderPhoneGapPlugin extends CordovaPlugin {
     }
 
     private void listen(final CallbackContext callbackContext) {
-
+        Log.w(TAG,"ACR listen");
         nfcReader.listen(
                 new OnGetResultListener() {
                     @Override
                     public void onResult(Result result) {
-                        Log.w(TAG, "==========UID==========");
+                        Log.w(TAG, "==========Reset==========");
                         Log.w(TAG, result.getCodeString());
                         if (result.getData() != null) {
                             for (byte b : result.getData()) {

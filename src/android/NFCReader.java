@@ -50,7 +50,7 @@ public class NFCReader {
     }
 
 
-    private OnGetResultListener onGetUIDResultlistener;
+    private OnGetResultListener onTouchListener;
 
 
     public void writeAuthenticate(AuthParams authParams) {
@@ -78,6 +78,11 @@ public class NFCReader {
     public void clearLCD(ClearLCDParams clearLCDParams) {
         clearLCDParams.setReader(this);
         new ClearLCDTask().execute(clearLCDParams);
+    }
+
+    public void getUID(UIDParams uidParams) {
+        uidParams.setReader(this);
+        new UIDTask().execute(uidParams);
     }
 
     public interface StatusChangeListener {
@@ -181,10 +186,10 @@ public class NFCReader {
     private boolean processing = false;
 
     public synchronized void reset(int slotNumber) {
-        UIDParams uidParams = new UIDParams(slotNumber);
-        uidParams.setReader(this);
-        uidParams.setOnGetResultListener(this.onGetUIDResultlistener);
-        new UIDTask().execute(uidParams);
+        ResetParams resetParams = new ResetParams(slotNumber);
+        resetParams.setReader(this);
+        resetParams.setOnGetResultListener(this.onTouchListener);
+        new ResetTask().execute(resetParams);
     }
 
     public boolean isProcessing() {
@@ -197,7 +202,7 @@ public class NFCReader {
 
 
     public void listen(OnGetResultListener listener) {
-        onGetUIDResultlistener = listener;
+        onTouchListener = listener;
         if (mReaderList == null) {
             mReaderList = new ArrayList<String>();
         }

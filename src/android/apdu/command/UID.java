@@ -17,13 +17,19 @@ public class UID extends Base<UIDParams> {
         super(params);
     }
 
-    public boolean run() throws ReaderException {
+    public boolean run() {
         byte[] sendBuffer = new byte[]{(byte) 0xFF, (byte) 0xCA, (byte) 0x0, (byte) 0x0, (byte) 0x0};
         byte[] receiveBuffer = new byte[16];
+        Result result = Result.buildSuccessInstance("UID");
 
         Reader reader = this.getParams().getReader().getReader();
-        int byteCount = reader.transmit(this.getParams().getSlotNumber(), sendBuffer, sendBuffer.length, receiveBuffer, receiveBuffer.length);
-        Result result = new Result("UID",byteCount, receiveBuffer);
+        int byteCount = 0;
+        try {
+            byteCount = reader.transmit(this.getParams().getSlotNumber(), sendBuffer, sendBuffer.length, receiveBuffer, receiveBuffer.length);
+            result = new Result("UID", byteCount, receiveBuffer);
+        } catch (ReaderException e) {
+            result = new Result("UID", e);
+        }
         if (this.getParams().getOnGetResultListener() != null) {
             this.getParams().getOnGetResultListener().onResult(result);
         }

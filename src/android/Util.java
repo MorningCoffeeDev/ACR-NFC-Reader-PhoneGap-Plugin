@@ -169,7 +169,6 @@ public class Util {
                     json.put("data", new String(data));
                 } else {
                     json.put("data", Util.toHexString(result.getData()));
-
                 }
             }
             json.put("success", result.isSuccess());
