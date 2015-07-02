@@ -6,7 +6,7 @@ import com.acs.smartcard.Reader;
 import com.acs.smartcard.ReaderException;
 import com.frankgreen.NFCReader;
 import com.frankgreen.apdu.Result;
-import com.frankgreen.apdu.command.UID;
+
 
 /**
  * Created by kevin on 6/2/15.
@@ -22,6 +22,7 @@ public class ResetTask extends AsyncTask<ResetParams, Void, Boolean> {
         int slotNumber = resetParams.getSlotNumber();
         NFCReader reader = resetParams.getReader();
         Result result = Result.buildSuccessInstance("Reset");
+
         try {
             byte[] atr = reader.getReader().power(slotNumber, Reader.CARD_WARM_RESET);
             if (atr != null) {

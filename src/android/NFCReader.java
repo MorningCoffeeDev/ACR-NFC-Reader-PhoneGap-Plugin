@@ -85,6 +85,11 @@ public class NFCReader {
         new UIDTask().execute(uidParams);
     }
 
+    public void selectFile(SelectFileParams selectFileParams) {
+        selectFileParams.setReader(this);
+        new SelectFileTask().execute(selectFileParams);
+    }
+
     public interface StatusChangeListener {
         void onReady(Reader reader);
 

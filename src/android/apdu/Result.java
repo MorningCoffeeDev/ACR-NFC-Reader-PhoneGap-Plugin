@@ -36,6 +36,8 @@ public class Result {
     public Result(String command, Exception exception) {
         this.exception = exception;
         this.command = command;
+        this.size = 0;
+        this.code = new byte[]{(byte)0,(byte)0};
     }
 
     public Result() {
@@ -91,7 +93,7 @@ public class Result {
             this.data = Arrays.copyOf(receiveBuffer, size);
         } else {
             this.size = 0;
-            this.code = new byte[2];
+            this.code = new byte[]{(byte)0,(byte)0};
             if (receiveBuffer != null && receiveBuffer.length > 2) {
                 this.code[0] = receiveBuffer[size];
                 this.code[1] = receiveBuffer[size + 1];
