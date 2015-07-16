@@ -79,6 +79,11 @@ ACR.display = function (msg, opts, success, failure) {
   cordova.exec(success, failure, "ACRNFCReaderPhoneGapPlugin", "display", [msg, options.x, options.y, options.bold, options.font]);
 }
 
+ACR.removeTagListener = function (success, failure) {
+  ACR.TagSuccessListener = function(){};
+  ACR.TagFailureListener = function(){};
+}
+
 ACR.addTagListener = function (success, failure) {
   ACR.TagSuccessListener = success;
   ACR.TagFailureListener = failure;
