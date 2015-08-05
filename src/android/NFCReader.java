@@ -90,6 +90,11 @@ public class NFCReader {
         new SelectFileTask().execute(selectFileParams);
     }
 
+    public void getVersion(BaseParams baseParams) {
+        baseParams.setReader(this);
+        new GetVersionTask().execute(baseParams);
+    }
+
     public interface StatusChangeListener {
         void onReady(Reader reader);
 

@@ -34,6 +34,7 @@
     <source-file src="src/android/task/AuthenticateWithKeyB.java" target-dir="src/com/frankgreen/task" />
     <source-file src="src/android/NFCReader.java" target-dir="src/com/frankgreen" />
     <source-file src="src/android/Util.java" target-dir="src/com/frankgreen" />
+    <source-file src="src/android/Chip.java" target-dir="src/com/frankgreen" />
     <source-file src="src/android/ATR.java" target-dir="src/com/frankgreen" />
     <source-file src="src/android/libs/acssmc-1.1.2.jar" target-dir="libs" />
     <source-file src="src/android/task/UIDParams.java" target-dir="src/com/frankgreen/task" />
@@ -47,6 +48,9 @@
     <source-file src="src/android/apdu/command/SelectFile.java" target-dir="src/com/frankgreen/apdu/command" />
     <source-file src="src/android/task/SelectFileParams.java" target-dir="src/com/frankgreen/task" />
     <source-file src="src/android/task/SelectFileTask.java" target-dir="src/com/frankgreen/task" />
+    <source-file src="src/android/apdu/command/GetVersion.java" target-dir="src/com/frankgreen/apdu/command" />
+    <source-file src="src/android/task/BaseParams.java" target-dir="src/com/frankgreen/task" />
+    <source-file src="src/android/task/GetVersionTask.java" target-dir="src/com/frankgreen/task" />
   </platform>
 </plugin>
 

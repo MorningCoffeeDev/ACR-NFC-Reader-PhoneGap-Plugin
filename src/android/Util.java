@@ -160,6 +160,14 @@ public class Util {
                         json.put("data", toHexString(result.getData()));
                         ATR atr = new ATR(result.getData());
                         json.put("historical", toHexString(atr.getHistoricalBytes()));
+                    } else if (result.getCommand() == "GetVersion") {
+                        Chip chip = Chip.find(result.getData());
+                        if (chip != null) {
+                            json.put("data", chip.getName());
+                        }else{
+                            json.put("data", "UNKNOWN");
+                        }
+                        json.put("response", toHexString(result.getData()));
                     } else {
                         json.put("data", toHexString(result.getData()));
                     }
