@@ -3,10 +3,11 @@ package com.frankgreen.task;
 /**
  * Created by kevin on 6/5/15.
  */
-public class BaseParams extends Params {
+public class InitNTAGParams extends Params {
     private int slotNumber = 0;
+    private String password = "";
 
-    public BaseParams(int slotNumber) {
+    public InitNTAGParams(int slotNumber) {
         this.slotNumber = slotNumber;
     }
 
@@ -16,5 +17,13 @@ public class BaseParams extends Params {
 
     public void setSlotNumber(int slotNumber) {
         this.slotNumber = slotNumber;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 }

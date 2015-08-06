@@ -14,7 +14,11 @@ public class Result {
     private byte[] data;
     private byte[] code;
     private Exception exception;
+    private  Checker checker;
 
+    public interface Checker{
+        boolean check(Result result);
+    }
     public String getCommand() {
         return command;
     }
@@ -81,7 +85,19 @@ public class Result {
     }
 
     public boolean isSuccess() {
-        return this.code[0] == (byte) 0x90 && this.code[1] == (byte) 0x00;
+        boolean flag = this.code[0] == (byte) 0x90 && this.code[1] == (byte) 0x00;
+        if(flag && this.checker != null){
+            return this.checker.check(this);
+        }
+        return flag;
+    }
+
+    public Checker getChecker() {
+        return checker;
+    }
+
+    public void setChecker(Checker checker) {
+        this.checker = checker;
     }
 
     public void setReceiveBuffer(int byteCount,byte[] receiveBuffer) {

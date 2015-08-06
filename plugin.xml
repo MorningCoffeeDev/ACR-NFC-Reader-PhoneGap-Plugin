@@ -51,6 +51,13 @@
     <source-file src="src/android/apdu/command/GetVersion.java" target-dir="src/com/frankgreen/apdu/command" />
     <source-file src="src/android/task/BaseParams.java" target-dir="src/com/frankgreen/task" />
     <source-file src="src/android/task/GetVersionTask.java" target-dir="src/com/frankgreen/task" />
+    <source-file src="src/android/task/InitNTAGParams.java" target-dir="src/com/frankgreen/task" />
+    <source-file src="src/android/task/InitNTAGTask.java" target-dir="src/com/frankgreen/task" />
+    <source-file src="src/android/apdu/command/ntag/CardCommand.java" target-dir="src/com/frankgreen/apdu/command/ntag" />
+    <source-file src="src/android/apdu/command/ntag/InitChip.java" target-dir="src/com/frankgreen/apdu/command/ntag" />
+    <source-file src="src/android/apdu/command/ntag/NTagAuth.java" target-dir="src/com/frankgreen/apdu/command/ntag" />
+    <source-file src="src/android/apdu/command/ntag/StartSession.java" target-dir="src/com/frankgreen/apdu/command/ntag" />
+    <source-file src="src/android/apdu/command/ntag/StopSession.java" target-dir="src/com/frankgreen/apdu/command/ntag" />
   </platform>
 </plugin>
 

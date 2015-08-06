@@ -62,6 +62,9 @@ ACR.setAID = function (aid) {
 ACR.getVersion = function(success,failure){
   cordova.exec(success, failure, "ACRNFCReaderPhoneGapPlugin", "getVersion", []);
 }
+ACR.initNTAG213 = function(password,success,failure){
+  cordova.exec(success, failure, "ACRNFCReaderPhoneGapPlugin", "initNTAG213", [password]);
+}
 
 ACR.metadata = {};
 ACR.runCardAbsent = function () {

@@ -1,7 +1,12 @@
 package com.frankgreen.apdu.command;
 
+import android.util.Log;
+
+import com.acs.smartcard.Reader;
 import com.acs.smartcard.ReaderException;
 import com.frankgreen.NFCReader;
+import com.frankgreen.Util;
+import com.frankgreen.apdu.Result;
 import com.frankgreen.task.Params;
 
 /**
@@ -23,4 +28,6 @@ public abstract class Base<T extends Params> {
     }
 
     public abstract boolean run() throws ReaderException;
+
+
 }

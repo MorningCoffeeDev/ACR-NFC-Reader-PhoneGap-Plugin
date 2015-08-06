@@ -29,6 +29,7 @@ import com.frankgreen.task.AuthParams;
 import com.frankgreen.task.BaseParams;
 import com.frankgreen.task.ClearLCDParams;
 import com.frankgreen.task.DisplayParams;
+import com.frankgreen.task.InitNTAGParams;
 import com.frankgreen.task.ReadParams;
 import com.frankgreen.task.SelectFileParams;
 import com.frankgreen.task.UIDParams;
@@ -59,6 +60,7 @@ public class ACRNFCReaderPhoneGapPlugin extends CordovaPlugin {
     private static final String SELECT_FILE = "selectFile";
     private static final String DISPLAY = "display";
     private static final String CLEAR_LCD = "clearLCD";
+    private static final String INIT_NTAG213 = "initNTAG213";
 
 
     private CordovaWebView webView;
@@ -180,36 +182,29 @@ public class ACRNFCReaderPhoneGapPlugin extends CordovaPlugin {
             clearLCD(callbackContext, data);
         } else if (action.equalsIgnoreCase(GET_VERSION)) {
             getVersion(callbackContext, data);
+        } else if (action.equalsIgnoreCase(INIT_NTAG213)) {
+            initNTAG213(callbackContext, data);
         } else {
             return false;
         }
         return true;
     }
 
-    private OnGetResultListener generateResultListener(final String name, final CallbackContext callbackContext) {
-        return new OnGetResultListener() {
-            @Override
-            public void onResult(Result result) {
-                Log.w(TAG, "==========" + name + "==========");
-                Log.w(TAG, result.getCodeString());
-                if (result.getData() != null) {
-                    for (byte b : result.getData()) {
-                        Log.w(TAG, "byte " + b);
-                    }
-                }
-                Log.w(TAG, "====================");
-                PluginResult pluginResult = new PluginResult(
-                        result.isSuccess() ? PluginResult.Status.OK : PluginResult.Status.ERROR,
-                        Util.resultToJSON(result));
-                pluginResult.setKeepCallback(true);
-                callbackContext.sendPluginResult(pluginResult);
-            }
-        };
+    private void initNTAG213(CallbackContext callbackContext, JSONArray data) {
+        InitNTAGParams initNTAGParams = new InitNTAGParams(0);
+        try {
+            initNTAGParams.setPassword(data.getString(0));
+            initNTAGParams.setOnGetResultListener(generateResultListener(callbackContext));
+            nfcReader.initNTAGTask(initNTAGParams);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
     }
+
 
     private void getVersion(final CallbackContext callbackContext, JSONArray data) {
         BaseParams baseParams = new BaseParams(0);
-        baseParams.setOnGetResultListener(generateResultListener("Get Version", callbackContext));
+        baseParams.setOnGetResultListener(generateResultListener(callbackContext));
         nfcReader.getVersion(baseParams);
     }
 
@@ -466,6 +461,27 @@ public class ACRNFCReaderPhoneGapPlugin extends CordovaPlugin {
                     }
                 }
         );
+    }
+
+    private OnGetResultListener generateResultListener(final CallbackContext callbackContext) {
+        return new OnGetResultListener() {
+            @Override
+            public void onResult(Result result) {
+                Log.w(TAG, "==========" + result.getCommand() + "==========");
+                Log.w(TAG, result.getCodeString());
+                if (result.getData() != null) {
+                    for (byte b : result.getData()) {
+                        Log.w(TAG, "byte " + b);
+                    }
+                }
+                Log.w(TAG, "====================");
+                PluginResult pluginResult = new PluginResult(
+                        result.isSuccess() ? PluginResult.Status.OK : PluginResult.Status.ERROR,
+                        Util.resultToJSON(result));
+                pluginResult.setKeepCallback(true);
+                callbackContext.sendPluginResult(pluginResult);
+            }
+        };
     }
 
     private Activity getActivity() {

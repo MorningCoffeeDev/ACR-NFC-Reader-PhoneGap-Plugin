@@ -90,6 +90,11 @@ public class NFCReader {
         new SelectFileTask().execute(selectFileParams);
     }
 
+    public void initNTAGTask(InitNTAGParams initNTAGParams) {
+        initNTAGParams.setReader(this);
+        new InitNTAGTask().execute(initNTAGParams);
+    }
+
     public void getVersion(BaseParams baseParams) {
         baseParams.setReader(this);
         new GetVersionTask().execute(baseParams);
