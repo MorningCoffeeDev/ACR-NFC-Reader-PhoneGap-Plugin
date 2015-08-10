@@ -21,7 +21,7 @@ public class ReadBinaryBlock extends Base<ReadParams> {
     }
 
     public boolean run() {
-//         FF B0 00 04 10h
+//         FFB0000410
         byte[] sendBuffer = new byte[]{(byte) 0xFF, (byte) 0xB0, (byte) 0x0, (byte) 0x04, (byte) 0x10};
         byte[] receiveBuffer = new byte[300];
         sendBuffer[3] = (byte) this.getParams().getBlock();

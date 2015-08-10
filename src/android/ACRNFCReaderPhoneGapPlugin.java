@@ -475,11 +475,13 @@ public class ACRNFCReaderPhoneGapPlugin extends CordovaPlugin {
                     }
                 }
                 Log.w(TAG, "====================");
-                PluginResult pluginResult = new PluginResult(
-                        result.isSuccess() ? PluginResult.Status.OK : PluginResult.Status.ERROR,
-                        Util.resultToJSON(result));
-                pluginResult.setKeepCallback(true);
-                callbackContext.sendPluginResult(pluginResult);
+                if(result.isSendPlugin()) {
+                    PluginResult pluginResult = new PluginResult(
+                            result.isSuccess() ? PluginResult.Status.OK : PluginResult.Status.ERROR,
+                            Util.resultToJSON(result));
+                    pluginResult.setKeepCallback(true);
+                    callbackContext.sendPluginResult(pluginResult);
+                }
             }
         };
     }

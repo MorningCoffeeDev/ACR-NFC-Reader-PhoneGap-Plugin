@@ -12,19 +12,30 @@ public class NTagAuth extends CardCommand {
         super(params);
     }
 
-    public boolean run() {
-        byte[] sendBuffer = new byte[]{(byte) 0xFF, (byte) 0x0, (byte) 0x0, (byte) 0x0, (byte) 0x05,
-                (byte) 0x1B, (byte) 0xFF, (byte) 0xFF, (byte) 0xFF, (byte) 0xFF};
+    private byte[] sendBuffer = new byte[]{(byte) 0xFF, (byte) 0x0, (byte) 0x0, (byte) 0x0, (byte) 0x05,
+            (byte) 0x1B, (byte) 0xFF, (byte) 0xFF, (byte) 0xFF, (byte) 0xFF};
+
+
+    public boolean tryPassword() {
         if (transmit(sendBuffer)) { // use default password
             return true;
         }
         if (this.getParams().getPassword() != null && !"".equals(this.getParams().getPassword())) // use custom password
         {
+            try {
+                Thread.sleep(500); //do remove this line.
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
             byte[] pwd = Util.toNFCByte(this.getParams().getPassword(), 4);
             System.arraycopy(pwd, 0, sendBuffer, 6, 4);
             return transmit(sendBuffer);
         }
         return false;
+    }
+
+    public boolean run() {
+        return transmit(sendBuffer);
     }
 
     @Override

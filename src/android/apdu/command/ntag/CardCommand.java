@@ -34,10 +34,11 @@ public abstract class CardCommand extends Base<InitNTAGParams> {
         } catch (ReaderException e) {
             result = new Result(getCommandName(), e);
         }
+        result.setSendPlugin(false);
+        result.setChecker(getChecker());
         if (this.getParams().getOnGetResultListener() != null) {
             this.getParams().getOnGetResultListener().onResult(result);
         }
-        result.setChecker(getChecker());
         return result.isSuccess();
     }
 

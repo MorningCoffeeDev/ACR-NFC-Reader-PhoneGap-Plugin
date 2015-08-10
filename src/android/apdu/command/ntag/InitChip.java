@@ -1,5 +1,7 @@
 package com.frankgreen.apdu.command.ntag;
 
+import android.util.Log;
+
 import com.frankgreen.Util;
 import com.frankgreen.apdu.Result;
 import com.frankgreen.task.InitNTAGParams;
@@ -37,8 +39,9 @@ public class InitChip extends CardCommand {
         return new Result.Checker() {
             @Override
             public boolean check(Result result) {
-                byte[] code = result.getCode();
-                if (code != null && code.length > 0 && code[0] == (byte) 0x0a) {
+                byte[] data = result.getData();
+                Log.d(getTag(), Util.toHexString(data));
+                if (data != null && data.length > 0 && data[0] == (byte) 0x0a) {
                     return true;
                 } else {
                     return false;

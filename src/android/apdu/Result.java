@@ -14,7 +14,8 @@ public class Result {
     private byte[] data;
     private byte[] code;
     private Exception exception;
-    private  Checker checker;
+    private Checker checker;
+    private boolean sendPlugin = true;
 
     public interface Checker{
         boolean check(Result result);
@@ -90,6 +91,14 @@ public class Result {
             return this.checker.check(this);
         }
         return flag;
+    }
+
+    public boolean isSendPlugin() {
+        return sendPlugin;
+    }
+
+    public void setSendPlugin(boolean sendPlugin) {
+        this.sendPlugin = sendPlugin;
     }
 
     public Checker getChecker() {

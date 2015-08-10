@@ -2,6 +2,8 @@ package com.frankgreen.task;
 
 import android.os.AsyncTask;
 
+import com.acs.smartcard.ReaderException;
+import com.frankgreen.apdu.Result;
 import com.frankgreen.apdu.command.UID;
 import com.frankgreen.apdu.command.ntag.InitChip;
 import com.frankgreen.apdu.command.ntag.NTagAuth;
@@ -22,17 +24,27 @@ public class InitNTAGTask extends AsyncTask<InitNTAGParams, Void, Boolean> {
         if (initNTAGParams == null) {
             return false;
         }
+        Result result = Result.buildSuccessInstance("InitNTAGTask");
         StartSession startSession = new StartSession(initNTAGParams);
         NTagAuth nTagAuth = new NTagAuth(initNTAGParams);
         InitChip initChip = new InitChip(initNTAGParams);
         StopSession stopSession = new StopSession(initNTAGParams);
-        try{
-            startSession.run();
-            if(nTagAuth.run()) {
-                initChip.run();
+
+        if(nTagAuth.tryPassword()) {
+            try {
+                startSession.run();
+                if (nTagAuth.run()) {
+                    initChip.run();
+                }
+            } finally {
+                stopSession.run();
             }
-        }finally {
-            stopSession.run();
+
+        }else{
+            result =  new Result("InitNTAGTask", new ReaderException("Invalid Password"));
+        }
+        if (initNTAGParams.getOnGetResultListener() != null) {
+            initNTAGParams.getOnGetResultListener().onResult(result);
         }
         return true;
     }
