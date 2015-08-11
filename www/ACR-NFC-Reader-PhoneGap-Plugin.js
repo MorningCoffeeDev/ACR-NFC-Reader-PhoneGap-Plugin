@@ -12,12 +12,13 @@ ACR.start = function() {
             function () {
                 cordova.exec( 
                   function(r){
-                    ACR.metadata = ACR.convertMetadata(r);
-                    r.metadata = ACR.metadata;
+                    //ACR.metadata = ACR.convertMetadata(r);
+                    //r.metadata = ACR.metadata;
+                    ACR.metadata = r.metadata;
                     ACR.TagSuccessListener(r);
                   },
                   function(r){
-                    ACR.metadata = {};
+                    //ACR.metadata = {};
                     ACR.TagFailureListener(r);
                   },
                     "ACRNFCReaderPhoneGapPlugin", "listen", []); 
@@ -28,32 +29,32 @@ ACR.start = function() {
 
 //document.addEventListener('deviceready', ACR.handleFromIntentFilter, false);
 
-ACR.convertMetadata = function(r){
-  var h = {};
-  if(r.data =="3B80800101"){
-    h.type = "JavaCard";
-  }else if(r.historical){
-    var t = r.historical.slice(10,14)
-      if (t == "0001"){
-        h.type = "Mifare 1K"
-      }else if(t == "0002"){
-        h.type = "Mifare 4K"
-      }else if(t == "0003"){
-        h.type = "Mifare Ultralight"
-      }else if(t == "0026"){
-        h.type = "Mifare Mini"
-      }else if(t == "F004"){
-        h.type = "Topaz and Jewel"
-      }else if(t == "F011"){
-        h.type = "FeliCa 212K"
-      }else if(t == "F012"){
-        h.type = "FeliCa 424K"
-      }else if(t == "F028"){
-        h.type = "JCOP 30"
-      }
-  }
-  return h;
-}
+//ACR.convertMetadata = function(r){
+  //var h = {};
+  //if(r.data =="3B80800101"){
+    //h.type = "JavaCard";
+  //}else if(r.historical){
+    //var t = r.historical.slice(10,14)
+      //if (t == "0001"){
+        //h.type = "Mifare 1K"
+      //}else if(t == "0002"){
+        //h.type = "Mifare 4K"
+      //}else if(t == "0003"){
+        //h.type = "Mifare Ultralight"
+      //}else if(t == "0026"){
+        //h.type = "Mifare Mini"
+      //}else if(t == "F004"){
+        //h.type = "Topaz and Jewel"
+      //}else if(t == "F011"){
+        //h.type = "FeliCa 212K"
+      //}else if(t == "F012"){
+        //h.type = "FeliCa 424K"
+      //}else if(t == "F028"){
+        //h.type = "JCOP 30"
+      //}
+  //}
+  //return h;
+//}
 
 ACR.AID = "F222222228";
 ACR.setAID = function (aid) {

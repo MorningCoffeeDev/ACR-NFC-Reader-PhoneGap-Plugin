@@ -1,5 +1,6 @@
 package com.frankgreen.apdu;
 
+import com.frankgreen.ChipMeta;
 import com.frankgreen.Util;
 
 import java.util.Arrays;
@@ -13,6 +14,7 @@ public class Result {
     private String command;
     private byte[] data;
     private byte[] code;
+    private ChipMeta meta;
     private Exception exception;
     private Checker checker;
     private boolean sendPlugin = true;
@@ -91,6 +93,14 @@ public class Result {
             return this.checker.check(this);
         }
         return flag;
+    }
+
+    public ChipMeta getMeta() {
+        return meta;
+    }
+
+    public void setMeta(ChipMeta meta) {
+        this.meta = meta;
     }
 
     public boolean isSendPlugin() {

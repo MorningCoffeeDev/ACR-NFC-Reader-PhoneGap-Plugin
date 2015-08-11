@@ -21,7 +21,6 @@ public class GetVersionTask extends AsyncTask<BaseParams, Void, Boolean> {
         }
         GetVersion getVersion = new GetVersion(baseParams);
         return getVersion.run();
-
     }
 
 }

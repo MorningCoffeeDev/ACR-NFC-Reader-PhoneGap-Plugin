@@ -32,7 +32,6 @@ import com.frankgreen.task.DisplayParams;
 import com.frankgreen.task.InitNTAGParams;
 import com.frankgreen.task.ReadParams;
 import com.frankgreen.task.SelectFileParams;
-import com.frankgreen.task.UIDParams;
 import com.frankgreen.task.WriteParams;
 
 import org.apache.cordova.*;
@@ -201,7 +200,6 @@ public class ACRNFCReaderPhoneGapPlugin extends CordovaPlugin {
         }
     }
 
-
     private void getVersion(final CallbackContext callbackContext, JSONArray data) {
         BaseParams baseParams = new BaseParams(0);
         baseParams.setOnGetResultListener(generateResultListener(callbackContext));
@@ -211,24 +209,7 @@ public class ACRNFCReaderPhoneGapPlugin extends CordovaPlugin {
     private void selectFile(final CallbackContext callbackContext, JSONArray data) {
         try {
             SelectFileParams selectFileParams = new SelectFileParams(0, data.getString(0));
-            selectFileParams.setOnGetResultListener(new OnGetResultListener() {
-                @Override
-                public void onResult(Result result) {
-                    Log.w(TAG, "==========Select File==========");
-                    Log.w(TAG, result.getCodeString());
-                    if (result.getData() != null) {
-                        for (byte b : result.getData()) {
-                            Log.w(TAG, "byte " + b);
-                        }
-                    }
-                    Log.w(TAG, "====================");
-                    PluginResult pluginResult = new PluginResult(
-                            result.isSuccess() ? PluginResult.Status.OK : PluginResult.Status.ERROR,
-                            Util.resultToJSON(result));
-                    pluginResult.setKeepCallback(true);
-                    callbackContext.sendPluginResult(pluginResult);
-                }
-            });
+            selectFileParams.setOnGetResultListener(generateResultListener(callbackContext));
             nfcReader.selectFile(selectFileParams);
         } catch (JSONException e) {
             e.printStackTrace();
@@ -236,25 +217,8 @@ public class ACRNFCReaderPhoneGapPlugin extends CordovaPlugin {
     }
 
     private void readUID(final CallbackContext callbackContext) {
-        UIDParams uidParams = new UIDParams(0);
-        uidParams.setOnGetResultListener(new OnGetResultListener() {
-            @Override
-            public void onResult(Result result) {
-                Log.w(TAG, "==========UID==========");
-                Log.w(TAG, result.getCodeString());
-                if (result.getData() != null) {
-                    for (byte b : result.getData()) {
-                        Log.w(TAG, "byte " + b);
-                    }
-                }
-                Log.w(TAG, "====================");
-                PluginResult pluginResult = new PluginResult(
-                        result.isSuccess() ? PluginResult.Status.OK : PluginResult.Status.ERROR,
-                        Util.resultToJSON(result));
-                pluginResult.setKeepCallback(true);
-                callbackContext.sendPluginResult(pluginResult);
-            }
-        });
+        BaseParams uidParams = new BaseParams(0);
+        uidParams.setOnGetResultListener(generateResultListener(callbackContext));
         nfcReader.getUID(uidParams);
     }
 
@@ -263,24 +227,7 @@ public class ACRNFCReaderPhoneGapPlugin extends CordovaPlugin {
             AuthParams authParams = new AuthParams(0, data.getInt(0));
             authParams.setKeyA(data.getString(1));
             authParams.setKeyB(data.getString(2));
-            authParams.setOnGetResultListener(new OnGetResultListener() {
-                @Override
-                public void onResult(Result result) {
-                    Log.w(TAG, "==========writeAuthenticate==========");
-                    Log.w(TAG, result.getCodeString());
-                    if (result.isSuccess() && result.getData() != null) {
-                        for (byte b : result.getData()) {
-                            Log.w(TAG, "byte " + b);
-                        }
-                    }
-                    Log.w(TAG, "====================");
-                    PluginResult pluginResult = new PluginResult(
-                            result.isSuccess() ? PluginResult.Status.OK : PluginResult.Status.ERROR,
-                            Util.resultToJSON(result));
-                    pluginResult.setKeepCallback(true);
-                    callbackContext.sendPluginResult(pluginResult);
-                }
-            });
+            authParams.setOnGetResultListener(generateResultListener(callbackContext));
             nfcReader.writeAuthenticate(authParams);
         } catch (JSONException e) {
             e.printStackTrace();
@@ -291,24 +238,7 @@ public class ACRNFCReaderPhoneGapPlugin extends CordovaPlugin {
         try {
             AuthParams authParams = new AuthParams(0, data.getInt(0));
             authParams.setKeyB(data.getString(1));
-            authParams.setOnGetResultListener(new OnGetResultListener() {
-                @Override
-                public void onResult(Result result) {
-                    Log.w(TAG, "==========authenticateWithKeyB==========");
-                    Log.w(TAG, result.getCodeString());
-                    if (result.isSuccess() && result.getData() != null) {
-                        for (byte b : result.getData()) {
-                            Log.w(TAG, "byte " + b);
-                        }
-                    }
-                    Log.w(TAG, "====================");
-                    PluginResult pluginResult = new PluginResult(
-                            result.isSuccess() ? PluginResult.Status.OK : PluginResult.Status.ERROR,
-                            Util.resultToJSON(result));
-                    pluginResult.setKeepCallback(true);
-                    callbackContext.sendPluginResult(pluginResult);
-                }
-            });
+            authParams.setOnGetResultListener(generateResultListener(callbackContext));
             nfcReader.authenticateWithKeyB(authParams);
         } catch (JSONException e) {
             e.printStackTrace();
@@ -319,24 +249,7 @@ public class ACRNFCReaderPhoneGapPlugin extends CordovaPlugin {
         try {
             AuthParams authParams = new AuthParams(0, data.getInt(0));
             authParams.setKeyA(data.getString(1));
-            authParams.setOnGetResultListener(new OnGetResultListener() {
-                @Override
-                public void onResult(Result result) {
-                    Log.w(TAG, "==========authenticateWithKeyA==========");
-                    Log.w(TAG, result.getCodeString());
-                    if (result.isSuccess() && result.getData() != null) {
-                        for (byte b : result.getData()) {
-                            Log.w(TAG, "byte " + b);
-                        }
-                    }
-                    Log.w(TAG, "====================");
-                    PluginResult pluginResult = new PluginResult(
-                            result.isSuccess() ? PluginResult.Status.OK : PluginResult.Status.ERROR,
-                            Util.resultToJSON(result));
-                    pluginResult.setKeepCallback(true);
-                    callbackContext.sendPluginResult(pluginResult);
-                }
-            });
+            authParams.setOnGetResultListener(generateResultListener(callbackContext));
             nfcReader.authenticateWithKeyA(authParams);
         } catch (JSONException e) {
             e.printStackTrace();
@@ -347,25 +260,7 @@ public class ACRNFCReaderPhoneGapPlugin extends CordovaPlugin {
 
         try {
             ReadParams readParams = new ReadParams(0, data.getInt(0));
-            readParams.setOnGetResultListener(
-                    new OnGetResultListener() {
-                        @Override
-                        public void onResult(Result result) {
-                            Log.w(TAG, "==========ReadData==========");
-                            Log.w(TAG, result.getCodeString());
-                            if (result.isSuccess() && result.getData() != null) {
-                                for (byte b : result.getData()) {
-                                    Log.w(TAG, "byte " + b);
-                                }
-                            }
-                            Log.w(TAG, "====================");
-                            PluginResult pluginResult = new PluginResult(
-                                    result.isSuccess() ? PluginResult.Status.OK : PluginResult.Status.ERROR,
-                                    Util.resultToJSON(result));
-                            pluginResult.setKeepCallback(true);
-                            callbackContext.sendPluginResult(pluginResult);
-                        }
-                    });
+            readParams.setOnGetResultListener(generateResultListener(callbackContext));
             nfcReader.readData(readParams);
         } catch (JSONException e) {
             e.printStackTrace();
@@ -375,19 +270,7 @@ public class ACRNFCReaderPhoneGapPlugin extends CordovaPlugin {
     private void writeData(final CallbackContext callbackContext, JSONArray data) {
         try {
             WriteParams writeParams = new WriteParams(0, data.getInt(0), data.getString(1));
-            writeParams.setOnGetResultListener(new OnGetResultListener() {
-                @Override
-                public void onResult(Result result) {
-                    Log.w(TAG, "==========Write==========");
-                    Log.w(TAG, result.getCodeString());
-                    Log.w(TAG, "====================");
-                    PluginResult pluginResult = new PluginResult(
-                            result.isSuccess() ? PluginResult.Status.OK : PluginResult.Status.ERROR,
-                            Util.resultToJSON(result));
-                    pluginResult.setKeepCallback(true);
-                    callbackContext.sendPluginResult(pluginResult);
-                }
-            });
+            writeParams.setOnGetResultListener(generateResultListener(callbackContext));
             nfcReader.writeData(writeParams);
         } catch (JSONException e) {
             e.printStackTrace();
@@ -396,19 +279,7 @@ public class ACRNFCReaderPhoneGapPlugin extends CordovaPlugin {
 
     private void clearLCD(final CallbackContext callbackContext, JSONArray data) {
         ClearLCDParams clearLCDParams = new ClearLCDParams();
-        clearLCDParams.setOnGetResultListener(new OnGetResultListener() {
-            @Override
-            public void onResult(Result result) {
-                Log.w(TAG, "==========Clear==========");
-                Log.w(TAG, result.getCodeString());
-                Log.w(TAG, "====================");
-                PluginResult pluginResult = new PluginResult(
-                        result.isSuccess() ? PluginResult.Status.OK : PluginResult.Status.ERROR,
-                        Util.resultToJSON(result));
-                pluginResult.setKeepCallback(true);
-                callbackContext.sendPluginResult(pluginResult);
-            }
-        });
+        clearLCDParams.setOnGetResultListener(generateResultListener(callbackContext));
         nfcReader.clearLCD(clearLCDParams);
     }
 
@@ -420,19 +291,7 @@ public class ACRNFCReaderPhoneGapPlugin extends CordovaPlugin {
             displayParams.setY(data.getInt(2));
             displayParams.setBold(data.getBoolean(3));
             displayParams.setFont(data.getInt(4));
-            displayParams.setOnGetResultListener(new OnGetResultListener() {
-                @Override
-                public void onResult(Result result) {
-                    Log.w(TAG, "==========Display==========");
-                    Log.w(TAG, result.getCodeString());
-                    Log.w(TAG, "====================");
-                    PluginResult pluginResult = new PluginResult(
-                            result.isSuccess() ? PluginResult.Status.OK : PluginResult.Status.ERROR,
-                            Util.resultToJSON(result));
-                    pluginResult.setKeepCallback(true);
-                    callbackContext.sendPluginResult(pluginResult);
-                }
-            });
+            displayParams.setOnGetResultListener(generateResultListener(callbackContext));
             nfcReader.display(displayParams);
         } catch (JSONException e) {
             e.printStackTrace();
@@ -441,26 +300,7 @@ public class ACRNFCReaderPhoneGapPlugin extends CordovaPlugin {
 
     private void listen(final CallbackContext callbackContext) {
         Log.w(TAG, "ACR listen");
-        nfcReader.listen(
-                new OnGetResultListener() {
-                    @Override
-                    public void onResult(Result result) {
-                        Log.w(TAG, "==========Reset==========");
-                        Log.w(TAG, result.getCodeString());
-                        if (result.getData() != null) {
-                            for (byte b : result.getData()) {
-                                Log.w(TAG, "byte " + b);
-                            }
-                        }
-                        Log.w(TAG, "====================");
-                        PluginResult pluginResult = new PluginResult(
-                                result.isSuccess() ? PluginResult.Status.OK : PluginResult.Status.ERROR,
-                                Util.resultToJSON(result));
-                        pluginResult.setKeepCallback(true);
-                        callbackContext.sendPluginResult(pluginResult);
-                    }
-                }
-        );
+        nfcReader.listen(generateResultListener(callbackContext));
     }
 
     private OnGetResultListener generateResultListener(final CallbackContext callbackContext) {

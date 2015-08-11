@@ -19,6 +19,7 @@
     <source-file src="src/android/apdu/command/ReadBinaryBlock.java" target-dir="src/com/frankgreen/apdu/command" />
     <source-file src="src/android/apdu/command/Authentication.java" target-dir="src/com/frankgreen/apdu/command" />
     <source-file src="src/android/apdu/command/LoadAuthentication.java" target-dir="src/com/frankgreen/apdu/command" />
+    <source-file src="src/android/apdu/command/Reset.java" target-dir="src/com/frankgreen/apdu/command" />
     <source-file src="src/android/apdu/OnGetResultListener.java" target-dir="src/com/frankgreen/apdu" />
     <source-file src="src/android/apdu/Result.java" target-dir="src/com/frankgreen/apdu" />
     <source-file src="src/android/task/ReadTask.java" target-dir="src/com/frankgreen/task" />
@@ -26,7 +27,6 @@
     <source-file src="src/android/task/WriteTask.java" target-dir="src/com/frankgreen/task" />
     <source-file src="src/android/task/WriteParams.java" target-dir="src/com/frankgreen/task" />
     <source-file src="src/android/task/ReadParams.java" target-dir="src/com/frankgreen/task" />
-    <source-file src="src/android/task/ResetParams.java" target-dir="src/com/frankgreen/task" />
     <source-file src="src/android/task/ResetTask.java" target-dir="src/com/frankgreen/task" />
     <source-file src="src/android/task/AuthParams.java" target-dir="src/com/frankgreen/task" />
     <source-file src="src/android/task/WriteAuthenticate.java" target-dir="src/com/frankgreen/task" />
@@ -35,9 +35,10 @@
     <source-file src="src/android/NFCReader.java" target-dir="src/com/frankgreen" />
     <source-file src="src/android/Util.java" target-dir="src/com/frankgreen" />
     <source-file src="src/android/Chip.java" target-dir="src/com/frankgreen" />
+    <source-file src="src/android/ChipMeta.java" target-dir="src/com/frankgreen" />
     <source-file src="src/android/ATR.java" target-dir="src/com/frankgreen" />
+    <source-file src="src/android/ATRHistorical.java" target-dir="src/com/frankgreen" />
     <source-file src="src/android/libs/acssmc-1.1.2.jar" target-dir="libs" />
-    <source-file src="src/android/task/UIDParams.java" target-dir="src/com/frankgreen/task" />
     <source-file src="src/android/task/UIDTask.java" target-dir="src/com/frankgreen/task" />
     <source-file src="src/android/task/DisplayParams.java" target-dir="src/com/frankgreen/task" />
     <source-file src="src/android/task/DisplayTask.java" target-dir="src/com/frankgreen/task" />

@@ -14,10 +14,10 @@ public class Chip {
         this.version = version;
     }
 
-    public Chip( String name, int[] version) {
+    public Chip(String name, int[] version) {
         byte[] v = new byte[version.length];
-        for(int i = 0; i < version.length; i++){
-            v[i] = (byte)(version[i] & 0xff);
+        for (int i = 0; i < version.length; i++) {
+            v[i] = (byte) (version[i] & 0xff);
         }
         this.name = name;
         this.version = v;
@@ -61,10 +61,15 @@ public class Chip {
     }
 
     public boolean equals(byte[] version) {
-      return Arrays.equals(this.version, version);
+        return Arrays.equals(this.version, version);
     }
 
     public boolean equals(Chip chip) {
-        return Arrays.equals(this.version,chip.version);
+        return Arrays.equals(this.version, chip.version);
+    }
+
+
+    public String getType() {
+        return "MIFARE Ultralight C"; // all chip are ULC
     }
 }

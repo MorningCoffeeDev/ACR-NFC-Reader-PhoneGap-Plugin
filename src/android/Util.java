@@ -157,9 +157,9 @@ public class Util {
                     if (result.getCommand() == "ReadBinaryBlock" || result.getCommand() == "SelectFile") {
                         json.put("data", dataToString(result.getData()));
                     } else if (result.getCommand() == "Reset") {
-                        json.put("data", toHexString(result.getData()));
-                        ATR atr = new ATR(result.getData());
-                        json.put("historical", toHexString(atr.getHistoricalBytes()));
+                        json.put("data", result.getMeta().getUid() );
+//                        ATR atr = new ATR(result.getData());
+                        json.put("metadata", result.getMeta().toJSON());
                     } else if (result.getCommand() == "GetVersion") {
                         Chip chip = Chip.find(result.getData());
                         if (chip != null) {

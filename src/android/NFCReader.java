@@ -29,6 +29,7 @@ public class NFCReader {
     private PendingIntent mPermissionIntent;
     private UsbManager mManager;
     private Reader mReader;
+    private ChipMeta chipMeta;
 
     private List<String> mReaderList;
     private List<String> mSlotList;
@@ -37,6 +38,10 @@ public class NFCReader {
     public NFCReader(UsbManager mManager) {
         this.mManager = mManager;
         this.mReader = new Reader(mManager);
+    }
+
+    public ChipMeta getChipMeta() {
+        return chipMeta;
     }
 
     public void readData(ReadParams readParams) {
@@ -80,7 +85,7 @@ public class NFCReader {
         new ClearLCDTask().execute(clearLCDParams);
     }
 
-    public void getUID(UIDParams uidParams) {
+    public void getUID(BaseParams uidParams) {
         uidParams.setReader(this);
         new UIDTask().execute(uidParams);
     }
@@ -190,6 +195,8 @@ public class NFCReader {
 
     }
 
+
+
     public void close() {
         new CloseTask().execute();
     }
@@ -201,10 +208,11 @@ public class NFCReader {
     private boolean processing = false;
 
     public synchronized void reset(int slotNumber) {
-        ResetParams resetParams = new ResetParams(slotNumber);
-        resetParams.setReader(this);
-        resetParams.setOnGetResultListener(this.onTouchListener);
-        new ResetTask().execute(resetParams);
+        this.chipMeta  = new ChipMeta();
+        BaseParams baseParams = new BaseParams(slotNumber);
+        baseParams.setReader(this);
+        baseParams.setOnGetResultListener(this.onTouchListener);
+        new ResetTask().execute(baseParams);
     }
 
     public boolean isProcessing() {

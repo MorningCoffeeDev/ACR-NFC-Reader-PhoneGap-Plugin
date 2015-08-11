@@ -4,10 +4,11 @@ import android.util.Log;
 
 import com.acs.smartcard.Reader;
 import com.acs.smartcard.ReaderException;
+import com.frankgreen.Chip;
+import com.frankgreen.NFCReader;
 import com.frankgreen.Util;
 import com.frankgreen.apdu.Result;
 import com.frankgreen.task.BaseParams;
-import com.frankgreen.task.UIDParams;
 
 /**
  * Created by kevin on 5/27/15.
@@ -15,7 +16,15 @@ import com.frankgreen.task.UIDParams;
 public class GetVersion extends Base<BaseParams> {
     private static final String TAG = "GetVersion";
 
+    private boolean sendPlugin = true;
 
+    public boolean isSendPlugin() {
+        return sendPlugin;
+    }
+
+    public void setSendPlugin(boolean sendPlugin) {
+        this.sendPlugin = sendPlugin;
+    }
     public GetVersion(BaseParams params) {
         super(params);
     }
@@ -25,14 +34,26 @@ public class GetVersion extends Base<BaseParams> {
         byte[] receiveBuffer = new byte[16];
         Result result = Result.buildSuccessInstance("GetVersion");
         Log.d(TAG, Util.toHexString(sendBuffer));
-        Reader reader = this.getParams().getReader().getReader();
-        int byteCount = 0;
-        try {
-            byteCount = reader.transmit(this.getParams().getSlotNumber(), sendBuffer, sendBuffer.length, receiveBuffer, receiveBuffer.length);
-            result = new Result("GetVersion", byteCount, receiveBuffer);
-        } catch (ReaderException e) {
-            result = new Result("GetVersion", e);
+        NFCReader reader = this.getParams().getReader();
+        if (reader.getChipMeta().canGetVersion()) {
+            int byteCount = 0;
+            try {
+                byteCount = reader.getReader().transmit(this.getParams().getSlotNumber(), sendBuffer, sendBuffer.length, receiveBuffer, receiveBuffer.length);
+                result = new Result("GetVersion", byteCount, receiveBuffer);
+                Chip chip = Chip.find(result.getData());
+                if (chip != null) {
+                    reader.getChipMeta().setName(chip.getName());
+                    reader.getChipMeta().setType(chip.getType());
+                }else{
+                    reader.getChipMeta().setName("Unknown");
+                }
+            } catch (ReaderException e) {
+                result = new Result("GetVersion", e);
+            }
+        } else {
+            result = new Result("GetVersion", new ReaderException("the chip does not support"));
         }
+        result.setSendPlugin(this.isSendPlugin());
         if (this.getParams().getOnGetResultListener() != null) {
             this.getParams().getOnGetResultListener().onResult(result);
         }
