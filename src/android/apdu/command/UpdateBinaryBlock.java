@@ -64,7 +64,7 @@ public class UpdateBinaryBlock extends Base<WriteParams> {
             int byteCount = reader.transmit(getParams().getSlotNumber(), sendBuffer, sendBuffer.length, receiveBuffer, receiveBuffer.length);
             result = new Result("UpdateBinaryBlock", byteCount, receiveBuffer);
             if(result.isSuccess()) {
-                result.setData(Arrays.copyOfRange(sendBuffer, 5, 16));
+                result.setData(Arrays.copyOfRange(sendBuffer, 5, sendBuffer.length));
             }
         } catch (ReaderException e) {
             result = new Result("UpdateBinaryBlock", e);

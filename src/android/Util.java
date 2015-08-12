@@ -146,6 +146,15 @@ public class Util {
         return new String(data);
     }
 
+    public static void sleep(int n){
+        try {
+            Log.d("Util.sleep",String.valueOf(n));
+            Thread.sleep(n); //do remove this line.
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+
     public static JSONObject resultToJSON(Result result) {
         JSONObject json = new JSONObject();
         try {

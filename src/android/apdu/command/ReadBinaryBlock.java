@@ -29,12 +29,12 @@ public class ReadBinaryBlock extends Base<ReadParams> {
         Reader reader = this.getParams().getReader().getReader();
         Result result;
         try {
-            Log.w(TAG, String.valueOf(this.getParams().getSlotNumber()));
             int byteCount = reader.transmit(this.getParams().getSlotNumber(), sendBuffer, sendBuffer.length, receiveBuffer, receiveBuffer.length);
-
             result = new Result("ReadBinaryBlock", byteCount, receiveBuffer);
+
         } catch (ReaderException e) {
             result = new Result("ReadBinaryBlock", e);
+
             e.printStackTrace();
         }
         if (this.getParams().getOnGetResultListener() != null) {

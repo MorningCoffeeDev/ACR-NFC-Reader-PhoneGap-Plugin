@@ -40,12 +40,16 @@ public class GetVersion extends Base<BaseParams> {
             try {
                 byteCount = reader.getReader().transmit(this.getParams().getSlotNumber(), sendBuffer, sendBuffer.length, receiveBuffer, receiveBuffer.length);
                 result = new Result("GetVersion", byteCount, receiveBuffer);
-                Chip chip = Chip.find(result.getData());
-                if (chip != null) {
-                    reader.getChipMeta().setName(chip.getName());
-                    reader.getChipMeta().setType(chip.getType());
+                if (result.isSuccess()) {
+                    Chip chip = Chip.find(result.getData());
+                    if (chip != null) {
+                        reader.getChipMeta().setName(chip.getName());
+                        reader.getChipMeta().setType(chip.getType());
+                    } else {
+                        reader.getChipMeta().setName("Unknown");
+                    }
                 }else{
-                    reader.getChipMeta().setName("Unknown");
+                   Util.sleep(800);
                 }
             } catch (ReaderException e) {
                 result = new Result("GetVersion", e);
