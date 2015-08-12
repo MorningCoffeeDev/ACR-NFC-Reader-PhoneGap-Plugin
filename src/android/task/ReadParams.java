@@ -9,10 +9,19 @@ import com.frankgreen.apdu.OnGetResultListener;
 public class ReadParams extends Params {
     private int slotNumber = 0;
     private int block = 4;
+    private String password = "";
 
     public ReadParams(int slotNumber,int block) {
         this.slotNumber = slotNumber;
         this.block = block;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 
     public int getBlock() {

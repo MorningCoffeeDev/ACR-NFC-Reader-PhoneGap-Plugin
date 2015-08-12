@@ -1,14 +1,8 @@
 package com.frankgreen.task;
 
-import android.nfc.NdefMessage;
-import android.nfc.NdefRecord;
 import android.os.AsyncTask;
-import android.util.Log;
+
 import com.frankgreen.NFCReader;
-import com.frankgreen.Util;
-import com.frankgreen.apdu.command.Authentication;
-import com.frankgreen.apdu.command.LoadAuthentication;
-import com.frankgreen.apdu.command.ReadBinaryBlock;
 import com.frankgreen.apdu.command.UpdateBinaryBlock;
 
 /**
@@ -23,9 +17,25 @@ public class WriteTask extends AsyncTask<WriteParams, Void, Boolean> {
         if (writeParams == null) {
             return false;
         }
-        int slotNumber = writeParams.getSlotNumber();
-        final NFCReader reader = writeParams.getReader();
-        UpdateBinaryBlock update = new UpdateBinaryBlock(writeParams);
-        return update.run();
+        final UpdateBinaryBlock update = new UpdateBinaryBlock(writeParams);
+
+        if (writeParams.getReader().getChipMeta().needAuthentication()) {
+            TaskWithPassword task = new TaskWithPassword("UpdateBinaryBlock",
+                    writeParams.getReader(),
+                    writeParams.getSlotNumber(),
+                    writeParams.getPassword()
+            );
+            task.setGetResultListener(writeParams.getOnGetResultListener());
+            task.setCallback(new TaskWithPassword.TaskCallback() {
+                @Override
+                public boolean run() {
+                    return update.run();
+                }
+            });
+            task.run();
+        } else {
+            return update.run();
+        }
+        return false;
     }
 }

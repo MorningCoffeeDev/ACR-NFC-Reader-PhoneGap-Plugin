@@ -1,5 +1,7 @@
 package com.frankgreen;
 
+import android.util.Log;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -40,6 +42,7 @@ public class ChipMeta {
     }
 
     public boolean needAuthentication() {
+        Log.d("ChipMeta.needAuthentication", (name != null && name == "NTAG213") ? "true" : "false");
         return name != null && name == "NTAG213";
     }
 
@@ -60,7 +63,9 @@ public class ChipMeta {
     public JSONObject toJSON() {
         JSONObject json = new JSONObject();
         try {
-            json.put("type",this.type);
+            if(this.type != null) {
+                json.put("type", this.type.toString().toLowerCase().replace(" ","_"));
+            }
             json.put("name",this.name);
             json.put("uid",this.uid);
             return json;

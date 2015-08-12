@@ -260,6 +260,7 @@ public class ACRNFCReaderPhoneGapPlugin extends CordovaPlugin {
 
         try {
             ReadParams readParams = new ReadParams(0, data.getInt(0));
+            readParams.setPassword(data.getString(1));
             readParams.setOnGetResultListener(generateResultListener(callbackContext));
             nfcReader.readData(readParams);
         } catch (JSONException e) {
@@ -270,6 +271,7 @@ public class ACRNFCReaderPhoneGapPlugin extends CordovaPlugin {
     private void writeData(final CallbackContext callbackContext, JSONArray data) {
         try {
             WriteParams writeParams = new WriteParams(0, data.getInt(0), data.getString(1));
+            writeParams.setPassword(data.getString(2));
             writeParams.setOnGetResultListener(generateResultListener(callbackContext));
             nfcReader.writeData(writeParams);
         } catch (JSONException e) {
@@ -308,6 +310,7 @@ public class ACRNFCReaderPhoneGapPlugin extends CordovaPlugin {
             @Override
             public void onResult(Result result) {
                 Log.w(TAG, "==========" + result.getCommand() + "==========");
+                Log.w(TAG, result.isSendPlugin() ? "Send to Plugin" : "Does not Send to Plugin");
                 Log.w(TAG, result.getCodeString());
                 if (result.getData() != null) {
                     for (byte b : result.getData()) {

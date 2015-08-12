@@ -11,6 +11,7 @@ public class WriteParams  extends Params{
     private String data;
     private byte[] bytes;
     private int block = 4;
+    private String password = "";
 
     public WriteParams( int slotNumber, int block, String data) {
         this.slotNumber = slotNumber;
@@ -22,6 +23,14 @@ public class WriteParams  extends Params{
         this.slotNumber = slotNumber;
         this.bytes = bytes;
         this.block = block;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 
     public byte[] getBytes() {

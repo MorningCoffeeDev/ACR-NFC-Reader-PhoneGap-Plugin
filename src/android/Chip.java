@@ -70,6 +70,6 @@ public class Chip {
 
 
     public String getType() {
-        return "MIFARE Ultralight C"; // all chip are ULC
+        return "Mifare Ultralight C"; // all chip are ULC
     }
 }

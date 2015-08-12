@@ -116,18 +116,18 @@ ACR.writeAuthenticate = function(block,keyA, keyB,success,failure){
 ACR.readUID = function(success,failure){
   cordova.exec(success, failure, "ACRNFCReaderPhoneGapPlugin", "readUID",[]);
 }
-ACR.readData = function(block,success,failure){
+ACR.readData = function(block,password,success,failure){
   if(ACR.metadata.type == "JavaCard"){
     ACR.selectFile(ACR.AID,success,failure);
   }else{
-    cordova.exec(success, failure, "ACRNFCReaderPhoneGapPlugin", "readData", [block]);
+    cordova.exec(success, failure, "ACRNFCReaderPhoneGapPlugin", "readData", [block,password]);
   }
 }
-ACR.writeData = function(block, data,success,failure){
+ACR.writeData = function(block, data, password, success, failure){
   if(ACR.metadata.type == "JavaCard"){
     failure({success:false, exception: "JavaCard"});
   }else{
-    cordova.exec(success, failure, "ACRNFCReaderPhoneGapPlugin", "writeData", [block,data]);
+    cordova.exec(success, failure, "ACRNFCReaderPhoneGapPlugin", "writeData", [block,data,password]);
   }
 }
 ACR.onCardAbsent = function () {

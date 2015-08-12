@@ -10,6 +10,8 @@ import com.frankgreen.apdu.OnGetResultListener;
 import com.frankgreen.apdu.Result;
 import com.frankgreen.task.WriteParams;
 
+import java.util.Arrays;
+
 /**
  * Created by kevin on 5/27/15.
  */
@@ -61,6 +63,7 @@ public class UpdateBinaryBlock extends Base<WriteParams> {
             Log.w(TAG, String.valueOf(this.getParams().getSlotNumber()));
             int byteCount = reader.transmit(getParams().getSlotNumber(), sendBuffer, sendBuffer.length, receiveBuffer, receiveBuffer.length);
             result = new Result("UpdateBinaryBlock", byteCount, receiveBuffer);
+            result.setData(Arrays.copyOfRange(sendBuffer,5,16));
         } catch (ReaderException e) {
             result = new Result("UpdateBinaryBlock", e);
             e.printStackTrace();

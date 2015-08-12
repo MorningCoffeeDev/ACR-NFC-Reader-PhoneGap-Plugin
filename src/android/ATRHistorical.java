@@ -26,11 +26,11 @@ public class ATRHistorical {
         mapping.put("FeliCa 212K", new byte[]{(byte) 0xF0, (byte) 0x11});
         mapping.put("FeliCa 424K", new byte[]{(byte) 0xF0, (byte) 0x12});
         mapping.put("JCOP 30", new byte[]{(byte) 0xF0, (byte) 0x28});
-        mapping.put("MIFARE Ultralight C", new byte[]{(byte) 0x00, (byte) 0x3A});
-        mapping.put("MIFARE Plus SL1 2K", new byte[]{(byte) 0x00, (byte) 0x36});
-        mapping.put("MIFARE Plus SL1 4K", new byte[]{(byte) 0x00, (byte) 0x37});
-        mapping.put("MIFARE Plus SL2 2K", new byte[]{(byte) 0x00, (byte) 0x38});
-        mapping.put("MIFARE Plus SL2 4K", new byte[]{(byte) 0x00, (byte) 0x39});
+        mapping.put("Mifare Ultralight C", new byte[]{(byte) 0x00, (byte) 0x3A});
+        mapping.put("Mifare Plus SL1 2K", new byte[]{(byte) 0x00, (byte) 0x36});
+        mapping.put("Mifare Plus SL1 4K", new byte[]{(byte) 0x00, (byte) 0x37});
+        mapping.put("Mifare Plus SL2 2K", new byte[]{(byte) 0x00, (byte) 0x38});
+        mapping.put("Mifare Plus SL2 4K", new byte[]{(byte) 0x00, (byte) 0x39});
         mapping.put("FeliCa", new byte[]{(byte) 0x00, (byte) 0x3B});
     }
 

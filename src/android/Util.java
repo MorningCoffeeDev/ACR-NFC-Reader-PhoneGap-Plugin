@@ -154,7 +154,7 @@ public class Util {
 //            json.put("command", result.getCommand());
             if (result.isSuccess()) {
                 if (result.getCommand() != null) {
-                    if (result.getCommand() == "ReadBinaryBlock" || result.getCommand() == "SelectFile") {
+                    if (result.getCommand() == "ReadBinaryBlock" || result.getCommand() == "UpdateBinaryBlock"  || result.getCommand() == "SelectFile") {
                         json.put("data", dataToString(result.getData()));
                     } else if (result.getCommand() == "Reset") {
                         json.put("data", result.getMeta().getUid() );

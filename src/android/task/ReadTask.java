@@ -23,7 +23,26 @@ public class ReadTask extends AsyncTask<ReadParams, Void, Boolean> {
         if (readParams == null) {
             return false;
         }
-        ReadBinaryBlock read = new ReadBinaryBlock(readParams);
-        return read.run();
+        final ReadBinaryBlock read = new ReadBinaryBlock(readParams);
+
+        if (readParams.getReader().getChipMeta().needAuthentication()) {
+            TaskWithPassword task = new TaskWithPassword("ReadBinaryBlock",
+                    readParams.getReader(),
+                    readParams.getSlotNumber(),
+                    readParams.getPassword()
+            );
+            task.setGetResultListener(readParams.getOnGetResultListener());
+            task.setCallback(new TaskWithPassword.TaskCallback() {
+                @Override
+                public boolean run() {
+                    return read.run();
+                }
+            });
+
+            task.run();
+        } else {
+            return read.run();
+        }
+        return false;
     }
 }

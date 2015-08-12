@@ -28,6 +28,7 @@
     <source-file src="src/android/task/WriteParams.java" target-dir="src/com/frankgreen/task" />
     <source-file src="src/android/task/ReadParams.java" target-dir="src/com/frankgreen/task" />
     <source-file src="src/android/task/ResetTask.java" target-dir="src/com/frankgreen/task" />
+    <source-file src="src/android/task/TaskWithPassword.java" target-dir="src/com/frankgreen/task" />
     <source-file src="src/android/task/AuthParams.java" target-dir="src/com/frankgreen/task" />
     <source-file src="src/android/task/WriteAuthenticate.java" target-dir="src/com/frankgreen/task" />
     <source-file src="src/android/task/AuthenticateWithKeyA.java" target-dir="src/com/frankgreen/task" />

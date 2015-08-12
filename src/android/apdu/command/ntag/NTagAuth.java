@@ -34,6 +34,15 @@ public class NTagAuth extends CardCommand {
         return false;
     }
 
+    public void initPassword() {
+        if (this.getParams().getPassword() != null && !"".equals(this.getParams().getPassword())) // use custom password
+        {
+
+            byte[] pwd = Util.toNFCByte(this.getParams().getPassword(), 4);
+            System.arraycopy(pwd, 0, sendBuffer, 6, 4);
+        }
+    }
+
     public boolean run() {
         return transmit(sendBuffer);
     }
