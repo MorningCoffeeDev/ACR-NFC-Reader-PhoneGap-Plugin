@@ -63,7 +63,9 @@ public class UpdateBinaryBlock extends Base<WriteParams> {
             Log.w(TAG, String.valueOf(this.getParams().getSlotNumber()));
             int byteCount = reader.transmit(getParams().getSlotNumber(), sendBuffer, sendBuffer.length, receiveBuffer, receiveBuffer.length);
             result = new Result("UpdateBinaryBlock", byteCount, receiveBuffer);
-            result.setData(Arrays.copyOfRange(sendBuffer,5,16));
+            if(result.isSuccess()) {
+                result.setData(Arrays.copyOfRange(sendBuffer, 5, 16));
+            }
         } catch (ReaderException e) {
             result = new Result("UpdateBinaryBlock", e);
             e.printStackTrace();
