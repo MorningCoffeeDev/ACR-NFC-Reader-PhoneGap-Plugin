@@ -7,6 +7,7 @@ import com.acs.smartcard.ReaderException;
 import com.frankgreen.NFCReader;
 import com.frankgreen.apdu.Result;
 import com.frankgreen.apdu.command.GetVersion;
+import com.frankgreen.apdu.command.ReadBinaryBlock;
 import com.frankgreen.apdu.command.Reset;
 import com.frankgreen.apdu.command.UID;
 
@@ -26,14 +27,21 @@ public class ResetTask extends AsyncTask<BaseParams, Void, Boolean> {
             return false;
         }
         Result result = Result.buildSuccessInstance("Reset");
+        ReadParams readParams = new ReadParams(0,0);
+        readParams.setOnGetResultListener(baseParams.getOnGetResultListener());
+        readParams.setReader(baseParams.getReader());
+        ReadBinaryBlock read = new ReadBinaryBlock(readParams);
         Reset reset = new Reset(baseParams);
         UID uid = new UID(baseParams);
         GetVersion getVersion = new GetVersion(baseParams);
         reset.setSendPlugin(false);
         uid.setSendPlugin(false);
+        read.setSendPlugin(false);
         getVersion.setSendPlugin(false);
+
         reset.run();
         uid.run();
+        read.run();
         getVersion.run();
         result.setMeta(baseParams.getReader().getChipMeta());
         if (baseParams.getOnGetResultListener() != null) {

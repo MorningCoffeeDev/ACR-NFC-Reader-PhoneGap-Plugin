@@ -4,6 +4,7 @@ import android.util.Log;
 
 import com.acs.smartcard.Reader;
 import com.acs.smartcard.ReaderException;
+import com.frankgreen.ATRHistorical;
 import com.frankgreen.Chip;
 import com.frankgreen.NFCReader;
 import com.frankgreen.Util;
@@ -46,7 +47,8 @@ public class GetVersion extends Base<BaseParams> {
                         reader.getChipMeta().setName(chip.getName());
                         reader.getChipMeta().setType(chip.getType());
                     } else {
-                        reader.getChipMeta().setName("Unknown");
+                        reader.getChipMeta().setName(ATRHistorical.UNKNOWN);
+                        reader.getChipMeta().setType(ATRHistorical.MIFARE_ULTRALIGHT);
                     }
                 }else{
                    Util.sleep(800);

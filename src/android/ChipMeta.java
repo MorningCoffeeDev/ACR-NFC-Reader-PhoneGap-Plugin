@@ -47,12 +47,24 @@ public class ChipMeta {
     }
 
     public boolean canGetVersion() {
-        return type != null && (type == "Mifare Ultralight" || type == "Mifare Ultralight C");
+        return type != null && (type == ATRHistorical.MIFARE_ULTRALIGHT_C);
     }
 
     public void parseATR(byte[] atr) {
         ATRHistorical atrHistorical = new ATRHistorical(atr);
         this.type = atrHistorical.getType();
+    }
+
+    public void parseBlock0(byte[] data) {
+        if (data != null && data.length == 16) {
+            if (bitCompare(data[12], (byte) 0xe1) && bitCompare(data[13], (byte) 0x10)) {
+                this.type = ATRHistorical.MIFARE_ULTRALIGHT_C;
+            }
+        }
+    }
+
+    public boolean bitCompare(byte a, byte b) {
+        return (a & b) == b;
     }
 
     public void setUID(byte[] data) {
@@ -63,15 +75,16 @@ public class ChipMeta {
     public JSONObject toJSON() {
         JSONObject json = new JSONObject();
         try {
-            if(this.type != null) {
-                json.put("type", this.type.toString().toLowerCase().replace(" ","_"));
+            if (this.type != null) {
+                json.put("type", this.type.toString().toLowerCase().replace(" ", "_"));
             }
-            json.put("name",this.name);
-            json.put("uid",this.uid);
+            json.put("name", this.name);
+            json.put("uid", this.uid);
             return json;
         } catch (JSONException e) {
             e.printStackTrace();
         }
         return null;
     }
+
 }
