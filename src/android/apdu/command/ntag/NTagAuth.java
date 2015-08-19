@@ -20,10 +20,10 @@ public class NTagAuth extends CardCommand {
         if (transmit(sendBuffer)) { // use default password
             return true;
         }
-        if (this.getParams().getPassword() != null && !"".equals(this.getParams().getPassword())) // use custom password
+        if (this.getParams().getOldPassword() != null && !"".equals(this.getParams().getOldPassword())) // use custom password
         {
            Util.sleep(500);
-            byte[] pwd = Util.toNFCByte(this.getParams().getPassword(), 4);
+            byte[] pwd = Util.toNFCByte(this.getParams().getOldPassword(), 4);
             System.arraycopy(pwd, 0, sendBuffer, 6, 4);
             return transmit(sendBuffer);
         }

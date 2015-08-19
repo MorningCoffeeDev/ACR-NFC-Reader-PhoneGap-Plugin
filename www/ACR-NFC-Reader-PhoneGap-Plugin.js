@@ -63,8 +63,10 @@ ACR.setAID = function (aid) {
 ACR.getVersion = function(success,failure){
   cordova.exec(success, failure, "ACRNFCReaderPhoneGapPlugin", "getVersion", []);
 }
-ACR.initNTAG213 = function(password,success,failure){
-  cordova.exec(success, failure, "ACRNFCReaderPhoneGapPlugin", "initNTAG213", [password]);
+ACR.initNTAG213 = function(oldPassword,password,success,failure){
+  if(oldPassword === undefined || oldPassword === null){ oldPassword = ''; }
+  if(password === undefined || password === null){ password = ''; }
+  cordova.exec(success, failure, "ACRNFCReaderPhoneGapPlugin", "initNTAG213", [String(oldPassword),String(password)]);
 }
 
 ACR.metadata = {};
@@ -120,14 +122,17 @@ ACR.readData = function(block,password,success,failure){
   if(ACR.metadata.type == "JavaCard"){
     ACR.selectFile(ACR.AID,success,failure);
   }else{
-    cordova.exec(success, failure, "ACRNFCReaderPhoneGapPlugin", "readData", [block,password]);
+    if(password === undefined || password === null){ password = ''; }
+    cordova.exec(success, failure, "ACRNFCReaderPhoneGapPlugin", "readData", [block,String(password)]);
   }
 }
 ACR.writeData = function(block, data, password, success, failure){
   if(ACR.metadata.type == "JavaCard"){
     failure({success:false, exception: "JavaCard"});
   }else{
-    cordova.exec(success, failure, "ACRNFCReaderPhoneGapPlugin", "writeData", [block,data,password]);
+  if(password === undefined || password === null){ password = ''; }
+  if(data === undefined || data === null){ data = ''; }
+    cordova.exec(success, failure, "ACRNFCReaderPhoneGapPlugin", "writeData", [block,String(data),String(password)]);
   }
 }
 ACR.onCardAbsent = function () {

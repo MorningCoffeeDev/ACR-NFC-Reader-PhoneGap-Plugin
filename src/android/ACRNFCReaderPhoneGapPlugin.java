@@ -192,7 +192,8 @@ public class ACRNFCReaderPhoneGapPlugin extends CordovaPlugin {
     private void initNTAG213(CallbackContext callbackContext, JSONArray data) {
         InitNTAGParams initNTAGParams = new InitNTAGParams(0);
         try {
-            initNTAGParams.setPassword(data.getString(0));
+            initNTAGParams.setOldPassword(data.getString(0));
+            initNTAGParams.setPassword(data.getString(1));
             initNTAGParams.setOnGetResultListener(generateResultListener(callbackContext));
             nfcReader.initNTAGTask(initNTAGParams);
         } catch (JSONException e) {

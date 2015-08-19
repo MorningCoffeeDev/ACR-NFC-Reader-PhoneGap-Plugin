@@ -29,19 +29,22 @@ public class InitNTAGTask extends AsyncTask<InitNTAGParams, Void, Boolean> {
         NTagAuth nTagAuth = new NTagAuth(initNTAGParams);
         InitChip initChip = new InitChip(initNTAGParams);
         StopSession stopSession = new StopSession(initNTAGParams);
-
-        if(nTagAuth.tryPassword()) {
-            try {
-                startSession.run();
-                if (nTagAuth.run()) {
-                    initChip.run();
+        if(!initNTAGParams.getReader().getChipMeta().needAuthentication()){
+            result = new Result("InitNTAGTask", new ReaderException("Invalid Chip"));
+        }else {
+            if (nTagAuth.tryPassword()) {
+                try {
+                    startSession.run();
+                    if (nTagAuth.run()) {
+                        initChip.run();
+                    }
+                } finally {
+                    stopSession.run();
                 }
-            } finally {
-                stopSession.run();
-            }
 
-        }else{
-            result =  new Result("InitNTAGTask", new ReaderException("Invalid Password"));
+            } else {
+                result = new Result("InitNTAGTask", new ReaderException("Invalid Password"));
+            }
         }
         if (initNTAGParams.getOnGetResultListener() != null) {
             initNTAGParams.getOnGetResultListener().onResult(result);

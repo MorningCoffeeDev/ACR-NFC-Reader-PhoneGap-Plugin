@@ -6,6 +6,7 @@ package com.frankgreen.task;
 public class InitNTAGParams extends Params {
     private int slotNumber = 0;
     private String password = "";
+    private String oldPassword = "";
 
     public InitNTAGParams(int slotNumber) {
         this.slotNumber = slotNumber;
@@ -25,5 +26,13 @@ public class InitNTAGParams extends Params {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public String getOldPassword() {
+        return oldPassword;
+    }
+
+    public void setOldPassword(String oldPassword) {
+        this.oldPassword = oldPassword;
     }
 }

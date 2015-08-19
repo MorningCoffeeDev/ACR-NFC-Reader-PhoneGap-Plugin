@@ -16,6 +16,7 @@ public class ChipMeta {
     private String uid;
     private String type;
     private String name;
+    private byte[] atr;
 
     public String getUid() {
         return uid;
@@ -51,6 +52,7 @@ public class ChipMeta {
     }
 
     public void parseATR(byte[] atr) {
+        this.atr = atr;
         ATRHistorical atrHistorical = new ATRHistorical(atr);
         this.type = atrHistorical.getType();
     }
@@ -80,6 +82,7 @@ public class ChipMeta {
             }
             json.put("name", this.name);
             json.put("uid", this.uid);
+            json.put("atr", Util.toHexString(this.atr));
             return json;
         } catch (JSONException e) {
             e.printStackTrace();
