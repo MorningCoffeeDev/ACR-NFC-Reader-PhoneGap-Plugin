@@ -42,7 +42,6 @@ public class InitChip extends CardCommand {
             @Override
             public boolean check(Result result) {
                 byte[] data = result.getData();
-                Log.d(getTag(), Util.toHexString(data));
                 if (data != null && data.length > 0 && data[0] == (byte) 0x0a) {
                     return true;
                 } else {
