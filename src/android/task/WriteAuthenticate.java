@@ -31,8 +31,8 @@ public class WriteAuthenticate extends AsyncTask<AuthParams, Void, Boolean> {
                 (byte)0x08,(byte)0x77,(byte)0x8f,(byte)0x69,
                 (byte)0xff,(byte)0xff,(byte)0xff,(byte)0xff,(byte)0xff,(byte)0xff  // keyB
         };
-        byte[] keyA = Util.toNFCByte(authParams.getKeyA(), 16);
-        byte[] keyB = Util.toNFCByte(authParams.getKeyB(), 16);
+        byte[] keyA = Util.convertHexAsciiToByteArray(authParams.getKeyA(), 6);
+        byte[] keyB = Util.convertHexAsciiToByteArray(authParams.getKeyB(), 6);
 
         System.arraycopy(keyA, 0, data, 0, 6);
         System.arraycopy(keyB, 0, data, 10, 6);

@@ -26,8 +26,8 @@ public class LoadAuthentication extends Base<AuthParams> {
         byte[] sendBuffer = new byte[]{(byte) 0xFF, (byte) 0x82, (byte) 0x0, (byte) 0x0, (byte) 0x06,
                 (byte) 0x0, (byte) 0x0, (byte) 0x0, (byte) 0x0, (byte) 0x0, (byte) 0x0
         };
-
-        byte[] pwd = Util.toNFCByte(this.getParams().isA()? this.getParams().getKeyA() : this.getParams().getKeyB(), 6);
+        String pwdString = this.getParams().isA() ? this.getParams().getKeyA() : this.getParams().getKeyB();
+        byte[] pwd = Util.convertHexAsciiToByteArray(pwdString, 6);
         System.arraycopy(pwd, 0, sendBuffer, 5, 6);
         byte[] receiveBuffer = new byte[16];
         Log.d(TAG, Util.toHexString(sendBuffer));

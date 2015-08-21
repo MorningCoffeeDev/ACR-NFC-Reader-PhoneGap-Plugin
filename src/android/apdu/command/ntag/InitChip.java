@@ -20,7 +20,7 @@ public class InitChip extends CardCommand {
         byte[] password = new byte[]{(byte) 0xFF, (byte) 0x0, (byte) 0x0, (byte) 0x0, (byte) 0x06, (byte) 0xA2,
                 (byte) 0x2B, (byte) 0xFF, (byte) 0xFF, (byte) 0xFF, (byte) 0xFF};
         if(this.getParams().getPassword() != null && !"".equals(this.getParams().getPassword())) {
-            byte[] pwd = Util.toNFCByte(this.getParams().getPassword(), 4);
+            byte[] pwd = Util.convertHexAsciiToByteArray(this.getParams().getPassword(), 4);
             System.arraycopy(pwd, 0, password, 7, 4);
         }
         byte[] pack = new byte[]{(byte) 0xFF, (byte) 0x0, (byte) 0x0, (byte) 0x0, (byte) 0x06, (byte) 0xA2,

@@ -86,6 +86,33 @@ public class Util {
         return toHexString(buffer, buffer.length);
     }
 
+    public static byte[] convertHexAsciiToByteArray(byte[] bytes) {
+        return convertHexAsciiToByteArray(bytes, 0, bytes.length,0);
+    }
+
+    public static byte[] convertHexAsciiToByteArray(String s,int size) {
+        byte[] bytes = s.getBytes();
+        return convertHexAsciiToByteArray(bytes, 0, bytes.length,size);
+    }
+
+    public static byte[] convertHexAsciiToByteArray(byte[] bytes,int size) {
+        return convertHexAsciiToByteArray(bytes, 0, bytes.length,size);
+    }
+
+    public static byte[] convertHexAsciiToByteArray(byte[] bytes, int offset, int length,int size) {
+        if (size == 0){size = length /2;}
+        byte[] bin = new byte[size];
+        for (int x = 0; x < size; x++) {
+            if(offset + (x * 2) + 1 <= bytes.length) {
+                bin[x] = (byte) Integer.parseInt(new String(bytes, offset + (x * 2), 2), 16);
+            }else{
+                bin[x] = (byte)0;
+            }
+        }
+        Log.d("Util.convertHexAsciiToByteArray",toHexString(bin));
+        return bin;
+    }
+
     public final static int BYTE_FILL_NONE = -1;
 
     public static byte[] toNFCByte(String s, int length) {

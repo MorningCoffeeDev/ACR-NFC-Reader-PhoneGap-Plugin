@@ -25,7 +25,7 @@ public class AuthenticateWithKeyA extends AsyncTask<AuthParams, Void, Boolean> {
         if (authParams.getKeyA() != null && !"".equals(authParams.getKeyA())) {
             Log.d(TAG, authParams.getKeyA().getClass().getName());
             Log.d(TAG, authParams.getKeyA());
-            Log.d(TAG, Util.toHexString(Util.toNFCByte(authParams.getKeyA(), 6)));
+            Log.d(TAG, Util.toHexString(Util.convertHexAsciiToByteArray(authParams.getKeyA(), 6)));
             if (!load.run()) {
                 return false;
             }
