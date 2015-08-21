@@ -23,8 +23,6 @@ ACR.start = function() {
   }
 };
 
-document.addEventListener('deviceready', ACR.handleFromIntentFilter, false);
-
 //ACR.convertMetadata = function(r){
   //var h = {};
   //if(r.data =="3B80800101"){
@@ -161,5 +159,7 @@ function _normalizePassword(password) {
 }
 
 window.ACR = ACR;
+
+// document.addEventListener('deviceready', ACR.handleFromIntentFilter, false);
 
 })();
