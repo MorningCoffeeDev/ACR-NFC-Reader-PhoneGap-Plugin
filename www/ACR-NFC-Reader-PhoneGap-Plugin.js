@@ -26,7 +26,7 @@ ACR.start = function() {
 //ACR.convertMetadata = function(r){
   //var h = {};
   //if(r.data =="3B80800101"){
-    //h.type = "JavaCard";
+    //h.type = "javacard";
   //}else if(r.historical){
     //var t = r.historical.slice(10,14)
       //if (t == "0001"){
@@ -55,6 +55,9 @@ ACR.setAID = function (aid) {
   ACR.AID = aid;
 };
 
+ACR.initReader = function(success,failure) {
+  cordova.exec(success, failure, "ACRNFCReaderPhoneGapPlugin", "initReader", []);
+};
 ACR.getVersion = function(success,failure) {
   cordova.exec(success, failure, "ACRNFCReaderPhoneGapPlugin", "getVersion", []);
 };
@@ -71,10 +74,6 @@ ACR.initNTAG213 = function(oldPassword, password, success, failure) {
 
 ACR.metadata = {};
 
-ACR.runCardAbsent = function() {
-  ACR.metadata = {};
-  ACR.onCardAbsent();
-};
 
 ACR.clearLCD = function(success, failure) {
   cordova.exec(success, failure, "ACRNFCReaderPhoneGapPlugin", "clearLCD", []);
@@ -121,7 +120,7 @@ ACR.readUID = function(success, failure) {
 };
 
 ACR.readData = function(block, password, success, failure) {
-  if (ACR.metadata.type === "JavaCard") {
+  if (ACR.metadata.type === "javacard") {
     ACR.selectFile(ACR.AID, success, failure);
   } else {
     var re = _normalizePassword(password);
@@ -131,8 +130,8 @@ ACR.readData = function(block, password, success, failure) {
 };
 
 ACR.writeData = function(block, data, password, success, failure) {
-  if (ACR.metadata.type === "JavaCard"){
-    failure({success:false, exception: "JavaCard"});
+  if (ACR.metadata.type === "javacard"){
+    failure({success:false, exception: "javacard"});
   } else {
     if (data === undefined || data === null) data = '';
 
@@ -147,6 +146,11 @@ ACR.onCardAbsent = function() {};
 ACR.onReady = function(reader) {};
 ACR.onAttach = function(device) {};
 ACR.onDetach = function(device) {};
+
+ACR.runCardAbsent = function() {
+  ACR.metadata = {};
+  ACR.onCardAbsent();
+};
 
 function _normalizePassword(password) {
   if (typeof password !== 'string') password = '';

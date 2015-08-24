@@ -60,6 +60,9 @@
     <source-file src="src/android/apdu/command/ntag/NTagAuth.java" target-dir="src/com/frankgreen/apdu/command/ntag" />
     <source-file src="src/android/apdu/command/ntag/StartSession.java" target-dir="src/com/frankgreen/apdu/command/ntag" />
     <source-file src="src/android/apdu/command/ntag/StopSession.java" target-dir="src/com/frankgreen/apdu/command/ntag" />
+    <source-file src="src/android/task/PICCOperatingParameterTask.java" target-dir="src/com/frankgreen/task" />
+    <source-file src="src/android/task/PICCOperatingParameterParams.java" target-dir="src/com/frankgreen/task" />
+    <source-file src="src/android/apdu/command/PICCOperatingParameter.java" target-dir="src/com/frankgreen/apdu/command" />
   </platform>
 </plugin>
 

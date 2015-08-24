@@ -105,6 +105,13 @@ public class NFCReader {
         new GetVersionTask().execute(baseParams);
     }
 
+    public void updatePICCOperatingParameter(OnGetResultListener onGetResultListener) {
+        PICCOperatingParameterParams params = new PICCOperatingParameterParams();
+        params.setReader(this);
+        params.setOnGetResultListener(onGetResultListener);
+        new PICCOperatingParameterTask().execute(params);
+    }
+
     public interface StatusChangeListener {
         void onReady(Reader reader);
 

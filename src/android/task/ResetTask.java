@@ -41,8 +41,10 @@ public class ResetTask extends AsyncTask<BaseParams, Void, Boolean> {
 
         reset.run();
         uid.run();
-        read.run();
-        getVersion.run();
+        if(baseParams.getReader().getChipMeta().isMifare()) {
+            read.run();
+            getVersion.run();
+        }
         result.setMeta(baseParams.getReader().getChipMeta());
         if (baseParams.getOnGetResultListener() != null) {
             baseParams.getOnGetResultListener().onResult(result);

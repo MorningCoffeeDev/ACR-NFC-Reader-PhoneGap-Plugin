@@ -17,6 +17,7 @@ public class ChipMeta {
     private String type;
     private String name;
     private byte[] atr;
+    private boolean mifare;
 
     public String getUid() {
         return uid;
@@ -90,4 +91,7 @@ public class ChipMeta {
         return null;
     }
 
+    public boolean isMifare() {
+        return this.type != null && (this.type.equals(ATRHistorical.MIFARE_ULTRALIGHT) || this.type.equals(ATRHistorical.MIFARE_ULTRALIGHT_C));
+    }
 }
