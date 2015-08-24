@@ -62,8 +62,8 @@ public class ATRHistorical {
         }
         byte[] historicalBytes = atr.getHistoricalBytes();
         Log.d("ATRHistorical", Util.toHexString(historicalBytes));
-        if (historicalBytes != null && historicalBytes.length > 7) {
-            byte[] type = Arrays.copyOfRange(historicalBytes, 5, 7);
+        if (historicalBytes != null && historicalBytes.length > 11) {
+            byte[] type = Arrays.copyOfRange(historicalBytes, 9, 11);
             Log.d("ATRHistorical", Util.toHexString(type));
             for (Map.Entry<String, byte[]> entry : mapping.entrySet()) {
                 String name = entry.getKey();
