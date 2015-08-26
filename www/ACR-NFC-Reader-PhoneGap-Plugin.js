@@ -129,7 +129,7 @@ ACR.readData = function(block, password, success, failure) {
   }
 };
 
-ACR.readMobileData = function(block, success, failure) {
+ACR.readMobileData = function(success, failure) {
   ACR.selectFile(ACR.AID, success, failure);
 };
 
