@@ -97,6 +97,9 @@ public class TaskWithPassword {
                 } else {
                     result = new Result(getName(), new ReaderException("Invalid Password"));
                 }
+            } catch (NumberFormatException e){
+                e.printStackTrace();
+                result = new Result(getName(), new ReaderException("Invalid Password"));
             } finally {
                 stopSession.run();
             }
