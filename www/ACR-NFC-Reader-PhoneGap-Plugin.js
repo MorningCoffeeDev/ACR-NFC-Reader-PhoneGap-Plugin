@@ -129,6 +129,10 @@ ACR.readData = function(block, password, success, failure) {
   }
 };
 
+ACR.readMobileData = function(success, failure) {
+  ACR.selectFile(ACR.AID, success, failure);
+};
+
 ACR.writeData = function(block, data, password, success, failure) {
   if (ACR.metadata.type === "javacard"){
     failure({success:false, exception: "javacard"});
