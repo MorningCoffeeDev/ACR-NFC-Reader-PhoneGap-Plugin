@@ -11,12 +11,15 @@ public class UIDTask extends AsyncTask<BaseParams, Void, Boolean> {
     final private String TAG = "UIDTask";
 
     @Override
-    protected Boolean doInBackground(BaseParams... baseParamses) {
-        BaseParams baseParams = baseParamses[0];
-        if (baseParams == null) {
+    protected Boolean doInBackground(BaseParams... paramses) {
+        BaseParams params = paramses[0];
+        if (params == null) {
             return false;
         }
-        UID uid = new UID(baseParams);
+        if(!params.getReader().isReady()){
+            params.getReader().raiseNotReady(params.getOnGetResultListener());
+        }
+        UID uid = new UID(params);
         return uid.run();
 
     }

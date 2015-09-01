@@ -18,20 +18,25 @@ public class ReadTask extends AsyncTask<ReadParams, Void, Boolean> {
     final private String TAG = "UIDTask";
 
     @Override
-    protected Boolean doInBackground(ReadParams... readParamses) {
-        ReadParams readParams = readParamses[0];
-        if (readParams == null) {
+    protected Boolean doInBackground(ReadParams... paramses) {
+        ReadParams params = paramses[0];
+        if (params == null) {
             return false;
         }
-        final ReadBinaryBlock read = new ReadBinaryBlock(readParams);
+        if(!params.getReader().isReady()){
+            params.getReader().raiseNotReady(params.getOnGetResultListener());
+            return false;
+        }
 
-        if (readParams.getReader().getChipMeta().needAuthentication()) {
+        final ReadBinaryBlock read = new ReadBinaryBlock(params);
+
+        if (params.getReader().getChipMeta().needAuthentication()) {
             TaskWithPassword task = new TaskWithPassword("ReadBinaryBlock",
-                    readParams.getReader(),
-                    readParams.getSlotNumber(),
-                    readParams.getPassword()
+                    params.getReader(),
+                    params.getSlotNumber(),
+                    params.getPassword()
             );
-            task.setGetResultListener(readParams.getOnGetResultListener());
+            task.setGetResultListener(params.getOnGetResultListener());
             task.setCallback(new TaskWithPassword.TaskCallback() {
                 @Override
                 public boolean run() {

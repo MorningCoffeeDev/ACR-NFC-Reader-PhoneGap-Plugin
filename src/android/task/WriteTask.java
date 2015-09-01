@@ -12,20 +12,24 @@ public class WriteTask extends AsyncTask<WriteParams, Void, Boolean> {
     final private String TAG = "UIDTask";
 
     @Override
-    protected Boolean doInBackground(WriteParams... writeParamses) {
-        WriteParams writeParams = writeParamses[0];
-        if (writeParams == null) {
+    protected Boolean doInBackground(WriteParams... paramses) {
+        WriteParams params = paramses[0];
+        if (params == null) {
             return false;
         }
-        final UpdateBinaryBlock update = new UpdateBinaryBlock(writeParams);
+        if(!params.getReader().isReady()){
+            params.getReader().raiseNotReady(params.getOnGetResultListener());
+            return false;
+        }
+        final UpdateBinaryBlock update = new UpdateBinaryBlock(params);
 
-        if (writeParams.getReader().getChipMeta().needAuthentication()) {
+        if (params.getReader().getChipMeta().needAuthentication()) {
             TaskWithPassword task = new TaskWithPassword("UpdateBinaryBlock",
-                    writeParams.getReader(),
-                    writeParams.getSlotNumber(),
-                    writeParams.getPassword()
+                    params.getReader(),
+                    params.getSlotNumber(),
+                    params.getPassword()
             );
-            task.setGetResultListener(writeParams.getOnGetResultListener());
+            task.setGetResultListener(params.getOnGetResultListener());
             task.setCallback(new TaskWithPassword.TaskCallback() {
                 @Override
                 public boolean run() {

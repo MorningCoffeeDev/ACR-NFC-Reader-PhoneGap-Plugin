@@ -32,7 +32,6 @@ public class SelectFile extends Base<SelectFileParams> {
         Result result = Result.buildSuccessInstance("SelectFile");
         Reader reader = getParams().getReader().getReader();
         try {
-            Log.w(TAG, String.valueOf(this.getParams().getSlotNumber()));
             int byteCount = reader.transmit(getParams().getSlotNumber(), sendBuffer, sendBuffer.length, receiveBuffer, receiveBuffer.length);
             result = new Result("SelectFile", byteCount, receiveBuffer);
         } catch (ReaderException e) {

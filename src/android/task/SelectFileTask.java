@@ -14,12 +14,16 @@ public class SelectFileTask extends AsyncTask<SelectFileParams, Void, Boolean> {
 
 
     @Override
-    protected Boolean doInBackground(SelectFileParams... selectFileParamses) {
-        SelectFileParams selectFileParams = selectFileParamses[0];
-        if (selectFileParams == null) {
+    protected Boolean doInBackground(SelectFileParams... paramses) {
+        SelectFileParams params = paramses[0];
+        if (params == null) {
             return false;
         }
-        SelectFile selectFile = new SelectFile(selectFileParams);
+        if(!params.getReader().isReady()){
+            params.getReader().raiseNotReady(params.getOnGetResultListener());
+            return false;
+        }
+        SelectFile selectFile = new SelectFile(params);
         return selectFile.run();
 
     }

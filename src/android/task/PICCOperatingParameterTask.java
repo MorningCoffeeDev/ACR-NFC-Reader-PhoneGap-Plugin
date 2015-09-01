@@ -17,6 +17,10 @@ public class PICCOperatingParameterTask extends AsyncTask<PICCOperatingParameter
         if (params == null) {
             return false;
         }
+        if(!params.getReader().isReady()){
+            params.getReader().raiseNotReady(params.getOnGetResultListener());
+            return false;
+        }
         PICCOperatingParameter piccOperatingParameter = new PICCOperatingParameter(params);
         return piccOperatingParameter.run();
     }

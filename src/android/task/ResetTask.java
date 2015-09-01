@@ -21,19 +21,23 @@ public class ResetTask extends AsyncTask<BaseParams, Void, Boolean> {
 
 
     @Override
-    protected Boolean doInBackground(BaseParams... baseParamses) {
-        BaseParams baseParams = baseParamses[0];
-        if (baseParams == null) {
+    protected Boolean doInBackground(BaseParams... paramses) {
+        BaseParams params = paramses[0];
+        if (params == null) {
+            return false;
+        }
+        if(!params.getReader().isReady()){
+            params.getReader().raiseNotReady(params.getOnGetResultListener());
             return false;
         }
         Result result = Result.buildSuccessInstance("Reset");
         ReadParams readParams = new ReadParams(0,0);
-        readParams.setOnGetResultListener(baseParams.getOnGetResultListener());
-        readParams.setReader(baseParams.getReader());
+        readParams.setOnGetResultListener(params.getOnGetResultListener());
+        readParams.setReader(params.getReader());
         ReadBinaryBlock read = new ReadBinaryBlock(readParams);
-        Reset reset = new Reset(baseParams);
-        UID uid = new UID(baseParams);
-        GetVersion getVersion = new GetVersion(baseParams);
+        Reset reset = new Reset(params);
+        UID uid = new UID(params);
+        GetVersion getVersion = new GetVersion(params);
         reset.setSendPlugin(false);
         uid.setSendPlugin(false);
         read.setSendPlugin(false);
@@ -41,13 +45,13 @@ public class ResetTask extends AsyncTask<BaseParams, Void, Boolean> {
 
         reset.run();
         uid.run();
-        if(baseParams.getReader().getChipMeta().isMifare()) {
+        if(params.getReader().getChipMeta().isMifare()) {
             read.run();
             getVersion.run();
         }
-        result.setMeta(baseParams.getReader().getChipMeta());
-        if (baseParams.getOnGetResultListener() != null) {
-            baseParams.getOnGetResultListener().onResult(result);
+        result.setMeta(params.getReader().getChipMeta());
+        if (params.getOnGetResultListener() != null) {
+            params.getOnGetResultListener().onResult(result);
         }
         return true;
     }

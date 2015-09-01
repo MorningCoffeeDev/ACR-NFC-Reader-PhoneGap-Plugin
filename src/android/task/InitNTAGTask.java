@@ -19,17 +19,21 @@ public class InitNTAGTask extends AsyncTask<InitNTAGParams, Void, Boolean> {
 
 
     @Override
-    protected Boolean doInBackground(InitNTAGParams... InitNTAGParamses) {
-        InitNTAGParams initNTAGParams = InitNTAGParamses[0];
-        if (initNTAGParams == null) {
+    protected Boolean doInBackground(InitNTAGParams... paramses) {
+        InitNTAGParams params = paramses[0];
+        if (params == null) {
+            return false;
+        }
+        if(!params.getReader().isReady()){
+            params.getReader().raiseNotReady(params.getOnGetResultListener());
             return false;
         }
         Result result = Result.buildSuccessInstance("InitNTAGTask");
-        StartSession startSession = new StartSession(initNTAGParams);
-        NTagAuth nTagAuth = new NTagAuth(initNTAGParams);
-        InitChip initChip = new InitChip(initNTAGParams);
-        StopSession stopSession = new StopSession(initNTAGParams);
-        if(!initNTAGParams.getReader().getChipMeta().needAuthentication()){
+        StartSession startSession = new StartSession(params);
+        NTagAuth nTagAuth = new NTagAuth(params);
+        InitChip initChip = new InitChip(params);
+        StopSession stopSession = new StopSession(params);
+        if(!params.getReader().getChipMeta().needAuthentication()){
             result = new Result("InitNTAGTask", new ReaderException("Invalid Chip"));
         }else {
             if (nTagAuth.tryPassword()) {
@@ -49,8 +53,8 @@ public class InitNTAGTask extends AsyncTask<InitNTAGParams, Void, Boolean> {
                 result = new Result("InitNTAGTask", new ReaderException("Invalid Password"));
             }
         }
-        if (initNTAGParams.getOnGetResultListener() != null) {
-            initNTAGParams.getOnGetResultListener().onResult(result);
+        if (params.getOnGetResultListener() != null) {
+            params.getOnGetResultListener().onResult(result);
         }
         return true;
     }

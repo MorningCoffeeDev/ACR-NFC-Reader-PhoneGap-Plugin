@@ -14,12 +14,16 @@ public class GetVersionTask extends AsyncTask<BaseParams, Void, Boolean> {
 
 
     @Override
-    protected Boolean doInBackground(BaseParams... baseParamses) {
-        BaseParams baseParams = baseParamses[0];
-        if (baseParams == null) {
+    protected Boolean doInBackground(BaseParams... paramses) {
+        BaseParams params = paramses[0];
+        if (params == null) {
             return false;
         }
-        GetVersion getVersion = new GetVersion(baseParams);
+        if(!params.getReader().isReady()){
+            params.getReader().raiseNotReady(params.getOnGetResultListener());
+            return false;
+        }
+        GetVersion getVersion = new GetVersion(params);
         return getVersion.run();
     }
 

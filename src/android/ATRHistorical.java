@@ -13,6 +13,10 @@ public class ATRHistorical {
     private byte[] bytes;
     private ATR atr;
     private final byte[] JAVA_CARD_BYTES = new byte[]{(byte) 0x3B, (byte) 0x80, (byte) 0x80, (byte) 0x01, (byte) 0x01};
+    private final byte[] JAVA_SECURE_ELEMENT_CARD_BYTES = new byte[]{(byte) 0x3B, (byte) 0x8A, (byte) 0x80, (byte) 0x01,
+            (byte) 0x00, (byte) 0x31, (byte) 0xC1, (byte) 0x73,
+            (byte) 0xC8, (byte) 0x40, (byte) 0x00, (byte) 0x00,
+            (byte) 0x90, (byte) 0x00, (byte) 0x90};
 
     public static final String MIFARE_1K = "Mifare 1K";
     public static final String MIFARE_4K = "Mifare 4K";
@@ -58,6 +62,9 @@ public class ATRHistorical {
 
     public String getType() {
         if (Arrays.equals(this.bytes, JAVA_CARD_BYTES)) {
+            return JAVA_CARD;
+        }
+        if (Arrays.equals(this.bytes, JAVA_SECURE_ELEMENT_CARD_BYTES)) {
             return JAVA_CARD;
         }
         byte[] historicalBytes = atr.getHistoricalBytes();

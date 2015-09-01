@@ -60,7 +60,7 @@ public class NFCReader {
 
     public void writeAuthenticate(AuthParams authParams) {
         authParams.setReader(this);
-        new WriteAuthenticate().execute(authParams);
+        new WriteAuthenticateTask().execute(authParams);
     }
 
 
@@ -110,6 +110,12 @@ public class NFCReader {
         params.setReader(this);
         params.setOnGetResultListener(onGetResultListener);
         new PICCOperatingParameterTask().execute(params);
+    }
+
+    public void raiseNotReady(OnGetResultListener onGetResultListener) {
+            if(onGetResultListener != null){
+                onGetResultListener.onResult(new Result("Reader", new ReaderException("Reader is not ready.") ));
+            }
     }
 
     public interface StatusChangeListener {
@@ -227,6 +233,7 @@ public class NFCReader {
     }
 
     public boolean isReady() {
+        Log.d(TAG,"Ready:" + String.valueOf(ready));
         return ready;
     }
 

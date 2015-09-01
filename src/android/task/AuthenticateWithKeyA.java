@@ -16,20 +16,23 @@ public class AuthenticateWithKeyA extends AsyncTask<AuthParams, Void, Boolean> {
     private static final String TAG = "AuthenticateWithKeyA";
 
     @Override
-    protected Boolean doInBackground(AuthParams... authParamses) {
-        AuthParams authParams = authParamses[0];
-        if (authParams == null) {
+    protected Boolean doInBackground(AuthParams... paramses) {
+        AuthParams params = paramses[0];
+        if (params == null) {
             return false;
         }
-        LoadAuthentication load = new LoadAuthentication(authParams);
-        if (authParams.getKeyA() != null && !"".equals(authParams.getKeyA())) {
-            Log.d(TAG, authParams.getKeyA().getClass().getName());
-            Log.d(TAG, authParams.getKeyA());
-            Log.d(TAG, Util.toHexString(Util.convertHexAsciiToByteArray(authParams.getKeyA(), 6)));
+        if(!params.getReader().isReady()){
+            params.getReader().raiseNotReady(params.getOnGetResultListener());
+        }
+        LoadAuthentication load = new LoadAuthentication(params);
+        if (params.getKeyA() != null && !"".equals(params.getKeyA())) {
+            Log.d(TAG, params.getKeyA().getClass().getName());
+            Log.d(TAG, params.getKeyA());
+            Log.d(TAG, Util.toHexString(Util.convertHexAsciiToByteArray(params.getKeyA(), 6)));
             if (!load.run()) {
                 return false;
             }
-            Authentication auth = new Authentication(authParams);
+            Authentication auth = new Authentication(params);
             if (!auth.run()) {
                 return false;
             }

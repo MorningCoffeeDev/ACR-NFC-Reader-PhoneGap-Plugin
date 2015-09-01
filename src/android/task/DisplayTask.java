@@ -13,12 +13,16 @@ public class DisplayTask extends AsyncTask<DisplayParams, Void, Boolean> {
     final private String TAG = "DisplayTask";
 
     @Override
-    protected Boolean doInBackground(DisplayParams... displayParamses) {
-        DisplayParams displayParams = displayParamses[0];
-        if (displayParams == null) {
+    protected Boolean doInBackground(DisplayParams... paramses) {
+        DisplayParams params = paramses[0];
+        if (params == null) {
             return false;
         }
-        Display display = new Display(displayParams);
+        if(!params.getReader().isReady()){
+            params.getReader().raiseNotReady(params.getOnGetResultListener());
+            return false;
+        }
+        Display display = new Display(params);
         return display.run();
     }
 }

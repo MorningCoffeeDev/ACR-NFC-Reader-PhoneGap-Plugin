@@ -12,12 +12,16 @@ public class ClearLCDTask extends AsyncTask<ClearLCDParams, Void, Boolean> {
     final private String TAG = "DisplayTask";
 
     @Override
-    protected Boolean doInBackground(ClearLCDParams... clearLCDParamses) {
-        ClearLCDParams clearLCDParams = clearLCDParamses[0];
-        if (clearLCDParams == null) {
+    protected Boolean doInBackground(ClearLCDParams... paramses) {
+        ClearLCDParams params = paramses[0];
+        if (params == null) {
             return false;
         }
-        ClearCLD clear = new ClearCLD(clearLCDParams);
+        if(!params.getReader().isReady()){
+            params.getReader().raiseNotReady(params.getOnGetResultListener());
+            return false;
+        }
+        ClearCLD clear = new ClearCLD(params);
         return clear.run();
     }
 }
