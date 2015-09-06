@@ -57,6 +57,7 @@ public class ACRNFCReaderPhoneGapPlugin extends CordovaPlugin {
     private static final String AUTHENTICATE_WITH_KEY_B = "authenticateWithKeyB";
     private static final String WRITE_AUTHENTICATE = "writeAuthenticate";
     private static final String SELECT_FILE = "selectFile";
+    private static final String IS_READY = "isReady";
     private static final String DISPLAY = "display";
     private static final String CLEAR_LCD = "clearLCD";
     private static final String INIT_NTAG213 = "initNTAG213";
@@ -188,11 +189,19 @@ public class ACRNFCReaderPhoneGapPlugin extends CordovaPlugin {
             initNTAG213(callbackContext, data);
         } else if (action.equalsIgnoreCase(INIT_READER)) {
             initReader(callbackContext, data);
+        } else if (action.equalsIgnoreCase(IS_READY)) {
+            if(nfcReader != null && nfcReader.isReady()){
+                callbackContext.success();
+            }else{
+                callbackContext.error("Reader is not ready.");
+            }
         } else {
             return false;
         }
         return true;
     }
+
+
 
     private void initReader(CallbackContext callbackContext, JSONArray data) {
         nfcReader.updatePICCOperatingParameter(generateResultListener(null));

@@ -133,6 +133,10 @@ ACR.readMobileData = function(success, failure) {
   ACR.selectFile(ACR.AID, success, failure);
 };
 
+ACR.isReady = function(success, failure) {
+  cordova.exec(success, failure, "ACRNFCReaderPhoneGapPlugin", "isReady", []);
+};
+
 ACR.writeData = function(block, data, password, success, failure) {
   if (ACR.metadata.type === "javacard"){
     failure({success:false, exception: "javacard"});
