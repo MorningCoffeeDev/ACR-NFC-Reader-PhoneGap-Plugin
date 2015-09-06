@@ -26,6 +26,7 @@ public class GetVersion extends Base<BaseParams> {
     public void setSendPlugin(boolean sendPlugin) {
         this.sendPlugin = sendPlugin;
     }
+
     public GetVersion(BaseParams params) {
         super(params);
     }
@@ -50,8 +51,10 @@ public class GetVersion extends Base<BaseParams> {
                         reader.getChipMeta().setName(ATRHistorical.UNKNOWN);
                         reader.getChipMeta().setType(ATRHistorical.MIFARE_ULTRALIGHT);
                     }
-                }else{
-                   Util.sleep(800);
+                } else {
+                    reader.getChipMeta().setName(ATRHistorical.UNKNOWN);
+                    reader.getChipMeta().setType(ATRHistorical.MIFARE_ULTRALIGHT);
+                    Util.sleep(800);
                 }
             } catch (ReaderException e) {
                 result = new Result("GetVersion", e);
