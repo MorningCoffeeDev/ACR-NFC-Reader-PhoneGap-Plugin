@@ -16,16 +16,12 @@ public class NTagAuth extends CardCommand {
             (byte) 0x1B, (byte) 0xFF, (byte) 0xFF, (byte) 0xFF, (byte) 0xFF};
 
 
-    public boolean tryPassword() {
-        if (transmit(sendBuffer)) { // use default password
-            return true;
-        }
+    public boolean initOldPassword() {
         if (this.getParams().getOldPassword() != null && !"".equals(this.getParams().getOldPassword())) // use custom password
         {
-           Util.sleep(500);
             byte[] pwd = Util.convertHexAsciiToByteArray(this.getParams().getOldPassword(), 4);
             System.arraycopy(pwd, 0, sendBuffer, 6, 4);
-            return transmit(sendBuffer);
+            return true;
         }
         return false;
     }

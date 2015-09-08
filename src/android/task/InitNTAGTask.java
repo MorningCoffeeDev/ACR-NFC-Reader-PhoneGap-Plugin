@@ -24,7 +24,7 @@ public class InitNTAGTask extends AsyncTask<InitNTAGParams, Void, Boolean> {
         if (params == null) {
             return false;
         }
-        if(!params.getReader().isReady()){
+        if (!params.getReader().isReady()) {
             params.getReader().raiseNotReady(params.getOnGetResultListener());
             return false;
         }
@@ -33,24 +33,22 @@ public class InitNTAGTask extends AsyncTask<InitNTAGParams, Void, Boolean> {
         NTagAuth nTagAuth = new NTagAuth(params);
         InitChip initChip = new InitChip(params);
         StopSession stopSession = new StopSession(params);
-        if(!params.getReader().getChipMeta().needAuthentication()){
+        if (!params.getReader().getChipMeta().needAuthentication()) {
             result = new Result("InitNTAGTask", new ReaderException("Invalid Chip"));
-        }else {
-            if (nTagAuth.tryPassword()) {
-                try {
-                    startSession.run();
-                    if (nTagAuth.run()) {
-                        initChip.run();
-                    }
-                } catch (NumberFormatException e){
-                    e.printStackTrace();
+        } else {
+            try {
+                nTagAuth.initOldPassword();
+                startSession.run();
+                if (nTagAuth.run()) {
+                    initChip.run();
+                }else{
                     result = new Result("InitNTAGTask", new ReaderException("Invalid Password"));
-                } finally {
-                    stopSession.run();
                 }
-
-            } else {
+            } catch (NumberFormatException e) {
+                e.printStackTrace();
                 result = new Result("InitNTAGTask", new ReaderException("Invalid Password"));
+            } finally {
+                stopSession.run();
             }
         }
         if (params.getOnGetResultListener() != null) {

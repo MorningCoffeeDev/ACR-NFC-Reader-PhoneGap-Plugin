@@ -49,7 +49,7 @@ public class GetVersion extends Base<BaseParams> {
                         reader.getChipMeta().setType(chip.getType());
                     } else {
                         reader.getChipMeta().setName(ATRHistorical.UNKNOWN);
-                        reader.getChipMeta().setType(ATRHistorical.MIFARE_ULTRALIGHT);
+                        reader.getChipMeta().setType(ATRHistorical.MIFARE_ULTRALIGHT_C);
                     }
                 } else {
                     reader.getChipMeta().setName(ATRHistorical.UNKNOWN);

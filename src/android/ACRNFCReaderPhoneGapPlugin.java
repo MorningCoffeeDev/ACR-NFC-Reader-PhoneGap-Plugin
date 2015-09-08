@@ -201,8 +201,6 @@ public class ACRNFCReaderPhoneGapPlugin extends CordovaPlugin {
         return true;
     }
 
-
-
     private void initReader(CallbackContext callbackContext, JSONArray data) {
         nfcReader.updatePICCOperatingParameter(generateResultListener(null));
     }

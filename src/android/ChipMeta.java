@@ -60,7 +60,10 @@ public class ChipMeta {
 
     public void parseBlock0(byte[] data) {
         if (data != null && data.length == 16) { // check the Capability Container (CC bytes)
-            if (bitCompare(data[12], (byte) 0xe1) && bitCompare(data[13], (byte) 0x10)) {
+            if (bitCompare(data[12], (byte) 0xe1)
+                    && bitCompare(data[13], (byte) 0x10)
+                    && bitCompare(data[14], (byte) 0x12)
+                    ) {
                 this.type = ATRHistorical.MIFARE_ULTRALIGHT_C;
             }
         }

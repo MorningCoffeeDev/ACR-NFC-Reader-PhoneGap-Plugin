@@ -4,6 +4,7 @@ import android.os.AsyncTask;
 
 import com.acs.smartcard.Reader;
 import com.acs.smartcard.ReaderException;
+import com.frankgreen.ATRHistorical;
 import com.frankgreen.NFCReader;
 import com.frankgreen.apdu.Result;
 import com.frankgreen.apdu.command.GetVersion;
@@ -19,6 +20,7 @@ public class ResetTask extends AsyncTask<BaseParams, Void, Boolean> {
 
     final private String TAG = "ResetTask";
 
+    final private int ULTRALIGHT_MAX_PAGE = 0x0f;
 
     @Override
     protected Boolean doInBackground(BaseParams... paramses) {
@@ -43,9 +45,10 @@ public class ResetTask extends AsyncTask<BaseParams, Void, Boolean> {
         read.setSendPlugin(false);
         getVersion.setSendPlugin(false);
 
+        NFCReader reader = params.getReader();
         reset.run();
         uid.run();
-        if(params.getReader().getChipMeta().isMifare()) {
+        if(reader.getChipMeta().isMifare()) {
             read.run();
             getVersion.run();
         }
