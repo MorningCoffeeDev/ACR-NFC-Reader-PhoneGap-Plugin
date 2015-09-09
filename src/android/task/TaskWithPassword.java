@@ -95,16 +95,16 @@ public class TaskWithPassword {
                 if (nTagAuth.run()) {
                     return callback.run();
                 } else {
-                    result = new Result(getName(), new ReaderException("Invalid Password"));
+                    result = new Result(getName(), new ReaderException("PWD_WRONG"));
                 }
             } catch (NumberFormatException e){
                 e.printStackTrace();
-                result = new Result(getName(), new ReaderException("Invalid Password"));
+                result = new Result(getName(), new ReaderException("PWD_WRONG"));
             } finally {
                 stopSession.run();
             }
         }else{
-            result = new Result(getName(), new ReaderException("Lost Password"));
+            result = new Result(getName(), new ReaderException("PWD_WRONG"));
         }
         if (result != null && getResultListener != null) {
             getResultListener.onResult(result);

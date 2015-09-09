@@ -42,11 +42,11 @@ public class InitNTAGTask extends AsyncTask<InitNTAGParams, Void, Boolean> {
                 if (nTagAuth.run()) {
                     initChip.run();
                 }else{
-                    result = new Result("InitNTAGTask", new ReaderException("Invalid Password"));
+                    result = new Result("InitNTAGTask", new ReaderException("PWD_WRONG"));
                 }
             } catch (NumberFormatException e) {
                 e.printStackTrace();
-                result = new Result("InitNTAGTask", new ReaderException("Invalid Password"));
+                result = new Result("InitNTAGTask", new ReaderException("PWD_WRONG"));
             } finally {
                 stopSession.run();
             }
