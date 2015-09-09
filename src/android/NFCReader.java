@@ -118,6 +118,20 @@ public class NFCReader {
             }
     }
 
+    private long sessionStartedAt = 0;
+
+    public long getSessionStartedAt() {
+        return sessionStartedAt;
+    }
+
+    public void setSessionStartedAt(long l) {
+        sessionStartedAt = l;
+    }
+
+    public void clearSessionStartedAt() {
+        sessionStartedAt = 0;
+    }
+
     public interface StatusChangeListener {
         void onReady(Reader reader);
 

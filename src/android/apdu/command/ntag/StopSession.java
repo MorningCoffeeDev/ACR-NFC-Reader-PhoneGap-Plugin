@@ -19,8 +19,9 @@ public class StopSession extends CardCommand {
         super(params);
     }
 
-    public boolean run() {
+    public synchronized boolean run() {
         byte[] sendBuffer = new byte[]{(byte) 0xFF, (byte) 0xC2, (byte) 0x0, (byte) 0x0, (byte) 0x02, (byte) 0x82, (byte) 0x00};
+        this.getParams().getReader().clearSessionStartedAt();
         return transmit(sendBuffer);
     }
 

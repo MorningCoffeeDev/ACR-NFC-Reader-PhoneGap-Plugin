@@ -32,6 +32,7 @@ import com.frankgreen.task.DisplayParams;
 import com.frankgreen.task.InitNTAGParams;
 import com.frankgreen.task.ReadParams;
 import com.frankgreen.task.SelectFileParams;
+import com.frankgreen.task.StopSessionTimerTask;
 import com.frankgreen.task.WriteParams;
 
 import org.apache.cordova.*;
@@ -40,6 +41,7 @@ import org.json.JSONException;
 
 import java.util.ArrayList;
 import java.util.Map;
+import java.util.Timer;
 import java.util.UUID;
 
 /**
@@ -154,6 +156,14 @@ public class ACRNFCReaderPhoneGapPlugin extends CordovaPlugin {
         filter.addAction(ACTION_USB_PERMISSION);
         filter.addAction(UsbManager.ACTION_USB_DEVICE_DETACHED);
         getActivity().registerReceiver(broadcastReceiver, filter);
+        setupTimer();
+    }
+
+    private Timer timer;
+    private void setupTimer() {
+        timer = new Timer();
+        StopSessionTimerTask task = new StopSessionTimerTask(nfcReader);
+        timer.schedule(task,10000,5000);
     }
 
 
@@ -327,13 +337,13 @@ public class ACRNFCReaderPhoneGapPlugin extends CordovaPlugin {
         return new OnGetResultListener() {
             @Override
             public void onResult(Result result) {
-                Log.w(TAG, "==========" + result.getCommand() + "==========");
-                Log.w(TAG, result.isSendPlugin() ? "Send to Plugin" : "Does not Send to Plugin");
-                Log.w(TAG, "Code: " + result.getCodeString());
+                Log.d(TAG, "==========" + result.getCommand() + "==========");
+                Log.d(TAG, result.isSendPlugin() ? "Send to Plugin" : "Does not Send to Plugin");
+                Log.d(TAG, "Code: " + result.getCodeString());
                 if (result.getData() != null) {
-                    Log.w(TAG, "Data: " + Util.ByteArrayToHexString(result.getData()));
+                    Log.d(TAG, "Data: " + Util.ByteArrayToHexString(result.getData()));
                 }
-                Log.w(TAG, "====================");
+                Log.d(TAG, "====================");
                 if(callbackContext != null && result.isSendPlugin()) {
                     PluginResult pluginResult = new PluginResult(
                             result.isSuccess() ? PluginResult.Status.OK : PluginResult.Status.ERROR,
@@ -351,5 +361,14 @@ public class ACRNFCReaderPhoneGapPlugin extends CordovaPlugin {
 
     private Intent getIntent() {
         return getActivity().getIntent();
+    }
+
+    @Override
+    public void onDestroy() {
+        if (timer != null) {
+            timer.cancel( );
+            timer = null;
+        }
+        super.onDestroy();
     }
 }

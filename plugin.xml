@@ -22,6 +22,7 @@
     <source-file src="src/android/apdu/command/Reset.java" target-dir="src/com/frankgreen/apdu/command" />
     <source-file src="src/android/apdu/OnGetResultListener.java" target-dir="src/com/frankgreen/apdu" />
     <source-file src="src/android/apdu/Result.java" target-dir="src/com/frankgreen/apdu" />
+    <source-file src="src/android/task/StopSessionTimerTask.java" target-dir="src/com/frankgreen/task" />
     <source-file src="src/android/task/ReadTask.java" target-dir="src/com/frankgreen/task" />
     <source-file src="src/android/task/Params.java" target-dir="src/com/frankgreen/task" />
     <source-file src="src/android/task/WriteTask.java" target-dir="src/com/frankgreen/task" />
