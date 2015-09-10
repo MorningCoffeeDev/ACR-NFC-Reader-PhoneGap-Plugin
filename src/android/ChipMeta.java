@@ -70,8 +70,15 @@ public class ChipMeta {
     }
 
     public boolean bitCompare(byte a, byte b) {
-        return (a & b) == b;
+        Byte ba = new Byte(a);
+        Byte bb = new Byte(b);
+        return ba.compareTo(bb) == 0;
     }
+
+//
+//    public boolean bitCompare(byte a, byte b) {
+//        return (a & b) == b;
+//    }
 
     public void setUID(byte[] data) {
         this.uid = Util.toHexString(data);

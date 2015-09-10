@@ -19,7 +19,7 @@ public class InitChip extends CardCommand {
                 (byte) 0x2A, (byte) 0x80, (byte) 0x00, (byte) 0x00, (byte) 0x00};
         byte[] password = new byte[]{(byte) 0xFF, (byte) 0x0, (byte) 0x0, (byte) 0x0, (byte) 0x06, (byte) 0xA2,
                 (byte) 0x2B, (byte) 0xFF, (byte) 0xFF, (byte) 0xFF, (byte) 0xFF};
-        if(this.getParams().getPassword() != null && !"".equals(this.getParams().getPassword())) {
+        if (this.getParams().getPassword() != null && !"".equals(this.getParams().getPassword())) {
             byte[] pwd = Util.convertHexAsciiToByteArray(this.getParams().getPassword(), 4);
             System.arraycopy(pwd, 0, password, 7, 4);
         }
@@ -29,7 +29,7 @@ public class InitChip extends CardCommand {
         byte[] range = new byte[]{(byte) 0xFF, (byte) 0x0, (byte) 0x0, (byte) 0x0, (byte) 0x06, (byte) 0xA2,
                 (byte) 0x29, (byte) 0x04, (byte) 0x00, (byte) 0x00, (byte) 0x04};
 
-        if (transmit(type) && transmit(password) && transmit(pack) && transmit(range)) {
+        if (transmit(type) && transmit(pack) && transmit(range) && transmit(password)) {
             return true;
         } else {
             return false;
