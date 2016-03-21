@@ -11,59 +11,86 @@
         <param name="android-package" value="com.frankgreen.ACRNFCReaderPhoneGapPlugin" />
       </feature>
     </config-file>
-    <config-file parent="/*" target="AndroidManifest.xml"></config-file>
-    <source-file src="src/android/ACRNFCReaderPhoneGapPlugin.java" target-dir="src/com/frankgreen" />
-    <source-file src="src/android/apdu/command/Base.java" target-dir="src/com/frankgreen/apdu/command" />
-    <source-file src="src/android/apdu/command/UID.java" target-dir="src/com/frankgreen/apdu/command" />
-    <source-file src="src/android/apdu/command/UpdateBinaryBlock.java" target-dir="src/com/frankgreen/apdu/command" />
-    <source-file src="src/android/apdu/command/ReadBinaryBlock.java" target-dir="src/com/frankgreen/apdu/command" />
-    <source-file src="src/android/apdu/command/Authentication.java" target-dir="src/com/frankgreen/apdu/command" />
-    <source-file src="src/android/apdu/command/LoadAuthentication.java" target-dir="src/com/frankgreen/apdu/command" />
-    <source-file src="src/android/apdu/command/Reset.java" target-dir="src/com/frankgreen/apdu/command" />
-    <source-file src="src/android/apdu/OnGetResultListener.java" target-dir="src/com/frankgreen/apdu" />
-    <source-file src="src/android/apdu/Result.java" target-dir="src/com/frankgreen/apdu" />
-    <source-file src="src/android/task/StopSessionTimerTask.java" target-dir="src/com/frankgreen/task" />
-    <source-file src="src/android/task/ReadTask.java" target-dir="src/com/frankgreen/task" />
-    <source-file src="src/android/task/Params.java" target-dir="src/com/frankgreen/task" />
-    <source-file src="src/android/task/WriteTask.java" target-dir="src/com/frankgreen/task" />
-    <source-file src="src/android/task/WriteParams.java" target-dir="src/com/frankgreen/task" />
-    <source-file src="src/android/task/ReadParams.java" target-dir="src/com/frankgreen/task" />
-    <source-file src="src/android/task/ResetTask.java" target-dir="src/com/frankgreen/task" />
-    <source-file src="src/android/task/TaskWithPassword.java" target-dir="src/com/frankgreen/task" />
-    <source-file src="src/android/task/AuthParams.java" target-dir="src/com/frankgreen/task" />
-    <source-file src="src/android/task/WriteAuthenticateTask.java" target-dir="src/com/frankgreen/task" />
-    <source-file src="src/android/task/AuthenticateWithKeyA.java" target-dir="src/com/frankgreen/task" />
-    <source-file src="src/android/task/AuthenticateWithKeyB.java" target-dir="src/com/frankgreen/task" />
-    <source-file src="src/android/NFCReader.java" target-dir="src/com/frankgreen" />
-    <source-file src="src/android/Util.java" target-dir="src/com/frankgreen" />
-    <source-file src="src/android/Chip.java" target-dir="src/com/frankgreen" />
-    <source-file src="src/android/ChipMeta.java" target-dir="src/com/frankgreen" />
-    <source-file src="src/android/ATR.java" target-dir="src/com/frankgreen" />
-    <source-file src="src/android/ATRHistorical.java" target-dir="src/com/frankgreen" />
+    <config-file parent="/*" target="AndroidManifest.xml">
+      <uses-permission android:name="android.permission.BLUETOOTH"/>
+      <uses-permission android:name="android.permission.BLUETOOTH_ADMIN"/>
+      <uses-feature android:name="android.hardware.bluetooth_le" android:required="true"/>
+    </config-file>
+    <source-file src="src/android/com/frankgreen/ACRNFCReaderPhoneGapPlugin.java" target-dir="src/com/frankgreen" />
+    <source-file src="src/android/com/frankgreen/NFCReader.java" target-dir="src/com/frankgreen" />
+    <source-file src="src/android/com/frankgreen/Util.java" target-dir="src/com/frankgreen" />
+    <source-file src="src/android/com/frankgreen/Chip.java" target-dir="src/com/frankgreen" />
+    <source-file src="src/android/com/frankgreen/ChipMeta.java" target-dir="src/com/frankgreen" />
+    <source-file src="src/android/com/frankgreen/ATR.java" target-dir="src/com/frankgreen" />
+    <source-file src="src/android/com/frankgreen/ATRHistorical.java" target-dir="src/com/frankgreen" />
+    <source-file src="src/android/com/frankgreen/ACRDevice.java" target-dir="src/com/frankgreen" />
+
+    <!--apdu-command-->
+    <source-file src="src/android/com/frankgreen/apdu/command/Base.java" target-dir="src/com/frankgreen/apdu/command" />
+    <source-file src="src/android/com/frankgreen/apdu/command/UID.java" target-dir="src/com/frankgreen/apdu/command" />
+    <source-file src="src/android/com/frankgreen/apdu/command/UpdateBinaryBlock.java" target-dir="src/com/frankgreen/apdu/command" />
+    <source-file src="src/android/com/frankgreen/apdu/command/ReadBinaryBlock.java" target-dir="src/com/frankgreen/apdu/command" />
+    <source-file src="src/android/com/frankgreen/apdu/command/Authentication.java" target-dir="src/com/frankgreen/apdu/command" />
+    <source-file src="src/android/com/frankgreen/apdu/command/LoadAuthentication.java" target-dir="src/com/frankgreen/apdu/command" />
+    <source-file src="src/android/com/frankgreen/apdu/command/Reset.java" target-dir="src/com/frankgreen/apdu/command" />
+    <source-file src="src/android/com/frankgreen/apdu/OnGetResultListener.java" target-dir="src/com/frankgreen/apdu" />
+    <source-file src="src/android/com/frankgreen/apdu/TaskListener.java" target-dir="src/com/frankgreen/apdu" />
+    <source-file src="src/android/com/frankgreen/apdu/Result.java" target-dir="src/com/frankgreen/apdu" />
+    <source-file src="src/android/com/frankgreen/apdu/command/ClearCLD.java" target-dir="src/com/frankgreen/apdu/command" />
+    <source-file src="src/android/com/frankgreen/apdu/command/SelectFile.java" target-dir="src/com/frankgreen/apdu/command" />
+    <source-file src="src/android/com/frankgreen/apdu/command/Display.java" target-dir="src/com/frankgreen/apdu/command" />
+    <source-file src="src/android/com/frankgreen/apdu/command/GetVersion.java" target-dir="src/com/frankgreen/apdu/command" />
+    <source-file src="src/android/com/frankgreen/apdu/command/GetFirmwareVersion.java" target-dir="src/com/frankgreen/apdu/command" />
+    <source-file src="src/android/com/frankgreen/apdu/command/card/CardCommand.java" target-dir="src/com/frankgreen/apdu/command/card" />
+    <source-file src="src/android/com/frankgreen/apdu/command/ToDataString.java" target-dir="src/com/frankgreen/apdu/command" />
+    <source-file src="src/android/com/frankgreen/apdu/command/card/InitChip.java" target-dir="src/com/frankgreen/apdu/command/card" />
+    <source-file src="src/android/com/frankgreen/apdu/command/card/NTagAuth.java" target-dir="src/com/frankgreen/apdu/command/card" />
+    <source-file src="src/android/com/frankgreen/apdu/command/card/StartSession.java" target-dir="src/com/frankgreen/apdu/command/card" />
+    <source-file src="src/android/com/frankgreen/apdu/command/card/StopSession.java" target-dir="src/com/frankgreen/apdu/command/card" />
+    <source-file src="src/android/com/frankgreen/apdu/command/PICCOperatingParameter.java" target-dir="src/com/frankgreen/apdu/command" />
+    <source-file src="src/android/com/frankgreen/apdu/command/GetReceivedData.java" target-dir="src/com/frankgreen/apdu/command" />
+    <source-file src="src/android/com/frankgreen/apdu/command/GetLedStatus.java" target-dir="src/com/frankgreen/apdu/command" />
+
+    <!--params-->
+    <source-file src="src/android/com/frankgreen/params/Params.java" target-dir="src/com/frankgreen/params" />
+    <source-file src="src/android/com/frankgreen/params/WriteParams.java" target-dir="src/com/frankgreenparams" />
+    <source-file src="src/android/com/frankgreen/params/ReadParams.java" target-dir="src/com/frankgreen/params" />
+    <source-file src="src/android/com/frankgreen/params/AuthParams.java" target-dir="src/com/frankgreen/params" />
+    <source-file src="src/android/com/frankgreen/params/DisplayParams.java" target-dir="src/com/frankgreen/params" />
+    <source-file src="src/android/com/frankgreen/params/ClearLCDParams.java" target-dir="src/com/frankgreen/params" />
+    <source-file src="src/android/com/frankgreen/params/BaseParams.java" target-dir="src/com/frankgreen/params" />
+    <source-file src="src/android/com/frankgreen/params/InitNTAGParams.java" target-dir="src/com/frankgreen/params" />
+    <source-file src="src/android/com/frankgreen/params/SelectFileParams.java" target-dir="src/com/frankgreen/params" />
+    <source-file src="src/android/com/frankgreen/params/PICCOperatingParameterParams.java" target-dir="src/com/frankgreen/params" />
+
+    <!--task-->
+    <source-file src="src/android/com/frankgreen/task/StopSessionTimerTask.java" target-dir="src/com/frankgreen/task" />
+    <source-file src="src/android/com/frankgreen/task/ReadTask.java" target-dir="src/com/frankgreen/task" />
+    <source-file src="src/android/com/frankgreen/task/WriteTask.java" target-dir="src/com/frankgreen/task" />
+    <source-file src="src/android/com/frankgreen/task/ResetTask.java" target-dir="src/com/frankgreen/task" />
+    <source-file src="src/android/com/frankgreen/task/TaskWithPassword.java" target-dir="src/com/frankgreen/task" />
+    <source-file src="src/android/com/frankgreen/task/WriteAuthenticateTask.java" target-dir="src/com/frankgreen/task" />
+    <source-file src="src/android/com/frankgreen/task/AuthenticateWithKeyA.java" target-dir="src/com/frankgreen/task" />
+    <source-file src="src/android/com/frankgreen/task/AuthenticateWithKeyB.java" target-dir="src/com/frankgreen/task" />
+    <source-file src="src/android/com/frankgreen/task/UIDTask.java" target-dir="src/com/frankgreen/task" />
+    <source-file src="src/android/com/frankgreen/task/DisplayTask.java" target-dir="src/com/frankgreen/task" />
+    <source-file src="src/android/com/frankgreen/task/ClearLCDTask.java" target-dir="src/com/frankgreen/task" />
+    <source-file src="src/android/com/frankgreen/task/SelectFileTask.java" target-dir="src/com/frankgreen/task" />
+    <source-file src="src/android/com/frankgreen/task/GetVersionTask.java" target-dir="src/com/frankgreen/task" />
+    <source-file src="src/android/com/frankgreen/task/InitNTAGTask.java" target-dir="src/com/frankgreen/task" />
+    <source-file src="src/android/com/frankgreen/task/GetFirmwareVersionTask.java" target-dir="src/com/frankgreen/task" />
+    <source-file src="src/android/com/frankgreen/task/PICCOperatingParameterTask.java" target-dir="src/com/frankgreen/task" />
+    <source-file src="src/android/com/frankgreen/task/GetReceivedDataTask.java" target-dir="src/com/frankgreen/task" />
+    <source-file src="src/android/com/frankgreen/task/GetLedStatusTask.java" target-dir="src/com/frankgreen/task" />
+   
+    <source-file src="src/android/com/frankgreen/reader/ACRReader.java" target-dir="src/com/frankgreen/reader" />
+    <source-file src="src/android/com/frankgreen/reader/USBReader.java" target-dir="src/com/frankgreen/reader" />
+    <source-file src="src/android/com/frankgreen/reader/BTReader.java" target-dir="src/com/frankgreen/reader" />
+    <source-file src="src/android/com/frankgreen/reader/ACRReaderException.java" target-dir="src/com/frankgreen/reader" />
+    <source-file src="src/android/com/frankgreen/reader/OnDataListener.java" target-dir="src/com/frankgreen/reader" />
+
     <source-file src="src/android/libs/acssmc-1.1.2.jar" target-dir="libs" />
-    <source-file src="src/android/task/UIDTask.java" target-dir="src/com/frankgreen/task" />
-    <source-file src="src/android/task/DisplayParams.java" target-dir="src/com/frankgreen/task" />
-    <source-file src="src/android/task/DisplayTask.java" target-dir="src/com/frankgreen/task" />
-    <source-file src="src/android/apdu/command/Display.java" target-dir="src/com/frankgreen/apdu/command" />
-    <source-file src="src/android/task/ClearLCDParams.java" target-dir="src/com/frankgreen/task" />
-    <source-file src="src/android/task/ClearLCDTask.java" target-dir="src/com/frankgreen/task" />
-    <source-file src="src/android/apdu/command/ClearCLD.java" target-dir="src/com/frankgreen/apdu/command" />
-    <source-file src="src/android/apdu/command/SelectFile.java" target-dir="src/com/frankgreen/apdu/command" />
-    <source-file src="src/android/task/SelectFileParams.java" target-dir="src/com/frankgreen/task" />
-    <source-file src="src/android/task/SelectFileTask.java" target-dir="src/com/frankgreen/task" />
-    <source-file src="src/android/apdu/command/GetVersion.java" target-dir="src/com/frankgreen/apdu/command" />
-    <source-file src="src/android/task/BaseParams.java" target-dir="src/com/frankgreen/task" />
-    <source-file src="src/android/task/GetVersionTask.java" target-dir="src/com/frankgreen/task" />
-    <source-file src="src/android/task/InitNTAGParams.java" target-dir="src/com/frankgreen/task" />
-    <source-file src="src/android/task/InitNTAGTask.java" target-dir="src/com/frankgreen/task" />
-    <source-file src="src/android/apdu/command/ntag/CardCommand.java" target-dir="src/com/frankgreen/apdu/command/ntag" />
-    <source-file src="src/android/apdu/command/ntag/InitChip.java" target-dir="src/com/frankgreen/apdu/command/ntag" />
-    <source-file src="src/android/apdu/command/ntag/NTagAuth.java" target-dir="src/com/frankgreen/apdu/command/ntag" />
-    <source-file src="src/android/apdu/command/ntag/StartSession.java" target-dir="src/com/frankgreen/apdu/command/ntag" />
-    <source-file src="src/android/apdu/command/ntag/StopSession.java" target-dir="src/com/frankgreen/apdu/command/ntag" />
-    <source-file src="src/android/task/PICCOperatingParameterTask.java" target-dir="src/com/frankgreen/task" />
-    <source-file src="src/android/task/PICCOperatingParameterParams.java" target-dir="src/com/frankgreen/task" />
-    <source-file src="src/android/apdu/command/PICCOperatingParameter.java" target-dir="src/com/frankgreen/apdu/command" />
+    <source-file src="src/android/libs/acsbt-1.0.0preview6.jar" target-dir="libs"/>
+    <source-file src="src/android/com/frankgreen/Utils.java" target-dir="src/android/com/frankgreen"/>
   </platform>
 </plugin>
-
