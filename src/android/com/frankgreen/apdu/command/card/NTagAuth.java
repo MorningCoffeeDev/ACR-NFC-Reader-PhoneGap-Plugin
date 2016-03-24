@@ -1,7 +1,7 @@
 package com.frankgreen.apdu.command.card;
 
 import com.frankgreen.Util;
-import com.frankgreen.apdu.TaskListener;
+import com.frankgreen.task.TaskListener;
 import com.frankgreen.params.InitNTAGParams;
 
 /**
@@ -36,6 +36,7 @@ public class NTagAuth extends CardCommand {
     }
 
     public boolean run(TaskListener listener) {
+        super.run(listener);
         return transmit(sendBuffer);
     }
 

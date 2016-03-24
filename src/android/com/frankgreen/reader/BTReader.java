@@ -13,11 +13,11 @@ import android.hardware.usb.UsbDevice;
 import android.util.Log;
 import com.acs.bluetooth.*;
 import com.acs.smartcard.Reader;
+import com.frankgreen.ACRDevice;
 import com.frankgreen.NFCReader;
 import com.frankgreen.Util;
 import com.frankgreen.Utils;
 import com.frankgreen.apdu.OnGetResultListener;
-import com.frankgreen.apdu.Result;
 
 import java.io.UnsupportedEncodingException;
 import java.util.List;
@@ -46,6 +46,7 @@ public class BTReader implements ACRReader {
             0x40, 0x01};
     private OnGetResultListener onTouchListener;
     private static final int CARDON = 2;
+    private static final int CARDOFF = 1;
     private OnDataListener onDataListener;
     private OnDataListener onPowerListener;
 
@@ -86,7 +87,7 @@ public class BTReader implements ACRReader {
         /* Connect to GATT server. */
             if (device.getName().contains("ACR12")) {
                 this.device = device;
-                mBluetoothGatt = device.connectGatt(activity, false, gattCallback);
+                mBluetoothGatt = device.connectGatt(activity, true, gattCallback);
                 return;
             }
         }
@@ -107,6 +108,9 @@ public class BTReader implements ACRReader {
                                 bluetoothGatt, gattCallback);
                     }
                 } else if (newState == BluetoothReader.STATE_DISCONNECTED) {
+                    reader = null;
+                    ready = false;
+                    BTReader.this.getOnStatusChangeListener().onDetach(new ACRDevice<BluetoothDevice>(device));
                 }
             }
         });
@@ -136,6 +140,8 @@ public class BTReader implements ACRReader {
                 setListener(reader);
                 reader.enableNotification(true);
             }
+
+
         });
 
     }
@@ -268,6 +274,8 @@ public class BTReader implements ACRReader {
                 Log.d(TAG, "--------bluetoothReader On Card Listener----------" + i);
                 if (i == CARDON) {
                     nfcReader.reset(0);
+                } else if (i == CARDOFF) {
+                    nfcReader.getCordovaWebView().sendJavascript("ACR.runCardAbsent();");
                 }
             }
         });

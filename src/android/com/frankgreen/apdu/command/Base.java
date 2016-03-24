@@ -1,9 +1,8 @@
 package com.frankgreen.apdu.command;
 
-import com.acs.smartcard.ReaderException;
 import com.frankgreen.Util;
 import com.frankgreen.apdu.Result;
-import com.frankgreen.apdu.TaskListener;
+import com.frankgreen.task.TaskListener;
 import com.frankgreen.params.Params;
 
 /**
@@ -27,14 +26,18 @@ public abstract class Base<T extends Params> implements ToDataString{
     public boolean run(){
         return run(null);
     }
-    public  boolean run(TaskListener listener){
+    public boolean run(TaskListener listener){
         this.taskListener = listener;
         return true;
     }
 
-    public void runTaksListener(){
+    public void runTaskListener(boolean isSuccess){
         if (taskListener != null){
-            taskListener.onSuccess();
+             if(isSuccess) {
+                 taskListener.onSuccess();
+             } else {
+                 taskListener.onFailure();
+             }
         }
     }
     public String toDataString(Result result){

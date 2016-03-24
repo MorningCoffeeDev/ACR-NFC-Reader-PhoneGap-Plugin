@@ -3,7 +3,6 @@ package com.frankgreen.reader;
 
 import android.app.PendingIntent;
 import android.content.Intent;
-import android.hardware.usb.UsbDevice;
 
 import com.acs.smartcard.Reader;
 import com.frankgreen.ACRDevice;

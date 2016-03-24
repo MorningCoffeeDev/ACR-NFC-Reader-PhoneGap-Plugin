@@ -2,13 +2,11 @@ package com.frankgreen.apdu.command;
 
 import android.util.Log;
 
-import com.acs.smartcard.ReaderException;
 import com.frankgreen.NFCReader;
 import com.frankgreen.Util;
 import com.frankgreen.apdu.Result;
-import com.frankgreen.apdu.TaskListener;
+import com.frankgreen.task.TaskListener;
 import com.frankgreen.params.ReadParams;
-import com.frankgreen.reader.ACRReader;
 import com.frankgreen.reader.ACRReaderException;
 import com.frankgreen.reader.OnDataListener;
 
@@ -47,24 +45,6 @@ public class ReadBinaryBlock extends Base<ReadParams> implements OnDataListener 
         Log.d(TAG, Util.toHexString(sendBuffer));
         nfcReader = this.getParams().getReader();
         nfcReader.getReader().transmit(0, sendBuffer, this);
-//        Result result;
-//        int byteCount;
-//        try {
-//            byteCount = nfcReader.getReader().transmit(this.getParams().getSlotNumber(), sendBuffer, sendBuffer.length, receiveBuffer, receiveBuffer.length);
-//            result = new Result("ReadBinaryBlock", byteCount, receiveBuffer);
-//            if(result.isSuccess() && getParams().getBlock() == 0){
-//                nfcReader.getChipMeta().parseBlock0(result.getData());
-//            }
-//        } catch (ACRReaderException e) {
-//            result = new Result("ReadBinaryBlock", e);
-//
-//            e.printStackTrace();
-//        }
-//        result.setSendPlugin(this.isSendPlugin());
-//        if (this.getParams().getOnGetResultListener() != null) {
-//            result.setProcessor(this);
-//            this.getParams().getOnGetResultListener().onResult(result);
-//        }
         return true;
     }
 
@@ -79,7 +59,7 @@ public class ReadBinaryBlock extends Base<ReadParams> implements OnDataListener 
             result.setProcessor(this);
             this.getParams().getOnGetResultListener().onResult(result);
         }
-        runTaksListener();
+        runTaskListener(result.isSuccess());
         return result.isSuccess();
     }
 

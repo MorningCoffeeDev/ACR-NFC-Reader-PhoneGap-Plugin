@@ -2,10 +2,8 @@ package com.frankgreen.task;
 
 import android.os.AsyncTask;
 
-import com.acs.smartcard.ReaderException;
 import com.frankgreen.NFCReader;
 import com.frankgreen.apdu.Result;
-import com.frankgreen.apdu.TaskListener;
 import com.frankgreen.apdu.command.GetVersion;
 import com.frankgreen.apdu.command.ReadBinaryBlock;
 import com.frankgreen.apdu.command.Reset;
@@ -47,8 +45,8 @@ public class ResetTask extends AsyncTask<BaseParams, Void, Boolean> {
 
         final NFCReader reader = params.getReader();
         final TaskListener readListener = new TaskListener() {
-            @Override
 
+            @Override
             public void onSuccess() {
                 getVersion.run();
                 Result result = Result.buildSuccessInstance("Reset");
@@ -62,6 +60,11 @@ public class ResetTask extends AsyncTask<BaseParams, Void, Boolean> {
             public void onFailure() {
 
             }
+
+            @Override
+            public void onException() {
+
+            }
         };
 
         final TaskListener uidListener = new TaskListener() {
@@ -69,11 +72,22 @@ public class ResetTask extends AsyncTask<BaseParams, Void, Boolean> {
             public void onSuccess() {
                 if (reader.getChipMeta().isMifare()) {
                     read.run(readListener);
+                }else{
+                    Result result = Result.buildSuccessInstance("Reset");
+                    result.setMeta(params.getReader().getChipMeta());
+                    if (params.getOnGetResultListener() != null) {
+                        params.getOnGetResultListener().onResult(result);
+                    }
                 }
             }
 
             @Override
             public void onFailure() {
+
+            }
+
+            @Override
+            public void onException() {
 
             }
         };
@@ -86,6 +100,11 @@ public class ResetTask extends AsyncTask<BaseParams, Void, Boolean> {
 
             @Override
             public void onFailure() {
+
+            }
+
+            @Override
+            public void onException() {
 
             }
         };

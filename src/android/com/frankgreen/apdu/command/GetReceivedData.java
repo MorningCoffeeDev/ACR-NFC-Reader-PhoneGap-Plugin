@@ -1,10 +1,8 @@
 package com.frankgreen.apdu.command;
 
-import com.acs.smartcard.ReaderException;
-import com.frankgreen.NFCReader;
 import com.frankgreen.Util;
 import com.frankgreen.apdu.Result;
-import com.frankgreen.apdu.TaskListener;
+import com.frankgreen.task.TaskListener;
 import com.frankgreen.params.BaseParams;
 import com.frankgreen.reader.ACRReader;
 import com.frankgreen.reader.ACRReaderException;

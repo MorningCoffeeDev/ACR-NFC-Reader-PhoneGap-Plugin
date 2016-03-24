@@ -1,12 +1,8 @@
 package com.frankgreen.apdu.command;
 
-import android.util.Log;
-import com.acs.smartcard.Reader;
-import com.acs.smartcard.ReaderException;
-import com.frankgreen.NFCReader;
 import com.frankgreen.Util;
 import com.frankgreen.apdu.Result;
-import com.frankgreen.apdu.TaskListener;
+import com.frankgreen.task.TaskListener;
 import com.frankgreen.params.BaseParams;
 import com.frankgreen.reader.ACRReader;
 import com.frankgreen.reader.ACRReaderException;
@@ -41,32 +37,10 @@ public class GetFirmwareVersion extends Base<BaseParams> implements OnDataListen
 
     public boolean run(TaskListener listener) {
         byte[] sendBuffer = new byte[]{(byte) 0xE0, (byte) 0x00, (byte) 0x00, (byte) 0x18, (byte) 0x00};
-        byte[] receiveBuffer = new byte[30];
 
-//        Result result = Result.buildSuccessInstance(TAG);
         ACRReader reader = this.getParams().getReader().getReader();
 
         reader.control(0, sendBuffer, this);
-//        if (reader.getReaderType().equals("USB_READER")) {
-//            int byteCount;
-//            try {
-//                byteCount = reader.control(0, Reader.IOCTL_CCID_ESCAPE, sendBuffer, sendBuffer.length, receiveBuffer, receiveBuffer.length);
-//                result.setData(receiveBuffer, byteCount);
-//            } catch (ACRReaderException e) {
-//                result = new Result(TAG, e);
-//                e.printStackTrace();
-//            }
-//        } else if(reader.getReaderType().equals("BT_READER")) {
-//            if (reader.btControl(sendBuffer)) {
-//                result.setData(reader.getReceiveBuffer());
-//            }
-//        }
-//
-//        if (this.getParams().getOnGetResultListener() != null) {
-//            result.setProcessor(this);
-//            this.getParams().getOnGetResultListener().onResult(result);
-//        }
-//        return result.isSuccess();
         return true;
     }
 

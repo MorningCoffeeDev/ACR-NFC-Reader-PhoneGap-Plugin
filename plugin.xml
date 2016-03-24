@@ -34,7 +34,6 @@
     <source-file src="src/android/com/frankgreen/apdu/command/LoadAuthentication.java" target-dir="src/com/frankgreen/apdu/command" />
     <source-file src="src/android/com/frankgreen/apdu/command/Reset.java" target-dir="src/com/frankgreen/apdu/command" />
     <source-file src="src/android/com/frankgreen/apdu/OnGetResultListener.java" target-dir="src/com/frankgreen/apdu" />
-    <source-file src="src/android/com/frankgreen/apdu/TaskListener.java" target-dir="src/com/frankgreen/apdu" />
     <source-file src="src/android/com/frankgreen/apdu/Result.java" target-dir="src/com/frankgreen/apdu" />
     <source-file src="src/android/com/frankgreen/apdu/command/ClearCLD.java" target-dir="src/com/frankgreen/apdu/command" />
     <source-file src="src/android/com/frankgreen/apdu/command/SelectFile.java" target-dir="src/com/frankgreen/apdu/command" />
@@ -82,7 +81,9 @@
     <source-file src="src/android/com/frankgreen/task/PICCOperatingParameterTask.java" target-dir="src/com/frankgreen/task" />
     <source-file src="src/android/com/frankgreen/task/GetReceivedDataTask.java" target-dir="src/com/frankgreen/task" />
     <source-file src="src/android/com/frankgreen/task/GetLedStatusTask.java" target-dir="src/com/frankgreen/task" />
-   
+    <source-file src="src/android/com/frankgreen/task/TaskListener.java" target-dir="src/com/frankgreen/apdu" />
+    <source-file src="src/android/com/frankgreen/task/AbstractTaskListener.java" target-dir="src/com/frankgreen/apdu" />
+
     <source-file src="src/android/com/frankgreen/reader/ACRReader.java" target-dir="src/com/frankgreen/reader" />
     <source-file src="src/android/com/frankgreen/reader/USBReader.java" target-dir="src/com/frankgreen/reader" />
     <source-file src="src/android/com/frankgreen/reader/BTReader.java" target-dir="src/com/frankgreen/reader" />

@@ -1,6 +1,6 @@
 package com.frankgreen.apdu.command.card;
 
-import com.frankgreen.apdu.TaskListener;
+import com.frankgreen.task.TaskListener;
 import com.frankgreen.params.InitNTAGParams;
 
 /**
@@ -12,6 +12,7 @@ public class StartSession extends CardCommand {
     }
 
     public boolean run(TaskListener listener) {
+        super.run(listener);
         byte[] sendBuffer = new byte[]{(byte) 0xFF, (byte) 0xC2, (byte) 0x0, (byte) 0x0, (byte) 0x02, (byte) 0x81,(byte) 0x00};
         this.getParams().getReader().setSessionStartedAt(System.currentTimeMillis());
         return  transmit(sendBuffer);

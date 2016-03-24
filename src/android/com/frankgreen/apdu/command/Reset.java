@@ -1,12 +1,10 @@
 package com.frankgreen.apdu.command;
 
 import com.acs.smartcard.Reader;
-import com.acs.smartcard.ReaderException;
 import com.frankgreen.NFCReader;
 import com.frankgreen.apdu.Result;
-import com.frankgreen.apdu.TaskListener;
+import com.frankgreen.task.TaskListener;
 import com.frankgreen.params.BaseParams;
-import com.frankgreen.reader.ACRReader;
 import com.frankgreen.reader.ACRReaderException;
 import com.frankgreen.reader.OnDataListener;
 
@@ -37,23 +35,8 @@ public class Reset extends Base<BaseParams> implements OnDataListener {
 
     public boolean run(TaskListener listener) {
         super.run(listener);
-//        BaseParams BaseParams = this.getParams();
-//        int slotNumber = BaseParams.getSlotNumber();
         reader = getParams().getReader();
-//        try {
-        byte[] atr = reader.getReader().power(getParams().getSlotNumber(), Reader.CARD_WARM_RESET, this);
-//            if (atr != null) {
-//                result.setData(atr);
-//                reader.getChipMeta().parseATR(atr);
-//                reader.getReader().setProtocol(slotNumber, Reader.PROTOCOL_T0 | Reader.PROTOCOL_T1);
-//            }
-//        } catch (ACRReaderException e) {
-
-//        }
-//        result.setSendPlugin(isSendPlugin());
-//        if (BaseParams.getOnGetResultListener() != null) {
-//            BaseParams.getOnGetResultListener().onResult(result);
-//        }
+        reader.getReader().power(getParams().getSlotNumber(), Reader.CARD_WARM_RESET, this);
         return true;
     }
 
@@ -67,8 +50,8 @@ public class Reset extends Base<BaseParams> implements OnDataListener {
         if (getParams().getOnGetResultListener() != null) {
             getParams().getOnGetResultListener().onResult(result);
         }
-        runTaksListener();
-        return false;
+        runTaskListener(result.isSuccess());
+        return result.isSuccess();
     }
 
     @Override

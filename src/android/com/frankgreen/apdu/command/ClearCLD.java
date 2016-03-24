@@ -2,11 +2,9 @@ package com.frankgreen.apdu.command;
 
 import android.util.Log;
 
-import com.acs.smartcard.Reader;
-import com.acs.smartcard.ReaderException;
 import com.frankgreen.Util;
 import com.frankgreen.apdu.Result;
-import com.frankgreen.apdu.TaskListener;
+import com.frankgreen.task.TaskListener;
 import com.frankgreen.params.ClearLCDParams;
 import com.frankgreen.reader.ACRReader;
 import com.frankgreen.reader.ACRReaderException;

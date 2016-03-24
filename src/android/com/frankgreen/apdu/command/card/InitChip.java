@@ -2,7 +2,9 @@ package com.frankgreen.apdu.command.card;
 
 import com.frankgreen.Util;
 import com.frankgreen.apdu.Result;
-import com.frankgreen.apdu.TaskListener;
+import com.frankgreen.reader.ACRReaderException;
+import com.frankgreen.reader.OnDataListener;
+import com.frankgreen.task.TaskListener;
 import com.frankgreen.params.InitNTAGParams;
 
 /**
@@ -13,26 +15,36 @@ public class InitChip extends CardCommand {
         super(params);
     }
 
-    public boolean run(TaskListener listener) {
-        byte[] type = new byte[]{(byte) 0xFF, (byte) 0x0, (byte) 0x0, (byte) 0x0, (byte) 0x06, (byte) 0xA2,
-                (byte) 0x2A, (byte) 0x80, (byte) 0x00, (byte) 0x00, (byte) 0x00};
-        byte[] password = new byte[]{(byte) 0xFF, (byte) 0x0, (byte) 0x0, (byte) 0x0, (byte) 0x06, (byte) 0xA2,
-                (byte) 0x2B, (byte) 0xFF, (byte) 0xFF, (byte) 0xFF, (byte) 0xFF};
-        if (this.getParams().getPassword() != null && !"".equals(this.getParams().getPassword())) {
-            byte[] pwd = Util.convertHexAsciiToByteArray(this.getParams().getPassword(), 4);
-            System.arraycopy(pwd, 0, password, 7, 4);
-        }
-        byte[] pack = new byte[]{(byte) 0xFF, (byte) 0x0, (byte) 0x0, (byte) 0x0, (byte) 0x06, (byte) 0xA2,
-                (byte) 0x2C, (byte) 0x33, (byte) 0x33, (byte) 0x00, (byte) 0x00};
-
-        byte[] range = new byte[]{(byte) 0xFF, (byte) 0x0, (byte) 0x0, (byte) 0x0, (byte) 0x06, (byte) 0xA2,
-                (byte) 0x29, (byte) 0x04, (byte) 0x00, (byte) 0x00, (byte) 0x04};
-
-        if (transmit(type) && transmit(pack) && transmit(range) && transmit(password)) {
-            return true;
-        } else {
+    abstract class AbstractOnDataListener implements  OnDataListener{
+        @Override
+        public boolean onError(ACRReaderException e) {
             return false;
         }
+    }
+
+//    final byte[] type = new byte[]{(byte) 0xFF, (byte) 0x0, (byte) 0x0, (byte) 0x0, (byte) 0x06, (byte) 0xA2,
+//            (byte) 0x2A, (byte) 0x80, (byte) 0x00, (byte) 0x00, (byte) 0x00};
+//    final byte[] password = new byte[]{(byte) 0xFF, (byte) 0x0, (byte) 0x0, (byte) 0x0, (byte) 0x06, (byte) 0xA2,
+//            (byte) 0x2B, (byte) 0xFF, (byte) 0xFF, (byte) 0xFF, (byte) 0xFF};
+//final byte[] pack = new byte[]{(byte) 0xFF, (byte) 0x0, (byte) 0x0, (byte) 0x0, (byte) 0x06, (byte) 0xA2,
+//        (byte) 0x2C, (byte) 0x33, (byte) 0x33, (byte) 0x00, (byte) 0x00};
+//
+//    final byte[] range = new byte[]{(byte) 0xFF, (byte) 0x0, (byte) 0x0, (byte) 0x0, (byte) 0x06, (byte) 0xA2,
+//            (byte) 0x29, (byte) 0x04, (byte) 0x00, (byte) 0x00, (byte) 0x04};
+
+    public boolean run(TaskListener listener) {
+        super.run(listener);
+        final byte[] bytes = new byte[]{(byte) 0xFF, (byte) 0xD6, (byte) 0x0, (byte) 0x29, (byte) 0x10,
+                (byte) 0x04, (byte) 0x00, (byte) 0x00, (byte) 0x04, // 29 range
+                (byte) 0x80, (byte) 0x00, (byte) 0x00, (byte) 0x00, // 2a type
+                (byte) 0xFF, (byte) 0xFF, (byte) 0xFF, (byte) 0xFF, // 2b password
+                (byte) 0x33, (byte) 0x33, (byte) 0x00, (byte) 0x00}; // 2c pack
+
+        if (this.getParams().getPassword() != null && !"".equals(this.getParams().getPassword())) {
+            byte[] pwd = Util.convertHexAsciiToByteArray(this.getParams().getPassword(), 4);
+            System.arraycopy(pwd, 0, bytes, 13, 4);
+        }
+         return transmit(bytes);
     }
 
     @Override
@@ -59,5 +71,4 @@ public class InitChip extends CardCommand {
     protected String getCommandName() {
         return "InitChip";
     }
-
 }

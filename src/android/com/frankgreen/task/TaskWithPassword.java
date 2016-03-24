@@ -28,7 +28,7 @@ public class TaskWithPassword {
     }
 
     interface TaskCallback {
-        boolean run();
+        boolean run(TaskListener taskListener);
     }
 
     public String getName() {
@@ -71,6 +71,10 @@ public class TaskWithPassword {
         this.getResultListener = getResultListener;
     }
 
+    private Result result = null;
+
+    private boolean callBackSuccess;
+
     public TaskCallback getCallback() {
         return callback;
     }
@@ -80,31 +84,63 @@ public class TaskWithPassword {
     }
 
     public boolean run() {
-        Result result = null;
+
         if (this.callback != null && reader.getChipMeta().needAuthentication()) {
             InitNTAGParams initNTAGParams = new InitNTAGParams(slotNumber);
             initNTAGParams.setReader(reader);
             initNTAGParams.setPassword(password);
             initNTAGParams.setOnGetResultListener(getResultListener);
-            StartSession startSession = new StartSession(initNTAGParams);
-            NTagAuth nTagAuth = new NTagAuth(initNTAGParams);
-            StopSession stopSession = new StopSession(initNTAGParams);
+            final StartSession startSession = new StartSession(initNTAGParams);
+            final NTagAuth nTagAuth = new NTagAuth(initNTAGParams);
+            final StopSession stopSession = new StopSession(initNTAGParams);
 
-            try {
-                startSession.run();
-                nTagAuth.initPassword();
-                if (nTagAuth.run()) {
-                    return callback.run();
-                } else {
-                    result = new Result(getName(), new ReaderException("PWD_WRONG"));
+            final TaskListener callbackListener = new AbstractTaskListener(stopSession) {
+                @Override
+                public void onSuccess() {
+                    stopSession.run();
                 }
-            } catch (NumberFormatException e){
-                e.printStackTrace();
-                result = new Result(getName(), new ReaderException("PWD_WRONG"));
-            } finally {
-                stopSession.run();
-            }
-        }else{
+            };
+
+            final TaskListener nTagAuthListener = new AbstractTaskListener(stopSession){
+            @Override
+                public void onSuccess() {
+                    callBackSuccess = callback.run(callbackListener);
+                }
+
+                @Override
+                public void onFailure() {
+                    result = new Result(getName(), new ReaderException("PWD_WRONG"));
+                    stopSession.run();
+                    if (TaskWithPassword.this.getResultListener != null) {
+                        TaskWithPassword.this.getResultListener.onResult(result);
+                    }
+                }
+            };
+
+            final TaskListener startSessionListener = new AbstractTaskListener(stopSession) {
+                @Override
+                public void onSuccess() {
+                    nTagAuth.initPassword();
+                    nTagAuth.run(nTagAuthListener);
+                }
+            };
+            startSession.run(startSessionListener);
+//            try {
+//                startSession.run();
+//                nTagAuth.initPassword();
+//                if (nTagAuth.run()) {
+//                    return callback.run();
+//                } else {
+//                    result = new Result(getName(), new ReaderException("PWD_WRONG"));
+//                }
+//            } catch (NumberFormatException e){
+//                e.printStackTrace();
+//                result = new Result(getName(), new ReaderException("PWD_WRONG"));
+//            } finally {
+//                stopSession.run();
+//            }
+            return callBackSuccess;
+        } else {
             result = new Result(getName(), new ReaderException("PWD_WRONG"));
         }
         if (result != null && getResultListener != null) {

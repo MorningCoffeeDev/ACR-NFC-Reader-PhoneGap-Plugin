@@ -10,34 +10,26 @@ import com.frankgreen.apdu.command.Base;
 import com.frankgreen.params.InitNTAGParams;
 import com.frankgreen.reader.ACRReader;
 import com.frankgreen.reader.ACRReaderException;
+import com.frankgreen.reader.OnDataListener;
 
 /**
  * Created by kevin on 5/27/15.
  */
-public abstract class CardCommand extends Base<InitNTAGParams> {
+public abstract class CardCommand extends Base<InitNTAGParams> implements OnDataListener{
 
     public CardCommand(InitNTAGParams params) {
         super(params);
     }
 
-    protected boolean transmit(byte[] sendBuffer){
-        byte[] receiveBuffer = new byte[64];
-        Result result = Result.buildSuccessInstance(getCommandName());
+    protected boolean transmit(byte[] sendBuffer, OnDataListener listener){
         Log.d(getTag(), Util.toHexString(sendBuffer));
         ACRReader acrReader = this.getParams().getReader().getReader();
-        int byteCount = 0;
-        try {
-            byteCount = acrReader.transmit(this.getParams().getSlotNumber(), sendBuffer, sendBuffer.length, receiveBuffer, receiveBuffer.length);
-            result = new Result(getCommandName(), byteCount, receiveBuffer);
-        } catch (ACRReaderException e) {
-            result = new Result(getCommandName(), e);
-        }
-        result.setSendPlugin(false);
-        result.setChecker(getChecker());
-        if (this.getParams().getOnGetResultListener() != null) {
-            this.getParams().getOnGetResultListener().onResult(result);
-        }
-        return result.isSuccess();
+        acrReader.transmit(0, sendBuffer, listener);
+        return true;
+    }
+
+    protected boolean transmit(byte[] sendBuffer){
+        return transmit(sendBuffer,this);
     }
 
     protected abstract String getTag();
@@ -48,4 +40,24 @@ public abstract class CardCommand extends Base<InitNTAGParams> {
         return null;
     }
 
+    @Override
+    public boolean onData(byte[] bytes, int len) {
+        Result result = new Result(getCommandName(), len, bytes);
+        result.setSendPlugin(false);
+        result.setChecker(getChecker());
+        if (this.getParams().getOnGetResultListener() != null) {
+            this.getParams().getOnGetResultListener().onResult(result);
+        }
+        runTaskListener(result.isSuccess());
+        return result.isSuccess();
+    }
+
+    @Override
+    public boolean onError(ACRReaderException e) {
+        Result result = new Result(getCommandName(), e);
+        if (this.getParams().getOnGetResultListener() != null) {
+            this.getParams().getOnGetResultListener().onResult(result);
+        }
+        return result.isSuccess();
+    }
 }

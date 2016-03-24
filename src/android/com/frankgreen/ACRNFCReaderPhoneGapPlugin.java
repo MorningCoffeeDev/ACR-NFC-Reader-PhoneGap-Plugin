@@ -15,7 +15,6 @@ import android.content.pm.PackageManager;
 import android.hardware.usb.UsbDevice;
 import android.hardware.usb.UsbManager;
 import android.util.Log;
-import android.os.Handler;
 
 import com.acs.bluetooth.*;
 import com.acs.smartcard.Reader;
@@ -38,7 +37,6 @@ import org.apache.cordova.*;
 import org.json.JSONArray;
 import org.json.JSONException;
 
-import java.util.Set;
 import java.util.Timer;
 
 /**
@@ -155,7 +153,7 @@ public class ACRNFCReaderPhoneGapPlugin extends CordovaPlugin {
     private void useBluetoothReader(CordovaInterface cordova, final CordovaWebView webView) {
         ACRReader reader = new BTReader(mBluetoothManager, getActivity());
 
-        nfcReader = new NFCReader(reader);
+        nfcReader = new NFCReader(reader, webView);
 
         nfcReader.setOnStatusChangeListener(new ACRReader.StatusChangeListener() {
 
@@ -169,13 +167,13 @@ public class ACRNFCReaderPhoneGapPlugin extends CordovaPlugin {
                                                 @Override
                                                 public void onAttach(ACRDevice device) {
                                                     Log.d(TAG, "onAttach");
-                                                        webView.sendJavascript("ACR.onAttach('" + ((BluetoothDevice) device.getDevice()).getName() + "');");
+                                                    webView.sendJavascript("ACR.onAttach('" + ((BluetoothDevice) device.getDevice()).getName() + "');");
                                                 }
 
                                                 @Override
                                                 public void onDetach(ACRDevice device) {
                                                     Log.d(TAG, "onDetach");
-                                                        webView.sendJavascript("ACR.onDetach('" + ((BluetoothDevice) device.getDevice()).getName() + "');");
+                                                    webView.sendJavascript("ACR.onDetach('" + ((BluetoothDevice) device.getDevice()).getName() + "');");
                                                 }
                                             }
         );
@@ -210,7 +208,7 @@ public class ACRNFCReaderPhoneGapPlugin extends CordovaPlugin {
                 if (slotNumber == 0 && currentState == Reader.CARD_PRESENT) {
                     Log.d(TAG, "Ready to read!!!!");
                     nfcReader.reset(slotNumber);
-//                    } else {// if (currentState == Reader.CARD_ABSENT && previousState == Reader.CARD_PRESENT) {
+                } else {// if (currentState == Reader.CARD_ABSENT && previousState == Reader.CARD_PRESENT) {
                     Log.d(TAG, "Card Lost");
                     webView.sendJavascript("ACR.runCardAbsent();");
                 }

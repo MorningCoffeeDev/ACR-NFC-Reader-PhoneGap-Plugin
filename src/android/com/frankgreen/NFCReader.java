@@ -2,12 +2,9 @@ package com.frankgreen;
 
 import android.app.PendingIntent;
 import android.content.Intent;
-import android.hardware.usb.UsbDevice;
-import android.hardware.usb.UsbManager;
 import android.os.AsyncTask;
 import android.util.Log;
 
-import com.acs.bluetooth.BluetoothReader;
 import com.acs.smartcard.*;
 import com.frankgreen.apdu.OnGetResultListener;
 import com.frankgreen.apdu.Result;
@@ -15,9 +12,7 @@ import com.frankgreen.reader.ACRReader;
 import com.frankgreen.task.*;
 
 import com.frankgreen.params.*;
-
-import java.util.ArrayList;
-import java.util.List;
+import org.apache.cordova.CordovaWebView;
 
 /**
  * Created by kevin on 5/27/15.
@@ -26,12 +21,22 @@ public class NFCReader {
 
     private ACRReader acrReader;
     private ChipMeta chipMeta;
+    private CordovaWebView cordovaWebView;
     private static final String TAG = "NFCReader";
 
+    public CordovaWebView getCordovaWebView() {
+        return cordovaWebView;
+    }
 
     public NFCReader(ACRReader acrReader) {
         this.acrReader = acrReader;
         this.acrReader.setNfcReader(this);
+    }
+
+    public NFCReader(ACRReader acrReader, CordovaWebView cordovaWebView) {
+        this.acrReader = acrReader;
+        this.acrReader.setNfcReader(this);
+        this.cordovaWebView = cordovaWebView;
     }
 
     public ChipMeta getChipMeta() {

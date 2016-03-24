@@ -1,6 +1,6 @@
 package com.frankgreen.apdu.command.card;
 
-import com.frankgreen.apdu.TaskListener;
+import com.frankgreen.task.TaskListener;
 import com.frankgreen.params.InitNTAGParams;
 
 /**

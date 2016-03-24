@@ -1,11 +1,9 @@
 package com.frankgreen.apdu.command;
 
-import android.util.Log;
-import com.acs.smartcard.ReaderException;
 import com.frankgreen.NFCReader;
 import com.frankgreen.Util;
 import com.frankgreen.apdu.Result;
-import com.frankgreen.apdu.TaskListener;
+import com.frankgreen.task.TaskListener;
 import com.frankgreen.params.BaseParams;
 import com.frankgreen.reader.ACRReaderException;
 import com.frankgreen.reader.OnDataListener;
@@ -41,24 +39,9 @@ public class UID extends Base<BaseParams> implements OnDataListener {
     public boolean run(TaskListener listener) {
         super.run(listener);
         byte[] sendBuffer = new byte[]{(byte) 0xFF, (byte) 0xCA, (byte) 0x0, (byte) 0x0, (byte) 0x0};
-        byte[] receiveBuffer = new byte[9];
-//        Result result = Result.buildSuccessInstance("UID");
 
         nfcReader = this.getParams().getReader();
         nfcReader.getReader().transmit(0, sendBuffer, this);
-//        int byteCount = 0;
-//        try {
-//            byteCount = nfcReader.getReader().transmit(this.getParams().getSlotNumber(), sendBuffer, sendBuffer.length, receiveBuffer, receiveBuffer.length);
-//            result = new Result("UID", byteCount, receiveBuffer);
-//            nfcReader.getChipMeta().setUID(result.getData());
-//        } catch (ACRReaderException e) {
-//            result = new Result("UID", e);
-//        }
-//        result.setSendPlugin(this.isSendPlugin());
-//        if (this.getParams().getOnGetResultListener() != null) {
-//            this.getParams().getOnGetResultListener().onResult(result);
-//        }
-//        return result.isSuccess();
         return true;
     }
 
@@ -70,7 +53,7 @@ public class UID extends Base<BaseParams> implements OnDataListener {
         if (this.getParams().getOnGetResultListener() != null) {
             this.getParams().getOnGetResultListener().onResult(result);
         }
-        runTaksListener();
+        runTaskListener(result.isSuccess());
         return result.isSuccess();
     }
 

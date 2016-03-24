@@ -32,8 +32,8 @@ public class ReadTask extends AsyncTask<ReadParams, Void, Boolean> {
             task.setGetResultListener(params.getOnGetResultListener());
             task.setCallback(new TaskWithPassword.TaskCallback() {
                 @Override
-                public boolean run() {
-                    return read.run();
+                public boolean run(TaskListener taskListener) {
+                    return read.run(taskListener);
                 }
             });
 

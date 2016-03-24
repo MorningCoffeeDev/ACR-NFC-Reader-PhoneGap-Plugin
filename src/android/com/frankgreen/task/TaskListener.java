@@ -1,4 +1,4 @@
-package com.frankgreen.apdu;
+package com.frankgreen.task;
 
 import com.acs.smartcard.ReaderException;
 
@@ -8,4 +8,5 @@ import com.acs.smartcard.ReaderException;
 public interface TaskListener {
    void onSuccess();
    void onFailure();
+   void onException();
 }

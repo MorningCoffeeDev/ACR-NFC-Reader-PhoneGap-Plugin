@@ -32,8 +32,8 @@ public class WriteTask extends AsyncTask<WriteParams, Void, Boolean> {
             task.setGetResultListener(params.getOnGetResultListener());
             task.setCallback(new TaskWithPassword.TaskCallback() {
                 @Override
-                public boolean run() {
-                    return update.run();
+                public boolean run(TaskListener taskListener) {
+                    return update.run(taskListener);
                 }
             });
             task.run();
