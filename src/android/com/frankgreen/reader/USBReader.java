@@ -278,4 +278,23 @@ public class USBReader implements ACRReader {
     public int transmit(int slotNum, byte[] sendBuffer, int sendBufferLength, byte[] recvBuffer, int recvBufferLength) {
         return 0;
     }
+
+    @Override
+    public void connect() {
+    }
+
+    @Override
+    public int getBatteryLevelValue() {
+        return 0;
+    }
+
+    @Override
+    public void getBatteryLevel() {
+
+    }
+
+    @Override
+    public void disconnect() {
+
+    }
 }

@@ -85,7 +85,7 @@ public class NFCReader {
         new UIDTask().execute(uidParams);
     }
 
-    public void getFirmwareVersion(BaseParams firmwareVersionParams){
+    public void getFirmwareVersion(BaseParams firmwareVersionParams) {
         firmwareVersionParams.setReader(this);
         new GetFirmwareVersionTask().execute(firmwareVersionParams);
     }
@@ -115,6 +115,20 @@ public class NFCReader {
         new GetVersionTask().execute(baseParams);
     }
 
+    public void getBatteryLevel(BaseParams baseParams) {
+        baseParams.setReader(this);
+        new GetBatteryLevelTask().execute(baseParams);
+    }
+
+    public void connect() {
+        this.acrReader.connect();
+    }
+
+    public void disconnect(BaseParams baseParams) {
+        baseParams.setReader(this);
+        new DisconnectTask().execute(baseParams);
+    }
+
     public void updatePICCOperatingParameter(OnGetResultListener onGetResultListener) {
         PICCOperatingParameterParams params = new PICCOperatingParameterParams();
         params.setReader(this);
@@ -123,9 +137,9 @@ public class NFCReader {
     }
 
     public void raiseNotReady(OnGetResultListener onGetResultListener) {
-            if(onGetResultListener != null){
-                onGetResultListener.onResult(new Result("Reader", new ReaderException("Reader is not ready.") ));
-            }
+        if (onGetResultListener != null) {
+            onGetResultListener.onResult(new Result("Reader", new ReaderException("Reader is not ready.")));
+        }
     }
 
     private long sessionStartedAt = 0;
@@ -142,9 +156,8 @@ public class NFCReader {
         sessionStartedAt = 0;
     }
 
-
     public void setOnStatusChangeListener(ACRReader.StatusChangeListener onStatusChangeListener) {
-         this.acrReader.setOnStatusChangeListener(onStatusChangeListener);
+        this.acrReader.setOnStatusChangeListener(onStatusChangeListener);
     }
 
     public void setOnStateChangeListener(Reader.OnStateChangeListener onStateChangeListener) {
@@ -182,7 +195,7 @@ public class NFCReader {
     private boolean processing = false;
 
     public synchronized void reset(int slotNumber) {
-        this.chipMeta  = new ChipMeta();
+        this.chipMeta = new ChipMeta();
         BaseParams baseParams = new BaseParams(slotNumber);
         baseParams.setReader(this);
         baseParams.setOnGetResultListener(acrReader.getOnTouchListener());
@@ -194,21 +207,18 @@ public class NFCReader {
     }
 
     public boolean isReady() {
-        Log.d(TAG,"Ready:" + String.valueOf(this.acrReader.isReady()));
+        Log.d(TAG, "Ready:" + String.valueOf(this.acrReader.isReady()));
         return acrReader.isReady();
     }
 
 
     public void listen(OnGetResultListener listener) {
-       acrReader.listen(listener);
+        acrReader.listen(listener);
     }
 
     private void logBuffer(byte[] atr, int length) {
         Log.d(TAG, Util.toHexString(atr));
     }
-
-
-
 
     private class CloseTask extends AsyncTask<Void, Void, Void> {
 

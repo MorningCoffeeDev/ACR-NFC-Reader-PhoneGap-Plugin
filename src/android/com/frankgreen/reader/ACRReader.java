@@ -20,6 +20,7 @@ public interface ACRReader {
 
     public void control(int slot, byte[] sendBuffer, OnDataListener listener);
     public void transmit(int slot, byte[] sendBuffer, OnDataListener listener);
+    public void connect();
 
     public void setOnStateChangeListener(Reader.OnStateChangeListener onStateChangeListener);
     public void setOnStatusChangeListener(StatusChangeListener onStatusChangeListener);
@@ -48,4 +49,7 @@ public interface ACRReader {
     public byte[] power(int slotNum, int action, OnDataListener listener);
     public int setProtocol(int slotNum, int preferredProtocols);
     public String getReaderType();
+    public void getBatteryLevel();
+    public int getBatteryLevelValue();
+    public void disconnect();
 }

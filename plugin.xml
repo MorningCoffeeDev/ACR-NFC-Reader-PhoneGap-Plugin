@@ -83,6 +83,8 @@
     <source-file src="src/android/com/frankgreen/task/GetLedStatusTask.java" target-dir="src/com/frankgreen/task" />
     <source-file src="src/android/com/frankgreen/task/TaskListener.java" target-dir="src/com/frankgreen/apdu" />
     <source-file src="src/android/com/frankgreen/task/AbstractTaskListener.java" target-dir="src/com/frankgreen/apdu" />
+    <source-file src="src/android/com/frankgreen/task/GetBatteryLevelTask.java" target-dir="src/com/frankgreen/apdu" />
+    <source-file src="src/android/com/frankgreen/task/DisconnectTask.java" target-dir="src/com/frankgreen/apdu" />
 
     <source-file src="src/android/com/frankgreen/reader/ACRReader.java" target-dir="src/com/frankgreen/reader" />
     <source-file src="src/android/com/frankgreen/reader/USBReader.java" target-dir="src/com/frankgreen/reader" />

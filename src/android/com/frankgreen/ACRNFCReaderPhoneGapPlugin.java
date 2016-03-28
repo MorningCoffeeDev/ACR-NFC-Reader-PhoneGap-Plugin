@@ -64,6 +64,9 @@ public class ACRNFCReaderPhoneGapPlugin extends CordovaPlugin {
     private static final String GET_FIRMWARE_VERSION = "getFirmwareVersion";
     private static final String GET_RECEIVED_DATA = "getReceivedData";
     private static final String GET_LED_STATUS = "getLedStatus";
+    private static final String GET_BATTERY_LEVEL = "getBatteryLevel";
+    private static final String DISCONNECT_READER = "disconnectReader";
+    private static final String CONNECT_READER = "connectReader";
     private static final int REQUEST_ENABLE_BT = 1;
 
     private static boolean isSupportedBlueTooth = true;
@@ -80,6 +83,8 @@ public class ACRNFCReaderPhoneGapPlugin extends CordovaPlugin {
     private BluetoothAdapter mBluetoothAdapter;
     private BluetoothReader mbluetoothReader;
     private BluetoothReaderGattCallback mGattCallback;
+
+    private int batteryLevel = -1;
 
     //    private Reader reader;
     PendingIntent mPermissionIntent;
@@ -103,19 +108,21 @@ public class ACRNFCReaderPhoneGapPlugin extends CordovaPlugin {
         }
     };
 
-//    private final BroadcastReceiver bluetoothBroadcastReceiver = new BroadcastReceiver() {
-//        @Override
-//        public void onReceive(Context context, Intent intent) {
-//            Log.d(TAG, "-----------Attach listen----------------");
-//            String action = intent.getAction();
-//            Log.d(TAG, "bluetoothBroadcastReceiver:" + action);
-//            if (BluetoothDevice.ACTION_ACL_CONNECTED.equals(action)) {
-//                nfcReader.attach(intent);
-//            } else if (BluetoothDevice.ACTION_ACL_DISCONNECTED.equals(action)) {
-//                nfcReader.detach(intent);
-//            }
-//        }
-//    };
+    private final BroadcastReceiver bluetoothBroadcastReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            Log.d(TAG, "-----------Attach listen----------------");
+            String action = intent.getAction();
+            Log.d(TAG, "bluetoothBroadcastReceiver:" + action);
+            if (action.equals(BluetoothAdapter.ACTION_STATE_CHANGED)) {
+                final int state = intent.getIntExtra(BluetoothAdapter.EXTRA_STATE,
+                        BluetoothAdapter.ERROR);
+                if (state==BluetoothAdapter.STATE_ON) {
+                    ACRNFCReaderPhoneGapPlugin.this.connectReader(null);
+                }
+            }
+        }
+    };
 
 
     @Override
@@ -177,11 +184,13 @@ public class ACRNFCReaderPhoneGapPlugin extends CordovaPlugin {
                                                 }
                                             }
         );
-//        IntentFilter filter = new IntentFilter();
-//        filter.addAction(BluetoothDevice.ACTION_BOND_STATE_CHANGED);
-//        filter.addAction(BluetoothDevice.ACTION_ACL_CONNECTED);
-//        filter.addAction(BluetoothDevice.ACTION_ACL_DISCONNECTED);
-//        getActivity().registerReceiver(bluetoothBroadcastReceiver, filter);
+        IntentFilter filter = new IntentFilter();
+        filter.addAction(BluetoothDevice.ACTION_BOND_STATE_CHANGED);
+        filter.addAction(BluetoothAdapter.ACTION_CONNECTION_STATE_CHANGED);
+        filter.addAction(BluetoothDevice.ACTION_ACL_CONNECTED);
+        filter.addAction(BluetoothDevice.ACTION_ACL_DISCONNECTED);
+        filter.addAction(BluetoothAdapter.ACTION_STATE_CHANGED);
+        getActivity().registerReceiver(bluetoothBroadcastReceiver, filter);
     }
 
 
@@ -287,6 +296,12 @@ public class ACRNFCReaderPhoneGapPlugin extends CordovaPlugin {
             getLedStatus(callbackContext);
         } else if (action.equalsIgnoreCase(GET_RECEIVED_DATA)) {
             getReceivedData(callbackContext);
+        } else if (action.equalsIgnoreCase(GET_BATTERY_LEVEL)) {
+            getBatteryLevel(callbackContext);
+        } else if (action.equalsIgnoreCase(CONNECT_READER)) {
+            connectReader(callbackContext);
+        } else if (action.equalsIgnoreCase(DISCONNECT_READER)) {
+            disconnectReader(callbackContext);
         } else if (action.equalsIgnoreCase(IS_READY)) {
             if (nfcReader != null && nfcReader.isReady()) {
                 callbackContext.success();
@@ -322,6 +337,32 @@ public class ACRNFCReaderPhoneGapPlugin extends CordovaPlugin {
         nfcReader.getVersion(baseParams);
     }
 
+    private void getBatteryLevelCommand() {
+        BaseParams baseParams = new BaseParams(0);
+        Log.d("ACR", "!!!!!!!!getbat");
+        nfcReader.getBatteryLevel(baseParams);
+    }
+
+    private void getBatteryLevel(final CallbackContext callbackContext) {
+        BaseParams baseParams = new BaseParams(0);
+        baseParams.setOnGetResultListener(generateResultListener(callbackContext));
+//        nfcReader.getBatteryLevel(baseParams);
+        callbackContext.success(nfcReader.getReader().getBatteryLevelValue());
+    }
+
+    private void connectReader(final CallbackContext callbackContext) {
+        if (nfcReader != null) {
+            nfcReader.connect();
+        }
+    }
+
+    private void disconnectReader(final CallbackContext callbackContext) {
+        BaseParams baseParams = new BaseParams(0);
+        baseParams.setOnGetResultListener(generateResultListener(callbackContext));
+        nfcReader.disconnect(baseParams);
+        callbackContext.success("Reader has been disconnected!");
+    }
+
     private void selectFile(final CallbackContext callbackContext, JSONArray data) {
         try {
             SelectFileParams selectFileParams = new SelectFileParams(0, data.getString(0));
@@ -355,7 +396,6 @@ public class ACRNFCReaderPhoneGapPlugin extends CordovaPlugin {
         ledStatusParams.setOnGetResultListener(generateResultListener(callbackContext));
         nfcReader.getLedStatus(ledStatusParams);
     }
-
 
     private void writeAuthenticate(final CallbackContext callbackContext, JSONArray data) {
         try {

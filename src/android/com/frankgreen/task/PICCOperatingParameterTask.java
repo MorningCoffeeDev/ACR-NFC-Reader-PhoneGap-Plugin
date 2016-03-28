@@ -23,6 +23,7 @@ public class PICCOperatingParameterTask extends AsyncTask<PICCOperatingParameter
             return false;
         }
         PICCOperatingParameter piccOperatingParameter = new PICCOperatingParameter(params);
+//        params.getReader().getReader().getBatteryLevel();
         return piccOperatingParameter.run();
     }
 }

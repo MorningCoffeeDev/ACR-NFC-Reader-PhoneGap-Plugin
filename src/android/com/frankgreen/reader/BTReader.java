@@ -18,8 +18,10 @@ import com.frankgreen.NFCReader;
 import com.frankgreen.Util;
 import com.frankgreen.Utils;
 import com.frankgreen.apdu.OnGetResultListener;
+import com.frankgreen.apdu.Result;
 
 import java.io.UnsupportedEncodingException;
+import java.nio.ByteBuffer;
 import java.util.List;
 import java.util.Set;
 
@@ -39,7 +41,7 @@ public class BTReader implements ACRReader {
     private BluetoothDevice device;
     private boolean ready = false;
     private boolean batteryAvailable = true;
-    private int batteryLevel = 100;
+    private int batteryLevel;
     private byte[] masterKey ;
     private String readerType = "";
     private static final byte[] AUTO_POLLING_START = {(byte) 0xE0, 0x00, 0x00,
@@ -104,13 +106,13 @@ public class BTReader implements ACRReader {
                 if (newState == BluetoothReader.STATE_CONNECTED) {
                     if (bluetoothReaderManager != null) {
                         Log.d(TAG, "detectReader");
-                        bluetoothReaderManager.detectReader(
-                                bluetoothGatt, gattCallback);
+                        bluetoothReaderManager.detectReader(bluetoothGatt, gattCallback);
                     }
                 } else if (newState == BluetoothReader.STATE_DISCONNECTED) {
-                    reader = null;
                     ready = false;
                     BTReader.this.getOnStatusChangeListener().onDetach(new ACRDevice<BluetoothDevice>(device));
+                } else if (newState == BluetoothReader.STATE_CONNECTING) {
+                    BTReader.this.getOnStatusChangeListener().onAttach(new ACRDevice<BluetoothDevice>(device));
                 }
             }
         });
@@ -133,15 +135,9 @@ public class BTReader implements ACRReader {
                     Log.d(TAG, "Not this reader");
                 }
                 reader = (Acr1255uj1Reader) bluetoothReader;
-                ready = true;
-                if (BTReader.this.getOnStatusChangeListener() != null) {
-                    BTReader.this.getOnStatusChangeListener().onReady(BTReader.this);
-                }
                 setListener(reader);
                 reader.enableNotification(true);
             }
-
-
         });
 
     }
@@ -191,10 +187,6 @@ public class BTReader implements ACRReader {
 
     @Override
     public void close() {
-
-    }
-
-    public void open(UsbDevice usbDevice) {
 
     }
 
@@ -260,11 +252,21 @@ public class BTReader implements ACRReader {
                 }
             }
         });
+
+        acrReader.setOnBatteryLevelAvailableListener(new Acr1255uj1Reader.OnBatteryLevelAvailableListener() {
+            @Override
+            public void onBatteryLevelAvailable(BluetoothReader bluetoothReader, int batteryLevel, int status) {
+                BTReader.this.batteryLevel = batteryLevel;
+                Log.d(TAG, "**********bluetoothReader Battery level [available]*******" + batteryLevel);
+            }
+        });
+
+
         acrReader.setOnBatteryLevelChangeListener(new Acr1255uj1Reader.OnBatteryLevelChangeListener() {
             @Override
-            public void onBatteryLevelChange(BluetoothReader bluetoothReader, int i) {
-                batteryLevel = i;
-                Log.d(TAG, "--------Battery  level--------------" + batteryLevel);
+            public void onBatteryLevelChange(BluetoothReader bluetoothReader, int batteryLevel) {
+                BTReader.this.batteryLevel = batteryLevel;
+                Log.d(TAG, "**********bluetoothReader Battery level [change]*******" + batteryLevel);
             }
         });
 
@@ -293,8 +295,7 @@ public class BTReader implements ACRReader {
             public void onEnableNotificationComplete(BluetoothReader bluetoothReader, int i) {
                 masterKey = initMasterKey();
                 Log.d(TAG, "bluetoothReader On Enable Notification listener: --" + i);
-                boolean isAuthenticate = reader.authenticate(masterKey);
-//                reader.powerOnCard();
+                reader.authenticate(masterKey);
             }
         });
 
@@ -302,7 +303,12 @@ public class BTReader implements ACRReader {
             @Override
             public void onAuthenticationComplete(BluetoothReader bluetoothReader, int i) {
                 Log.d(TAG, "onAuthenticationComplete ------" + i);
-                boolean isPollingSuccess = reader.transmitEscapeCommand(AUTO_POLLING_START);
+                reader.transmitEscapeCommand(AUTO_POLLING_START);
+                BTReader.this.getBatteryLevel();
+                ready = true;
+                if (BTReader.this.getOnStatusChangeListener() != null) {
+                    BTReader.this.getOnStatusChangeListener().onReady(BTReader.this);
+                }
             }
         });
 
@@ -332,7 +338,7 @@ public class BTReader implements ACRReader {
                 Log.d(TAG, "---------------[Escape Response]------------" + receiveBuffer);
                 Log.d(TAG, "Data: " + Util.ByteArrayToHexString(receiveBuffer));
                 Log.d(TAG, "code: " + String.valueOf(i));
-                if(BTReader.this.onDataListener != null){
+                if (BTReader.this.onDataListener != null) {
                     BTReader.this.onDataListener.onData(receiveBuffer, receiveBuffer.length);
                 }
                 BTReader.this.receiveBuffer = receiveBuffer;
@@ -340,8 +346,22 @@ public class BTReader implements ACRReader {
         });
     }
 
-    public int getBatteryLevel() {
+    @Override
+    public void getBatteryLevel() {
+        boolean b = this.reader.getBatteryLevel();
+        Log.d(TAG, "&&&&&&&get batterylevel&&&&&&&&&" + b);
+    }
+
+    @Override
+    public int getBatteryLevelValue() {
         return batteryLevel;
+    }
+
+    @Override
+    public void disconnect() {
+        mBluetoothGatt.disconnect();
+        mBluetoothGatt.close();
+        mBluetoothGatt = null;
     }
 
     private byte[] initMasterKey() {
@@ -386,4 +406,13 @@ public class BTReader implements ACRReader {
         this.onDataListener = listener;
         reader.transmitEscapeCommand(sendBuffer);
     }
+
+    @Override
+    public void connect() {
+        if (isReady()) {
+            return;
+        } else {
+            connectReader();
+        }
+     }
 }
