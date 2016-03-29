@@ -7,6 +7,7 @@ var ACR = {};
 ACR.TagSuccessListener = function() {};
 ACR.TagFailureListener = function() {};
 
+
 ACR.start = function() {
   if (cordova.platformId === "android") {
     setTimeout(function() {
@@ -119,6 +120,22 @@ ACR.readUID = function(success, failure) {
   cordova.exec(success, failure, "ACRNFCReaderPhoneGapPlugin", "readUID", []);
 };
 
+ACR.getFirmwareVersion = function(success, failure) {
+  cordova.exec(success, failure, "ACRNFCReaderPhoneGapPlugin", "getFirmwareVersion", []);
+};
+
+ACR.getReceivedData = function(success, failure) {
+  cordova.exec(success, failure, "ACRNFCReaderPhoneGapPlugin", "getReceivedData", []);
+};
+
+ACR.getLedStatus = function(success, failure) {
+  cordova.exec(success, failure, "ACRNFCReaderPhoneGapPlugin", "getLedStatus", []);
+}
+
+ACR.getBatteryLevel = function(success, failure) {
+  cordova.exec(success, failure, "ACRNFCReaderPhoneGapPlugin", "getBatteryLevel", []);
+}
+
 ACR.readData = function(block, password, success, failure) {
   if (ACR.metadata.type === "javacard") {
     ACR.selectFile(ACR.AID, success, failure);
@@ -135,6 +152,14 @@ ACR.readMobileData = function(success, failure) {
 
 ACR.isReady = function(success, failure) {
   cordova.exec(success, failure, "ACRNFCReaderPhoneGapPlugin", "isReady", []);
+};
+
+ACR.connectReader = function(success, failure) {
+  cordova.exec(success, failure, "ACRNFCReaderPhoneGapPlugin", "connectReader", []);
+}
+
+ACR.disconnectReader = function(success, failure) {
+  cordova.exec(success, failure, "ACRNFCReaderPhoneGapPlugin", "disconnectReader", []);
 };
 
 ACR.writeData = function(block, data, password, success, failure) {
@@ -154,6 +179,7 @@ ACR.onCardAbsent = function() {};
 ACR.onReady = function(reader) {};
 ACR.onAttach = function(device) {};
 ACR.onDetach = function(device) {};
+ACR.onBatteryLevelChange = function(level) {};
 
 ACR.runCardAbsent = function() {
   ACR.metadata = {};
