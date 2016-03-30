@@ -117,10 +117,29 @@ public class ACRNFCReaderPhoneGapPlugin extends CordovaPlugin {
             if (action.equals(BluetoothAdapter.ACTION_STATE_CHANGED)) {
                 final int state = intent.getIntExtra(BluetoothAdapter.EXTRA_STATE,
                         BluetoothAdapter.ERROR);
-                if (state==BluetoothAdapter.STATE_ON) {
+                if (state == BluetoothAdapter.STATE_ON) {
                     ACRNFCReaderPhoneGapPlugin.this.connectReader(null);
                 }
             }
+
+            if (action.equals(BluetoothDevice.ACTION_BOND_STATE_CHANGED)) {
+                final int state = intent.getIntExtra(BluetoothDevice.EXTRA_BOND_STATE, BluetoothDevice.ERROR);
+                final int prevState = intent.getIntExtra(BluetoothDevice.EXTRA_PREVIOUS_BOND_STATE, BluetoothDevice.ERROR);
+                if (state == BluetoothDevice.BOND_BONDED && prevState == BluetoothDevice.BOND_BONDING) {
+                    Log.d(TAG, "!!!!!!!!!!bond state!!!!!!!" + state);
+                    Log.d(TAG, "!!!!!!!!!!bond prevstate!!!!!!!" + prevState);
+                    ACRNFCReaderPhoneGapPlugin.this.connectReader(null);
+                }
+//                } else if (state == BluetoothDevice.BOND_NONE && prevState == BluetoothDevice.BOND_BONDED){
+//                    Log.d(TAG, "!!!!bond disconnect");
+//                    ACRNFCReaderPhoneGapPlugin.this.nfcReader.getReader().disconnect();
+//                }
+            }
+
+//            if(action.equals(BluetoothDevice.ACTION_ACL_CONNECTED)) {
+//                Log.d(TAG, "!!!!!!!!!!acl connect!!!!!!!" );
+//                ACRNFCReaderPhoneGapPlugin.this.connectReader(null);
+//            }
         }
     };
 
@@ -184,13 +203,11 @@ public class ACRNFCReaderPhoneGapPlugin extends CordovaPlugin {
                                                 }
                                             }
         );
-        IntentFilter filter = new IntentFilter();
-        filter.addAction(BluetoothDevice.ACTION_BOND_STATE_CHANGED);
-        filter.addAction(BluetoothAdapter.ACTION_CONNECTION_STATE_CHANGED);
-        filter.addAction(BluetoothDevice.ACTION_ACL_CONNECTED);
-        filter.addAction(BluetoothDevice.ACTION_ACL_DISCONNECTED);
-        filter.addAction(BluetoothAdapter.ACTION_STATE_CHANGED);
-        getActivity().registerReceiver(bluetoothBroadcastReceiver, filter);
+//        IntentFilter filter = new IntentFilter();
+//        filter.addAction(BluetoothDevice.ACTION_BOND_STATE_CHANGED);
+//        filter.addAction(BluetoothAdapter.ACTION_STATE_CHANGED);
+//        getActivity().registerReceiver(bluetoothBroadcastReceiver, filter);
+        nfcReader.start();
     }
 
 
@@ -256,6 +273,7 @@ public class ACRNFCReaderPhoneGapPlugin extends CordovaPlugin {
         filter.addAction(UsbManager.ACTION_USB_DEVICE_DETACHED);
         getActivity().registerReceiver(broadcastReceiver, filter);
         setupTimer();
+        nfcReader.start();
     }
 
     @Override
@@ -352,6 +370,7 @@ public class ACRNFCReaderPhoneGapPlugin extends CordovaPlugin {
 
     private void connectReader(final CallbackContext callbackContext) {
         if (nfcReader != null) {
+            Log.d(TAG, "$$$$Try to connect");
             nfcReader.connect();
         }
     }

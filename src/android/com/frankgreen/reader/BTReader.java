@@ -42,7 +42,7 @@ public class BTReader implements ACRReader {
     private boolean ready = false;
     private boolean batteryAvailable = true;
     private int batteryLevel;
-    private byte[] masterKey ;
+    private byte[] masterKey;
     private String readerType = "";
     private static final byte[] AUTO_POLLING_START = {(byte) 0xE0, 0x00, 0x00,
             0x40, 0x01};
@@ -51,6 +51,14 @@ public class BTReader implements ACRReader {
     private static final int CARDOFF = 1;
     private OnDataListener onDataListener;
     private OnDataListener onPowerListener;
+
+    private int connectState = DISCONNECTED;
+    private static final int DISCONNECTED = 0;
+    private static final int CONNECTING = 1;
+    private static final int CONNECTED = 2;
+
+    private static final int READE_REAL_CLOSED = 133;
+    private boolean isReaderNotClosed = true;
 
     @Override
     public void setNfcReader(NFCReader nfcReader) {
@@ -71,10 +79,11 @@ public class BTReader implements ACRReader {
         this.readerType = "BT_READER";
         findBondedDevice();
         initGattCallback();
-        connectReader();
     }
 
-    private void connectReader() {
+    private synchronized void connectReader() {
+        connectState = CONNECTING;
+        boolean found = false;
         BluetoothAdapter bluetoothAdapter = bluetoothManager.getAdapter();
         if (bluetoothAdapter == null) {
             Log.w(TAG, "Unable to obtain a BluetoothAdapter.");
@@ -87,11 +96,21 @@ public class BTReader implements ACRReader {
             Log.d(TAG, device.getName());
             Log.d(TAG, "&&&&&&&&&&&&&&&&&&&&&&&&&&&&&current bond state*************************" + device.getBondState());
         /* Connect to GATT server. */
-            if (device.getName().contains("ACR12")) {
+            if (device.getName().contains("ACR12") && device.getBondState() == BluetoothDevice.BOND_BONDED) {
                 this.device = device;
-                mBluetoothGatt = device.connectGatt(activity, true, gattCallback);
+                found = true;
+                if (isReaderNotClosed) {
+                    BTReader.this.getOnStatusChangeListener().onAttach(new ACRDevice<BluetoothDevice>(device));
+                }
+                mBluetoothGatt = device.connectGatt(activity, false, gattCallback);
+                boolean cr = mBluetoothGatt.discoverServices();
+//                int state =  mBluetoothGatt.getConnectionState(device);
+//                Log.d(TAG, "Current device state" + state);
                 return;
             }
+        }
+        if (!found) {
+            connectState = DISCONNECTED;
         }
     }
 
@@ -101,8 +120,10 @@ public class BTReader implements ACRReader {
             @Override
             public void onConnectionStateChange(BluetoothGatt bluetoothGatt, int state, int newState) {
                 Log.d(TAG, "onConnectionStateChange:" + String.valueOf(newState));
-                mConnectState = BluetoothReader.STATE_DISCONNECTED;
-
+                Log.d(TAG, "connection state:" + state);
+                Log.d(TAG, "connection newState:" + newState);
+//                mConnectState = BluetoothReader.STATE_DISCONNECTED;
+                isReaderNotClosed = true;
                 if (newState == BluetoothReader.STATE_CONNECTED) {
                     if (bluetoothReaderManager != null) {
                         Log.d(TAG, "detectReader");
@@ -110,9 +131,16 @@ public class BTReader implements ACRReader {
                     }
                 } else if (newState == BluetoothReader.STATE_DISCONNECTED) {
                     ready = false;
+                    BTReader.this.disconnect();
+                    connectState = DISCONNECTED;
+                    Log.d(TAG, "---------on detach++++++++++++");
                     BTReader.this.getOnStatusChangeListener().onDetach(new ACRDevice<BluetoothDevice>(device));
-                } else if (newState == BluetoothReader.STATE_CONNECTING) {
-                    BTReader.this.getOnStatusChangeListener().onAttach(new ACRDevice<BluetoothDevice>(device));
+                }
+                if (state != BluetoothReader.STATE_CONNECTED && state != BluetoothReader.STATE_DISCONNECTED) {
+                    Log.d(TAG, "connection---------------:" + state);
+                    connectState = DISCONNECTED;
+                    isReaderNotClosed = false;
+                    BTReader.this.getOnStatusChangeListener().onDetach(new ACRDevice<BluetoothDevice>(device));
                 }
             }
         });
@@ -247,7 +275,7 @@ public class BTReader implements ACRReader {
             @Override
             public void onAtrAvailable(BluetoothReader bluetoothReader, byte[] atr, int i) {
                 Log.d(TAG, "ATR: " + Util.ByteArrayToHexString(atr));
-                if(BTReader.this.onPowerListener != null){
+                if (BTReader.this.onPowerListener != null) {
                     BTReader.this.onPowerListener.onData(atr, atr.length);
                 }
             }
@@ -306,6 +334,7 @@ public class BTReader implements ACRReader {
                 reader.transmitEscapeCommand(AUTO_POLLING_START);
                 BTReader.this.getBatteryLevel();
                 ready = true;
+                connectState = CONNECTED;
                 if (BTReader.this.getOnStatusChangeListener() != null) {
                     BTReader.this.getOnStatusChangeListener().onReady(BTReader.this);
                 }
@@ -325,7 +354,7 @@ public class BTReader implements ACRReader {
                 Log.d(TAG, "---------------[Response]------------" + receiveBuffer);
                 Log.d(TAG, "Data: " + Util.ByteArrayToHexString(receiveBuffer));
                 Log.d(TAG, "code: " + String.valueOf(errorCode));
-                if(BTReader.this.onDataListener != null){
+                if (BTReader.this.onDataListener != null) {
                     BTReader.this.onDataListener.onData(receiveBuffer, receiveBuffer.length);
                 }
                 BTReader.this.receiveBuffer = receiveBuffer;
@@ -364,6 +393,15 @@ public class BTReader implements ACRReader {
         mBluetoothGatt = null;
     }
 
+    private boolean initialized = false;
+
+    @Override
+    public void start() {
+        initialized = true;
+        connectReader();
+
+    }
+
     private byte[] initMasterKey() {
         try {
             String key = Utils.toHexString("ACR1255U-J1 Auth".getBytes("UTF-8"));
@@ -389,7 +427,6 @@ public class BTReader implements ACRReader {
     }
 
 
-
     @Override
     public void transmit(int slot, byte[] sendBuffer, OnDataListener listener) {
         this.onDataListener = listener;
@@ -409,10 +446,16 @@ public class BTReader implements ACRReader {
 
     @Override
     public void connect() {
-        if (isReady()) {
-            return;
-        } else {
+//        if (isReady() || connectState == CONNECTING) {
+//            return;
+//        } else {
+//            connectReader();
+//        }
+        Log.d(TAG, "current connectState:" + connectState);
+        if (initialized && connectState == DISCONNECTED) {
             connectReader();
+        } else {
+            return;
         }
-     }
+    }
 }

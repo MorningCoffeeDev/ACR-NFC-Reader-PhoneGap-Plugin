@@ -220,6 +220,10 @@ public class NFCReader {
         Log.d(TAG, Util.toHexString(atr));
     }
 
+    public void start() {
+    acrReader.start();
+    }
+
     private class CloseTask extends AsyncTask<Void, Void, Void> {
 
         @Override

@@ -297,4 +297,9 @@ public class USBReader implements ACRReader {
     public void disconnect() {
 
     }
+
+    @Override
+    public void start() {
+
+    }
 }
