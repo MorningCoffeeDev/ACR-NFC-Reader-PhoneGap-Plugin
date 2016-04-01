@@ -43,10 +43,15 @@ public abstract class CardCommand extends Base<InitNTAGParams> implements OnData
     @Override
     public boolean onData(byte[] bytes, int len) {
         Result result = new Result(getCommandName(), len, bytes);
-        result.setSendPlugin(false);
+        result.setProcessor(this);
         result.setChecker(getChecker());
-        if (this.getParams().getOnGetResultListener() != null) {
-            this.getParams().getOnGetResultListener().onResult(result);
+        if(getStopSession() == null){
+            result.setSendPlugin(false);
+            if (this.getParams().getOnGetResultListener() != null) {
+                this.getParams().getOnGetResultListener().onResult(result);
+            }
+        }else{
+            getStopSession().setSendResult(result);
         }
         runTaskListener(result.isSuccess());
         return result.isSuccess();

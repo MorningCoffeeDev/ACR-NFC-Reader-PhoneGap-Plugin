@@ -504,6 +504,7 @@ public class ACRNFCReaderPhoneGapPlugin extends CordovaPlugin {
             public void onResult(Result result) {
                 Log.d(TAG, "==========" + result.getCommand() + "==========");
                 Log.d(TAG, result.isSendPlugin() ? "Send to Plugin" : "Does not Send to Plugin");
+                Log.d(TAG, "Success: " + result.isSuccess());
                 Log.d(TAG, "Code: " + result.getCodeString());
                 if (result.getData() != null) {
                     Log.d(TAG, "Data: " + Util.ByteArrayToHexString(result.getData()));

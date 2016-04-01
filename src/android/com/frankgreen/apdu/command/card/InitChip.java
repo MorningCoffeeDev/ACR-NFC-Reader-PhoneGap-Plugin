@@ -15,7 +15,7 @@ public class InitChip extends CardCommand {
         super(params);
     }
 
-    abstract class AbstractOnDataListener implements  OnDataListener{
+    abstract class AbstractOnDataListener implements OnDataListener {
         @Override
         public boolean onError(ACRReaderException e) {
             return false;
@@ -44,23 +44,23 @@ public class InitChip extends CardCommand {
             byte[] pwd = Util.convertHexAsciiToByteArray(this.getParams().getPassword(), 4);
             System.arraycopy(pwd, 0, bytes, 13, 4);
         }
-         return transmit(bytes);
+        return transmit(bytes);
     }
 
-    @Override
-    public Result.Checker getChecker() {
-        return new Result.Checker() {
-            @Override
-            public boolean check(Result result) {
-                byte[] data = result.getData();
-                if (data != null && data.length > 0 && data[0] == (byte) 0x0a) {
-                    return true;
-                } else {
-                    return false;
-                }
-            }
-        };
-    }
+//    @Override
+//    public Result.Checker getChecker() {
+//        return new Result.Checker() {
+//            @Override
+//            public boolean check(Result result) {
+//                byte[] data = result.getData();
+//                if (data != null && data.length > 0 && data[0] == (byte) 0x0a) {
+//                    return true;
+//                } else {
+//                    return false;
+//                }
+//            }
+//        };
+//    }
 
     @Override
     protected String getTag() {

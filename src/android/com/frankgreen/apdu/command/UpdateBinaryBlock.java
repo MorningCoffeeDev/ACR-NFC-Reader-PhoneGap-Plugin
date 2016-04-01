@@ -76,9 +76,14 @@ public class UpdateBinaryBlock extends Base<WriteParams> implements OnDataListen
         if (result.isSuccess()) {
             result.setData(Arrays.copyOfRange(sendBuffer, 5, sendBuffer.length));
         }
-        if (this.getParams().getOnGetResultListener() != null) {
-            result.setProcessor(this);
-            this.getParams().getOnGetResultListener().onResult(result);
+        result.setProcessor(this);
+        result.setSendPlugin(true);
+        if(getStopSession() == null){
+            if (this.getParams().getOnGetResultListener() != null) {
+                this.getParams().getOnGetResultListener().onResult(result);
+            }
+        }else{
+            getStopSession().setSendResult(result);
         }
         runTaskListener(result.isSuccess());
         return result.isSuccess();

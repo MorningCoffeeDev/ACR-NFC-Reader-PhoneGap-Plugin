@@ -3,6 +3,7 @@ package com.frankgreen.task;
 import android.os.AsyncTask;
 
 import com.frankgreen.apdu.command.UpdateBinaryBlock;
+import com.frankgreen.apdu.command.card.StopSession;
 import com.frankgreen.params.WriteParams;
 
 /**
@@ -32,7 +33,8 @@ public class WriteTask extends AsyncTask<WriteParams, Void, Boolean> {
             task.setGetResultListener(params.getOnGetResultListener());
             task.setCallback(new TaskWithPassword.TaskCallback() {
                 @Override
-                public boolean run(TaskListener taskListener) {
+                public boolean run(TaskListener taskListener, StopSession stopSession) {
+                    update.setStopSession(stopSession);
                     return update.run(taskListener);
                 }
             });

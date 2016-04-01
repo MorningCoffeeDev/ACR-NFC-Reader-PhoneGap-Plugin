@@ -57,16 +57,19 @@ public class InitNTAGTask extends AsyncTask<InitNTAGParams, Void, Boolean> {
             final TaskListener nTagAuthListener = new AbstractTaskListener(stopSession) {
                 @Override
                 public void onSuccess() {
+                    initChip.setStopSession(stopSession);
                     initChip.run(initChipListener);
                 }
 
                 @Override
                 public void onFailure() {
                     result = new Result("InitNTAGTask", new ReaderException("PWD_WRONG"));
+                    stopSession.setSendResult(result);
                     stopSession.run();
-                    if (params.getOnGetResultListener() != null) {
-                        params.getOnGetResultListener().onResult(result);
-                    }
+//                    stopSession.run();
+//                    if (params.getOnGetResultListener() != null) {
+//                        params.getOnGetResultListener().onResult(result);
+//                    }
                 }
             };
 
@@ -85,9 +88,9 @@ public class InitNTAGTask extends AsyncTask<InitNTAGParams, Void, Boolean> {
 //                stopSession.run();
 //            }
         }
-        if (params.getOnGetResultListener() != null) {
-            params.getOnGetResultListener().onResult(result);
-        }
+//        if (params.getOnGetResultListener() != null) {
+//            params.getOnGetResultListener().onResult(result);
+//        }
         return true;
     }
 

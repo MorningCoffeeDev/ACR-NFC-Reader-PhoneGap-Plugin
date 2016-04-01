@@ -1,5 +1,6 @@
 package com.frankgreen.task;
 
+import android.util.Log;
 import com.acs.smartcard.ReaderException;
 import com.frankgreen.NFCReader;
 import com.frankgreen.apdu.OnGetResultListener;
@@ -28,7 +29,7 @@ public class TaskWithPassword {
     }
 
     interface TaskCallback {
-        boolean run(TaskListener taskListener);
+        boolean run(TaskListener taskListener, StopSession stopSession);
     }
 
     public String getName() {
@@ -101,19 +102,18 @@ public class TaskWithPassword {
                 }
             };
 
-            final TaskListener nTagAuthListener = new AbstractTaskListener(stopSession){
-            @Override
+            final TaskListener nTagAuthListener = new AbstractTaskListener(stopSession) {
+                @Override
                 public void onSuccess() {
-                    callBackSuccess = callback.run(callbackListener);
+                    Log.d("ACR", "nTagAuthListener success");
+                    callBackSuccess = callback.run(callbackListener, getStopSession());
                 }
 
                 @Override
                 public void onFailure() {
                     result = new Result(getName(), new ReaderException("PWD_WRONG"));
+                    stopSession.setSendResult(result);
                     stopSession.run();
-                    if (TaskWithPassword.this.getResultListener != null) {
-                        TaskWithPassword.this.getResultListener.onResult(result);
-                    }
                 }
             };
 

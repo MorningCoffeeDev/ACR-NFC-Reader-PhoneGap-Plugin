@@ -1,5 +1,6 @@
 package com.frankgreen.apdu.command.card;
 
+import com.frankgreen.apdu.Result;
 import com.frankgreen.task.TaskListener;
 import com.frankgreen.params.InitNTAGParams;
 
@@ -8,14 +9,42 @@ import com.frankgreen.params.InitNTAGParams;
  */
 public class StopSession extends CardCommand {
 
+    Result sendResult = null;
     public StopSession(InitNTAGParams params) {
         super(params);
+    }
+
+    public void setSendResult(Result sendResult) {
+        this.sendResult = sendResult;
     }
 
     public synchronized boolean run(TaskListener listener) {
         byte[] sendBuffer = new byte[]{(byte) 0xFF, (byte) 0xC2, (byte) 0x0, (byte) 0x0, (byte) 0x02, (byte) 0x82, (byte) 0x00};
         this.getParams().getReader().clearSessionStartedAt();
         return transmit(sendBuffer);
+    }
+
+    @Override
+    public boolean onData(byte[] bytes, int len) {
+        Result result = new Result(getCommandName(), len, bytes);
+        result.setChecker(getChecker());
+        result.setSendPlugin(false);
+        if (this.getParams().getOnGetResultListener() != null) {
+            this.getParams().getOnGetResultListener().onResult(result);
+        }
+//        try {
+//            Thread.sleep(100);
+//        } catch (InterruptedException e) {
+//            e.printStackTrace();
+//        }
+        if(this.sendResult != null) {
+           // sendResult.setSendPlugin(true);
+            if (this.getParams().getOnGetResultListener() != null) {
+                this.getParams().getOnGetResultListener().onResult(sendResult);
+            }
+        }
+        runTaskListener(result.isSuccess());
+        return result.isSuccess();
     }
 
     @Override

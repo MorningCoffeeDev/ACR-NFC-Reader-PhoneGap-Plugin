@@ -1,7 +1,9 @@
 package com.frankgreen.apdu.command;
 
+import android.util.Log;
 import com.frankgreen.Util;
 import com.frankgreen.apdu.Result;
+import com.frankgreen.apdu.command.card.StopSession;
 import com.frankgreen.task.TaskListener;
 import com.frankgreen.params.Params;
 
@@ -12,6 +14,7 @@ public abstract class Base<T extends Params> implements ToDataString{
     private T params;
 
     private TaskListener taskListener;
+    private StopSession stopSession;
 
     public Base(T params) {
         this.params = params;
@@ -33,6 +36,7 @@ public abstract class Base<T extends Params> implements ToDataString{
 
     public void runTaskListener(boolean isSuccess){
         if (taskListener != null){
+                Log.d("ACR", "isSuccess in runTaskListener :" + String.valueOf(isSuccess));
              if(isSuccess) {
                  taskListener.onSuccess();
              } else {
@@ -42,5 +46,13 @@ public abstract class Base<T extends Params> implements ToDataString{
     }
     public String toDataString(Result result){
         return Util.toHexString(result.getData());
+    }
+
+    public StopSession getStopSession() {
+        return stopSession;
+    }
+
+    public void setStopSession(StopSession stopSession) {
+        this.stopSession = stopSession;
     }
 }

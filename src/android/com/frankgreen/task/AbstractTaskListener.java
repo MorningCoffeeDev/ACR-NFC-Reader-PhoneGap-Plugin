@@ -1,5 +1,6 @@
 package com.frankgreen.task;
 
+import com.frankgreen.apdu.Result;
 import com.frankgreen.apdu.command.card.StopSession;
 
 /**
@@ -11,6 +12,10 @@ abstract class AbstractTaskListener implements TaskListener{
 
     public AbstractTaskListener(StopSession stopSession) {
         this.stopSession = stopSession;
+    }
+
+    public StopSession getStopSession() {
+        return stopSession;
     }
 
     @Override

@@ -55,9 +55,13 @@ public class ReadBinaryBlock extends Base<ReadParams> implements OnDataListener 
             nfcReader.getChipMeta().parseBlock0(result.getData());
         }
         result.setSendPlugin(this.isSendPlugin());
-        if (this.getParams().getOnGetResultListener() != null) {
-            result.setProcessor(this);
-            this.getParams().getOnGetResultListener().onResult(result);
+        result.setProcessor(this);
+        if(getStopSession() == null){
+            if (this.getParams().getOnGetResultListener() != null) {
+                this.getParams().getOnGetResultListener().onResult(result);
+            }
+        }else{
+            getStopSession().setSendResult(result);
         }
         runTaskListener(result.isSuccess());
         return result.isSuccess();

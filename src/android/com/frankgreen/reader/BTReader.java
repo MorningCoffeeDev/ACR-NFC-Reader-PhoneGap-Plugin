@@ -351,8 +351,7 @@ public class BTReader implements ACRReader {
         acrReader.setOnResponseApduAvailableListener(new BluetoothReader.OnResponseApduAvailableListener() {
             @Override
             public void onResponseApduAvailable(BluetoothReader bluetoothReader, byte[] receiveBuffer, int errorCode) {
-                Log.d(TAG, "---------------[Response]------------" + receiveBuffer);
-                Log.d(TAG, "Data: " + Util.ByteArrayToHexString(receiveBuffer));
+                Log.d(TAG, "APDU Receive: " + Util.ByteArrayToHexString(receiveBuffer));
                 Log.d(TAG, "code: " + String.valueOf(errorCode));
                 if (BTReader.this.onDataListener != null) {
                     BTReader.this.onDataListener.onData(receiveBuffer, receiveBuffer.length);
@@ -364,8 +363,7 @@ public class BTReader implements ACRReader {
         acrReader.setOnEscapeResponseAvailableListener(new BluetoothReader.OnEscapeResponseAvailableListener() {
             @Override
             public void onEscapeResponseAvailable(BluetoothReader bluetoothReader, byte[] receiveBuffer, int i) {
-                Log.d(TAG, "---------------[Escape Response]------------" + receiveBuffer);
-                Log.d(TAG, "Data: " + Util.ByteArrayToHexString(receiveBuffer));
+                Log.d(TAG, "Escape Receive: " + Util.ByteArrayToHexString(receiveBuffer));
                 Log.d(TAG, "code: " + String.valueOf(i));
                 if (BTReader.this.onDataListener != null) {
                     BTReader.this.onDataListener.onData(receiveBuffer, receiveBuffer.length);
@@ -430,6 +428,7 @@ public class BTReader implements ACRReader {
     @Override
     public void transmit(int slot, byte[] sendBuffer, OnDataListener listener) {
         this.onDataListener = listener;
+        Log.d(TAG, "APDU Send: " + Util.ByteArrayToHexString(sendBuffer));
         reader.transmitApdu(sendBuffer);
     }
 
@@ -441,6 +440,7 @@ public class BTReader implements ACRReader {
     @Override
     public void control(int slot, byte[] sendBuffer, OnDataListener listener) {
         this.onDataListener = listener;
+        Log.d(TAG, "escape Send: " + Util.ByteArrayToHexString(sendBuffer));
         reader.transmitEscapeCommand(sendBuffer);
     }
 
