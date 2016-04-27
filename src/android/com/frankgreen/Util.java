@@ -185,31 +185,7 @@ public class Util {
     public static JSONObject resultToJSON(Result result) {
         JSONObject json = new JSONObject();
         try {
-//            json.put("data", Util.toHexString(result.getData()));
-//            json.put("code", Util.toHexString(result.getCode()));
-//            json.put("command", result.getCommand());
             if (result.isSuccess()) {
-//                if (result.getCommand() != null) {
-//                    if (result.getCommand() == "ReadBinaryBlock" || result.getCommand() == "UpdateBinaryBlock"  || result.getCommand() == "SelectFile" || result.getCommand().equals("GetFirmwareVersion")) {
-//                        json.put("data", dataToString(result.getData()));
-//                    } else if (result.getCommand() == "Reset") {
-//                        json.put("data", result.getMeta().getUid() );
-////                        ATR atr = new ATR(result.getData());
-//                        json.put("metadata", result.getMeta().toJSON());
-//                    } else if (result.getCommand() == "GetVersion") {
-//                        Chip chip = Chip.find(result.getData());
-//                        if (chip != null) {
-//                            json.put("data", chip.getName());
-//                        }else{
-//                            json.put("data", "UNKNOWN");
-//                        }
-//                        json.put("response", toHexString(result.getData()));
-//                    } else {
-//                        json.put("data", toHexString(result.getData()));
-//                    }
-//                } else {
-//                    json.put("data", toHexString(result.getData()));
-//                }
                 if (result.getCommand() == "GetVersion") {
                     json.put("response", toHexString(result.getData()));
                 }
@@ -217,14 +193,14 @@ public class Util {
                 if (result.getCommand() == "Reset") {
                     json.put("metadata", result.getMeta().toJSON());
                 }
-
                 json.put("data", result.getDataString());
-
             }
             json.put("success", result.isSuccess());
-//            json.put("size", result.getSize());
             if (result.getException() != null) {
                 json.put("exception", result.getException().getMessage());
+            }
+            if (result.getCommand() == "Disconnect") {
+                json.put("data", result.getResultMessage());
             }
         } catch (JSONException e) {
             try {
@@ -232,6 +208,22 @@ public class Util {
             } catch (JSONException e1) {
                 e1.printStackTrace();
             }
+        }
+        return json;
+    }
+
+    public static JSONObject customJSON(boolean isSuccess, String resultMessage) {
+        JSONObject json = new JSONObject();
+        try {
+            if (isSuccess) {
+                json.put("success", "true");
+                json.put("data", resultMessage);
+            } else {
+                json.put("success", "false");
+                json.put("exception", resultMessage);
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
         }
         return json;
     }

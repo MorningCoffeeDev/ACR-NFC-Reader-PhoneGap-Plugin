@@ -8,6 +8,8 @@ import com.acs.smartcard.Reader;
 import com.frankgreen.ACRDevice;
 import com.frankgreen.NFCReader;
 import com.frankgreen.apdu.OnGetResultListener;
+import com.frankgreen.operate.OperateDataListener;
+import org.apache.cordova.CallbackContext;
 
 import java.util.List;
 
@@ -24,7 +26,6 @@ public interface ACRReader {
 
     public void transmit(int slot, byte[] sendBuffer, OnDataListener listener);
 
-    public void connect();
 
     public void setOnStateChangeListener(Reader.OnStateChangeListener onStateChangeListener);
 
@@ -76,7 +77,15 @@ public interface ACRReader {
 
     public int getBatteryLevelValue();
 
-    public void disconnect();
+//    public void connect();
+
+    public boolean connect(String address, OperateDataListener listener);
+
+    public void disconnectReader(OperateDataListener listener);
 
     public void start();
+
+    public void startScan(CallbackContext callbackContext);
+
+    public void stopScan();
 }

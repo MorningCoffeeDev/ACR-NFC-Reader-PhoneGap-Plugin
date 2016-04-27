@@ -3,12 +3,13 @@ package com.frankgreen.reader;
 
 import android.app.Activity;
 import android.app.PendingIntent;
+import android.bluetooth.BluetoothAdapter.LeScanCallback;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothGatt;
 import android.bluetooth.BluetoothManager;
 import android.content.Intent;
-import android.hardware.usb.UsbDevice;
+import android.os.Handler;
 
 import android.util.Log;
 import com.acs.bluetooth.*;
@@ -18,10 +19,14 @@ import com.frankgreen.NFCReader;
 import com.frankgreen.Util;
 import com.frankgreen.Utils;
 import com.frankgreen.apdu.OnGetResultListener;
-import com.frankgreen.apdu.Result;
+import com.frankgreen.operate.CustomDevice;
+import com.frankgreen.operate.OperateDataListener;
+import com.frankgreen.operate.OperateResult;
+import org.apache.cordova.CallbackContext;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.UnsupportedEncodingException;
-import java.nio.ByteBuffer;
 import java.util.List;
 import java.util.Set;
 
@@ -34,6 +39,11 @@ public class BTReader implements ACRReader {
     private BluetoothGatt mBluetoothGatt;
     private BluetoothReaderManager bluetoothReaderManager;
     private Activity activity;
+    private BluetoothAdapter mBluetoothAdapter;
+    private Handler mHandler;
+    private boolean mScanning;
+    private static final long SCAN_PERIOD = 10000;
+    private CallbackContext startScanCallbackContext;
 
     private NFCReader nfcReader;
     private final String TAG = "BTReader";
@@ -51,11 +61,16 @@ public class BTReader implements ACRReader {
     private static final int CARDOFF = 1;
     private OnDataListener onDataListener;
     private OnDataListener onPowerListener;
+    private OperateDataListener operateDataListener;
 
     private int connectState = DISCONNECTED;
     private static final int DISCONNECTED = 0;
     private static final int CONNECTING = 1;
     private static final int CONNECTED = 2;
+
+    private int scanState = NONSCANNING;
+    private static final int NONSCANNING = 0;
+    private static final int SCANNING = 1;
 
     private static final int READE_REAL_CLOSED = 133;
     private boolean isReaderNotClosed = true;
@@ -76,21 +91,53 @@ public class BTReader implements ACRReader {
         this.activity = activity;
         this.bluetoothManager = bluetoothManager;
         bluetoothReaderManager = new BluetoothReaderManager();
+        mBluetoothAdapter = bluetoothManager.getAdapter();
+        mHandler = new Handler();
         this.readerType = "BT_READER";
         findBondedDevice();
         initGattCallback();
     }
 
+    private synchronized boolean connectReader(String mDeviceAddress) {
+        if (bluetoothManager == null || mBluetoothAdapter == null || !mBluetoothAdapter.isEnabled()) {
+            if (this.operateDataListener != null) {
+                this.operateDataListener.onError(new OperateResult("Bluetooth error, please check your bluetooth setting!"));
+            }
+            return false;
+        }
+
+        if (mBluetoothGatt != null) {
+            Log.i(TAG, "Clear old gatt");
+            this.disconnect();
+        }
+
+        Log.d(TAG, "address..: " + mDeviceAddress);
+
+        final BluetoothDevice device;
+        try {
+            device = mBluetoothAdapter.getRemoteDevice(mDeviceAddress);
+        } catch (Exception e) {
+            this.operateDataListener.onError(new OperateResult("Device not found. Unable to connect."));
+            return false;
+        }
+        if (device == null) {
+            this.operateDataListener.onError(new OperateResult("Device not found. Unable to connect."));
+            return false;
+        }
+        connectState = CONNECTING;
+        mBluetoothGatt = device.connectGatt(activity, false, gattCallback);
+        return true;
+    }
+
     private synchronized void connectReader() {
         connectState = CONNECTING;
         boolean found = false;
-        BluetoothAdapter bluetoothAdapter = bluetoothManager.getAdapter();
-        if (bluetoothAdapter == null) {
+        if (mBluetoothAdapter == null) {
             Log.w(TAG, "Unable to obtain a BluetoothAdapter.");
         }
 
         /* Create a new connection. */
-        Set<BluetoothDevice> devices = (Set<BluetoothDevice>) bluetoothManager.getAdapter().getBondedDevices();
+        Set<BluetoothDevice> devices = (Set<BluetoothDevice>) mBluetoothAdapter.getBondedDevices();
         for (BluetoothDevice device : devices) {
             Log.d(TAG, device.getAddress());
             Log.d(TAG, device.getName());
@@ -155,19 +202,93 @@ public class BTReader implements ACRReader {
             public void onReaderDetection(BluetoothReader bluetoothReader) {
                 if (bluetoothReader instanceof Acr3901us1Reader) {
                             /* The connected reader is ACR3901U-S1 reader. */
-                    Log.d(TAG, "On Acr3901us1Reader Detected.");
+                    Log.d(TAG, "Device Not support");
+                    if (BTReader.this.operateDataListener != null) {
+                        BTReader.this.operateDataListener.onError(new OperateResult("Device Not support"));
+                    }
                 } else if (bluetoothReader instanceof Acr1255uj1Reader) {
                             /* The connected reader is ACR1255U-J1 reader. */
                     Log.d(TAG, "On Acr1255uj1Reader Detected.");
+                    reader = (Acr1255uj1Reader) bluetoothReader;
+                    setListener(reader);
+                    reader.enableNotification(true);
+                    return;
                 } else {
-                    Log.d(TAG, "Not this reader");
+                    Log.d(TAG, "Device Not support");
+                    if (BTReader.this.operateDataListener != null) {
+                        BTReader.this.operateDataListener.onError(new OperateResult("Device Not support"));
+                    }
                 }
-                reader = (Acr1255uj1Reader) bluetoothReader;
-                setListener(reader);
-                reader.enableNotification(true);
+                connectState = DISCONNECTED;
+                mBluetoothGatt.disconnect();
+                mBluetoothGatt.close();
+                mBluetoothGatt = null;
             }
         });
 
+    }
+
+    @Override
+    public void startScan(CallbackContext startScanCallbackContext) {
+        if (bluetoothManager == null || mBluetoothAdapter == null || !mBluetoothAdapter.isEnabled()) {
+            if (startScanCallbackContext != null) {
+                startScanCallbackContext.error(Util.customJSON(false, "Bluetooth error, please check your bluetooth setting!"));
+            }
+            return;
+        }
+
+        if (this.startScanCallbackContext != null) {
+            Log.d(TAG, "Already in Scanning!");
+            this.startScanCallbackContext.error(Util.customJSON(false, "Already in Scanning!"));
+            this.startScanCallbackContext = startScanCallbackContext;
+            return;
+        }
+        Log.d(TAG, "startScan!!!");
+        this.scanLeDevice(true, startScanCallbackContext);
+    }
+
+    @Override
+    public void stopScan() {
+        if (bluetoothManager == null || mBluetoothAdapter == null || !mBluetoothAdapter.isEnabled()) {
+            if (this.startScanCallbackContext != null) {
+                this.startScanCallbackContext.error(Util.customJSON(false, "Bluetooth error, please check your bluetooth setting!"));
+            }
+            return;
+        }
+
+        if (this.startScanCallbackContext != null) {
+            this.scanLeDevice(false, null);
+            return;
+        }
+        Log.d(TAG, "Already not in Scanning!");
+    }
+
+    private synchronized void scanLeDevice(boolean enable, final CallbackContext callbackContext) {
+        if (enable) {
+            // Stops scanning after a predefined scan period.
+            Log.d(TAG, "Scanning!!!");
+            this.startScanCallbackContext = callbackContext;
+            mHandler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    if (mScanning) {
+                        mScanning = false;
+                        mBluetoothAdapter.stopLeScan(mLeScanCallback);
+                    }
+                    Log.d("BTReader", "Scan Reader Complete!!!");
+                    BTReader.this.startScanCallbackContext.success(Util.customJSON(true, "Scan complete!"));
+                    BTReader.this.startScanCallbackContext = null;
+                }
+            }, SCAN_PERIOD);
+            mScanning = true;
+            mBluetoothAdapter.startLeScan(mLeScanCallback);
+        } else {
+            mScanning = false;
+            mBluetoothAdapter.stopLeScan(mLeScanCallback);
+            mHandler.removeCallbacksAndMessages(null);
+            this.startScanCallbackContext.success(Util.customJSON(true, "Scan complete"));
+            this.startScanCallbackContext = null;
+        }
     }
 
     @Override
@@ -335,6 +456,10 @@ public class BTReader implements ACRReader {
                 BTReader.this.getBatteryLevel();
                 ready = true;
                 connectState = CONNECTED;
+                if (BTReader.this.operateDataListener != null) {
+                    CustomDevice customDevice = new CustomDevice(device.getName(), device.getAddress());
+                    BTReader.this.operateDataListener.onData(new OperateResult(customDevice));
+                }
                 if (BTReader.this.getOnStatusChangeListener() != null) {
                     BTReader.this.getOnStatusChangeListener().onReady(BTReader.this);
                 }
@@ -385,10 +510,20 @@ public class BTReader implements ACRReader {
     }
 
     @Override
+    public void disconnectReader(OperateDataListener operateDataListener) {
+        this.operateDataListener = operateDataListener;
+        this.disconnect();
+    }
+
     public void disconnect() {
-        mBluetoothGatt.disconnect();
-        mBluetoothGatt.close();
-        mBluetoothGatt = null;
+        if (mBluetoothGatt != null) {
+            mBluetoothGatt.disconnect();
+            mBluetoothGatt.close();
+            mBluetoothGatt = null;
+            operateDataListener.onData(new OperateResult("Disconnect Success!"));
+        } else {
+            operateDataListener.onError(new OperateResult("No Connected Device!"));
+        }
     }
 
     private boolean initialized = false;
@@ -396,7 +531,7 @@ public class BTReader implements ACRReader {
     @Override
     public void start() {
         initialized = true;
-        connectReader();
+//        connectReader();
 
     }
 
@@ -444,18 +579,39 @@ public class BTReader implements ACRReader {
         reader.transmitEscapeCommand(sendBuffer);
     }
 
-    @Override
-    public void connect() {
-//        if (isReady() || connectState == CONNECTING) {
-//            return;
-//        } else {
+//    @Override
+//    public void connect() {
+//        Log.d(TAG, "current connectState:" + connectState);
+//        if (initialized && connectState == DISCONNECTED) {
 //            connectReader();
+//        } else {
+//            return;
 //        }
+//    }
+
+    @Override
+    public boolean connect(String address, OperateDataListener operateDataListener) {
         Log.d(TAG, "current connectState:" + connectState);
         if (initialized && connectState == DISCONNECTED) {
-            connectReader();
+            this.operateDataListener = operateDataListener;
+            return connectReader(address);
         } else {
-            return;
+            return false;
         }
     }
+
+    private LeScanCallback mLeScanCallback = new LeScanCallback() {
+        @Override
+        public void onLeScan(final BluetoothDevice device, int rssi, byte[] scanRecord) {
+            JSONObject deviceJson = new JSONObject();
+            try {
+                deviceJson.put("name", device.getName());
+                deviceJson.put("address", device.getAddress());
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            nfcReader.getCordovaWebView().sendJavascript("ACR.onScan(" + deviceJson + ")");
+        }
+    };
+
 }

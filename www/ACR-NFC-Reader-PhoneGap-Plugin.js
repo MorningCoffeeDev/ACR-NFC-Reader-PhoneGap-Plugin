@@ -154,8 +154,9 @@ ACR.isReady = function(success, failure) {
   cordova.exec(success, failure, "ACRNFCReaderPhoneGapPlugin", "isReady", []);
 };
 
-ACR.connectReader = function(success, failure) {
-  cordova.exec(success, failure, "ACRNFCReaderPhoneGapPlugin", "connectReader", []);
+// connect reader by address
+ACR.connectReader = function(address, success, failure) {
+  cordova.exec(success, failure, "ACRNFCReaderPhoneGapPlugin", "connectReader", [address]);
 }
 
 ACR.disconnectReader = function(success, failure) {
@@ -180,6 +181,15 @@ ACR.onReady = function(reader) {};
 ACR.onAttach = function(device) {};
 ACR.onDetach = function(device) {};
 ACR.onBatteryLevelChange = function(level) {};
+ACR.onScan = function(device) {}
+
+ACR.startScan = function(success, failure) {
+  cordova.exec(success, failure, "ACRNFCReaderPhoneGapPlugin", "startScan", []);
+}
+
+ACR.stopScan = function() {
+  cordova.exec(function(){}, function(){}, "ACRNFCReaderPhoneGapPlugin", "stopScan", []);
+}
 
 ACR.runCardAbsent = function() {
   ACR.metadata = {};

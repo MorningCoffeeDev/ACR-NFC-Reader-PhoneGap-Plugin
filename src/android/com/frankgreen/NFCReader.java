@@ -12,6 +12,7 @@ import com.frankgreen.reader.ACRReader;
 import com.frankgreen.task.*;
 
 import com.frankgreen.params.*;
+import org.apache.cordova.CallbackContext;
 import org.apache.cordova.CordovaWebView;
 
 /**
@@ -120,13 +121,18 @@ public class NFCReader {
         new GetBatteryLevelTask().execute(baseParams);
     }
 
-    public void connect() {
-        this.acrReader.connect();
+//    public void connect() {
+//        this.acrReader.connect();
+//    }
+
+    public void connect(ConnectParams connectParams) {
+        connectParams.setReader(this);
+        new ConnectTask().execute(connectParams);
     }
 
-    public void disconnect(BaseParams baseParams) {
-        baseParams.setReader(this);
-        new DisconnectTask().execute(baseParams);
+    public void disconnect(DisconnectParams disconnectParams) {
+        disconnectParams.setReader(this);
+        new DisconnectTask().execute(disconnectParams);
     }
 
     public void updatePICCOperatingParameter(OnGetResultListener onGetResultListener) {
@@ -221,7 +227,7 @@ public class NFCReader {
     }
 
     public void start() {
-    acrReader.start();
+        acrReader.start();
     }
 
     private class CloseTask extends AsyncTask<Void, Void, Void> {
@@ -231,6 +237,14 @@ public class NFCReader {
             acrReader.close();
             return null;
         }
+    }
+
+    public void startScan(CallbackContext callbackContext) {
+        acrReader.startScan(callbackContext);
+    }
+
+    public void stopScan() {
+        acrReader.stopScan();
     }
 
 }

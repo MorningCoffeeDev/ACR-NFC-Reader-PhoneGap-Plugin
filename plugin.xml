@@ -61,6 +61,8 @@
     <source-file src="src/android/com/frankgreen/params/InitNTAGParams.java" target-dir="src/com/frankgreen/params" />
     <source-file src="src/android/com/frankgreen/params/SelectFileParams.java" target-dir="src/com/frankgreen/params" />
     <source-file src="src/android/com/frankgreen/params/PICCOperatingParameterParams.java" target-dir="src/com/frankgreen/params" />
+    <source-file src="src/android/com/frankgreen/params/ConnectParams.java" target-dir="src/com/frankgreen/params" />
+    <source-file src="src/android/com/frankgreen/params/DisconnectParams.java" target-dir="src/com/frankgreen/params" />
 
     <!--task-->
     <source-file src="src/android/com/frankgreen/task/StopSessionTimerTask.java" target-dir="src/com/frankgreen/task" />
@@ -84,6 +86,7 @@
     <source-file src="src/android/com/frankgreen/task/TaskListener.java" target-dir="src/com/frankgreen/apdu" />
     <source-file src="src/android/com/frankgreen/task/AbstractTaskListener.java" target-dir="src/com/frankgreen/apdu" />
     <source-file src="src/android/com/frankgreen/task/GetBatteryLevelTask.java" target-dir="src/com/frankgreen/apdu" />
+    <source-file src="src/android/com/frankgreen/task/ConnectTask.java" target-dir="src/com/frankgreen/apdu" />
     <source-file src="src/android/com/frankgreen/task/DisconnectTask.java" target-dir="src/com/frankgreen/apdu" />
 
     <source-file src="src/android/com/frankgreen/reader/ACRReader.java" target-dir="src/com/frankgreen/reader" />
@@ -92,8 +95,15 @@
     <source-file src="src/android/com/frankgreen/reader/ACRReaderException.java" target-dir="src/com/frankgreen/reader" />
     <source-file src="src/android/com/frankgreen/reader/OnDataListener.java" target-dir="src/com/frankgreen/reader" />
 
+    <!--operate-->
+    <source-file src="src/android/com/frankgreen/operate/ConnectReader.java" target-dir="src/com/frankgreen/operate" />
+    <source-file src="src/android/com/frankgreen/operate/DisconnectReader.java" target-dir="src/com/frankgreen/operate" />
+    <source-file src="src/android/com/frankgreen/operate/CustomDevice.java" target-dir="src/com/frankgreen/operate" />
+    <source-file src="src/android/com/frankgreen/operate/OperateDataListener.java" target-dir="src/com/frankgreen/operate" />
+    <source-file src="src/android/com/frankgreen/operate/OperateResult.java" target-dir="src/com/frankgreen/operate" />
+
     <source-file src="src/android/libs/acssmc-1.1.2.jar" target-dir="libs" />
-    <source-file src="src/android/libs/acsbt-1.0.0preview6.jar" target-dir="libs"/>
+    <source-file src="src/android/libs/acsbt-1.0.0preview7.jar" target-dir="libs"/>
     <source-file src="src/android/com/frankgreen/Utils.java" target-dir="src/android/com/frankgreen"/>
   </platform>
 </plugin>

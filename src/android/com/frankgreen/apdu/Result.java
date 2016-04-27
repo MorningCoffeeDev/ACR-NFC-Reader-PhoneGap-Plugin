@@ -19,6 +19,7 @@ public class Result {
     private ChipMeta meta;
     private Exception exception;
     private Checker checker;
+    private String resultMessage;
     private boolean sendPlugin = true;
     private ToDataString processor;
     public interface Checker{
@@ -40,6 +41,10 @@ public class Result {
         }
     }
 
+    public String getResultMessage() {
+        return resultMessage;
+    }
+
     public void setCommand(String command) {
         this.command = command;
     }
@@ -49,9 +54,15 @@ public class Result {
     }
 
     public Result(String command, int byteCount, byte[] receiveBuffer) {
-
         setReceiveBuffer(byteCount,receiveBuffer);
         this.command = command;
+    }
+
+    public Result(String command, String message) {
+        this.resultMessage = message;
+        this.command = command;
+        this.size = 0;
+        this.code = new byte[]{(byte) 0x90, (byte) 0x00};
     }
 
     public Result(String command, Exception exception) {

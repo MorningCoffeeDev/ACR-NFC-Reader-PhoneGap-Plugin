@@ -13,6 +13,8 @@ import com.acs.smartcard.ReaderException;
 import com.frankgreen.ACRDevice;
 import com.frankgreen.NFCReader;
 import com.frankgreen.apdu.OnGetResultListener;
+import com.frankgreen.operate.OperateDataListener;
+import org.apache.cordova.CallbackContext;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -280,10 +282,6 @@ public class USBReader implements ACRReader {
     }
 
     @Override
-    public void connect() {
-    }
-
-    @Override
     public int getBatteryLevelValue() {
         return 0;
     }
@@ -294,8 +292,23 @@ public class USBReader implements ACRReader {
     }
 
     @Override
-    public void disconnect() {
+    public void disconnectReader(OperateDataListener listener) {
 
+    }
+
+    @Override
+    public void startScan(CallbackContext callbackContext) {
+
+    }
+
+    @Override
+    public void stopScan() {
+
+    }
+
+    @Override
+    public boolean connect(String address, OperateDataListener listener) {
+        return false;
     }
 
     @Override
