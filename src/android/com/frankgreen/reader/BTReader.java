@@ -3,11 +3,8 @@ package com.frankgreen.reader;
 
 import android.app.Activity;
 import android.app.PendingIntent;
+import android.bluetooth.*;
 import android.bluetooth.BluetoothAdapter.LeScanCallback;
-import android.bluetooth.BluetoothAdapter;
-import android.bluetooth.BluetoothDevice;
-import android.bluetooth.BluetoothGatt;
-import android.bluetooth.BluetoothManager;
 import android.content.Intent;
 import android.os.Handler;
 
@@ -105,8 +102,10 @@ public class BTReader implements ACRReader {
         }
 
         if (mBluetoothGatt != null) {
-            Log.i(TAG, "Clear old gatt");
-            this.disconnect();
+            Log.d(TAG, "Clear old gatt");
+            mBluetoothGatt.disconnect();
+            mBluetoothGatt.close();
+            mBluetoothGatt = null;
         }
 
         Log.d(TAG, "address..: " + mDeviceAddress);
@@ -115,13 +114,10 @@ public class BTReader implements ACRReader {
         try {
             device = mBluetoothAdapter.getRemoteDevice(mDeviceAddress);
         } catch (Exception e) {
-            this.operateDataListener.onError(new OperateResult("Device not found. Unable to connect."));
+            this.operateDataListener.onError(new OperateResult("Device address format error."));
             return false;
         }
-        if (device == null) {
-            this.operateDataListener.onError(new OperateResult("Device not found. Unable to connect."));
-            return false;
-        }
+        Log.d(TAG, "bluetooth device:" + device);
         this.device = device;
         connectState = CONNECTING;
         mBluetoothGatt = device.connectGatt(activity, false, gattCallback);
@@ -137,34 +133,74 @@ public class BTReader implements ACRReader {
                 Log.d(TAG, "connection state:" + state);
                 Log.d(TAG, "connection newState:" + newState);
                 isReaderNotClosed = true;
-                if (newState == BluetoothReader.STATE_CONNECTED && state == BluetoothReader.STATE_DISCONNECTED) {
+                if (state != BluetoothGatt.GATT_SUCCESS) {
+                    connectState = DISCONNECTED;
+                    BTReader.this.getOnStatusChangeListener().onDetach(new ACRDevice<BluetoothDevice>(device));
+                    if (newState == BluetoothProfile.STATE_CONNECTED) {
+                        if (BTReader.this.operateDataListener != null) {
+                            BTReader.this.operateDataListener.onError(new OperateResult("Connect fail!"));
+                        }
+                    } else if (newState == BluetoothProfile.STATE_DISCONNECTED) {
+                        if (BTReader.this.operateDataListener != null) {
+                            BTReader.this.operateDataListener.onError(new OperateResult("Disconnect fail!"));
+                        }
+                    }
+                    return;
+                }
+
+                if (newState == BluetoothProfile.STATE_CONNECTED) {
                     if (bluetoothReaderManager != null) {
                         Log.d(TAG, "detectReader");
                         bluetoothReaderManager.detectReader(bluetoothGatt, gattCallback);
                     }
-                } else if (newState == BluetoothReader.STATE_DISCONNECTED) {
-                    ready = false;
-                    mBluetoothGatt.close();
-                    mBluetoothGatt = null;
-                    connectState = DISCONNECTED;
-                    Log.d(TAG, "---------on detach++++++++++++");
-                    if (BTReader.this.operateDataListener != null) {
-                        BTReader.this.operateDataListener.onError(new OperateResult("Device Not support"));
+                } else if (newState == BluetoothProfile.STATE_DISCONNECTED) {
+                    BTReader.this.reader = null;
+
+                    if (mBluetoothGatt != null) {
+                        mBluetoothGatt.close();
+                        mBluetoothGatt = null;
                     }
-                    BTReader.this.getOnStatusChangeListener().onDetach(new ACRDevice<BluetoothDevice>(device));
-                } else {
-                    Log.d(TAG, "connection---------------:" + state);
-                    mBluetoothGatt.close();
-                    mBluetoothGatt = null;
                     connectState = DISCONNECTED;
                     if (BTReader.this.operateDataListener != null) {
-                        BTReader.this.operateDataListener.onError(new OperateResult("Device Not support"));
+                        BTReader.this.operateDataListener.onData(new OperateResult("Reader has been disconnected!"));
                     }
                     BTReader.this.getOnStatusChangeListener().onDetach(new ACRDevice<BluetoothDevice>(device));
                 }
+//                if (newState == BluetoothReader.STATE_CONNECTED && state == BluetoothReader.STATE_DISCONNECTED) {
+//                    if (bluetoothReaderManager != null) {
+//                        Log.d(TAG, "detectReader");
+//                        bluetoothReaderManager.detectReader(bluetoothGatt, gattCallback);
+//                    }
+//                } else if (newState == BluetoothReader.STATE_DISCONNECTED) {
+//                    Log.d(TAG, "Disconnect!!!!!");
+//                    BTReader.this.reader = null;
+//                    ready = false;
+//                    BTReader.this.closeGatt();
+//                    connectState = DISCONNECTED;
+//                    if (BTReader.this.operateDataListener != null) {
+//                        BTReader.this.operateDataListener.onData(new OperateResult("Reader has been disconnected!"));
+//                        BluetoothGatt
+//                    }
+//                    BTReader.this.getOnStatusChangeListener().onDetach(new ACRDevice<BluetoothDevice>(device));
+//                } else {
+//                    BTReader.this.reader = null;
+//                    BTReader.this.closeGatt();
+//                    connectState = DISCONNECTED;
+//                    Log.d(TAG, "---------on detach++++++++++++");
+//                    if (BTReader.this.operateDataListener != null) {
+//                        BTReader.this.operateDataListener.onError(new OperateResult("Device Not support"));
+//                    }
+//                    BTReader.this.getOnStatusChangeListener().onDetach(new ACRDevice<BluetoothDevice>(device));
+//                }
             }
         });
+    }
 
+    private void closeGatt() {
+        if (mBluetoothGatt != null) {
+            mBluetoothGatt.close();
+            mBluetoothGatt = null;
+        }
     }
 
     public void findBondedDevice() {
@@ -183,8 +219,8 @@ public class BTReader implements ACRReader {
                 }
 
                 Log.d(TAG, "Device Not support");
-                mBluetoothGatt.close();
-                mBluetoothGatt = null;
+                BTReader.this.closeGatt();
+                connectState = DISCONNECTED;
                 BTReader.this.operateDataListener.onError(new OperateResult("Device Not support"));
                 BTReader.this.getOnStatusChangeListener().onDetach(new ACRDevice<BluetoothDevice>(device));
             }
@@ -477,9 +513,7 @@ public class BTReader implements ACRReader {
 
     public void disconnect() {
         if (mBluetoothGatt != null) {
-            mBluetoothGatt.close();
-            mBluetoothGatt = null;
-            operateDataListener.onData(new OperateResult("Disconnect Success!"));
+            mBluetoothGatt.disconnect();
         } else {
             operateDataListener.onError(new OperateResult("No Connected Device!"));
         }
@@ -572,5 +606,4 @@ public class BTReader implements ACRReader {
             nfcReader.getCordovaWebView().sendJavascript("ACR.onScan(" + deviceJson + ")");
         }
     };
-
 }
