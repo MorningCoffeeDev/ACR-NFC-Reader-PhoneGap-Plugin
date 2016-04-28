@@ -177,7 +177,7 @@ ACR.writeData = function(block, data, password, success, failure) {
 };
 
 ACR.onCardAbsent = function() {};
-ACR.onReady = function(reader) {};
+ACR.onReady = function() {};
 ACR.onAttach = function(device) {};
 ACR.onDetach = function(device) {};
 ACR.onBatteryLevelChange = function(level) {};

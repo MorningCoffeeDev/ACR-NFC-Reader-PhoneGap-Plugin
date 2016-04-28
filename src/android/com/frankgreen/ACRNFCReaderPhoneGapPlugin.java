@@ -200,7 +200,7 @@ public class ACRNFCReaderPhoneGapPlugin extends CordovaPlugin {
                                                 public void onReady(ACRReader reader) {
                                                     Log.d(TAG, "onReady");
                                                     initReader(null, null);
-                                                    webView.sendJavascript("ACR.onReady('" + reader.getReaderName() + "');");
+                                                    webView.sendJavascript("ACR.onReady();");
                                                 }
 
                                                 @Override

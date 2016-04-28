@@ -100,9 +100,7 @@ public class BTReader implements ACRReader {
 
     private synchronized boolean connectReader(String mDeviceAddress) {
         if (bluetoothManager == null || mBluetoothAdapter == null || !mBluetoothAdapter.isEnabled()) {
-            if (this.operateDataListener != null) {
-                this.operateDataListener.onError(new OperateResult("Bluetooth error, please check your bluetooth setting!"));
-            }
+            this.operateDataListener.onError(new OperateResult("Bluetooth error, please check your bluetooth setting!"));
             return false;
         }
 
@@ -124,41 +122,10 @@ public class BTReader implements ACRReader {
             this.operateDataListener.onError(new OperateResult("Device not found. Unable to connect."));
             return false;
         }
+        this.device = device;
         connectState = CONNECTING;
         mBluetoothGatt = device.connectGatt(activity, false, gattCallback);
         return true;
-    }
-
-    private synchronized void connectReader() {
-        connectState = CONNECTING;
-        boolean found = false;
-        if (mBluetoothAdapter == null) {
-            Log.w(TAG, "Unable to obtain a BluetoothAdapter.");
-        }
-
-        /* Create a new connection. */
-        Set<BluetoothDevice> devices = (Set<BluetoothDevice>) mBluetoothAdapter.getBondedDevices();
-        for (BluetoothDevice device : devices) {
-            Log.d(TAG, device.getAddress());
-            Log.d(TAG, device.getName());
-            Log.d(TAG, "&&&&&&&&&&&&&&&&&&&&&&&&&&&&&current bond state*************************" + device.getBondState());
-        /* Connect to GATT server. */
-            if (device.getName().contains("ACR12") && device.getBondState() == BluetoothDevice.BOND_BONDED) {
-                this.device = device;
-                found = true;
-                if (isReaderNotClosed) {
-                    BTReader.this.getOnStatusChangeListener().onAttach(new ACRDevice<BluetoothDevice>(device));
-                }
-                mBluetoothGatt = device.connectGatt(activity, false, gattCallback);
-                boolean cr = mBluetoothGatt.discoverServices();
-//                int state =  mBluetoothGatt.getConnectionState(device);
-//                Log.d(TAG, "Current device state" + state);
-                return;
-            }
-        }
-        if (!found) {
-            connectState = DISCONNECTED;
-        }
     }
 
     public void initGattCallback() {
@@ -169,24 +136,30 @@ public class BTReader implements ACRReader {
                 Log.d(TAG, "onConnectionStateChange:" + String.valueOf(newState));
                 Log.d(TAG, "connection state:" + state);
                 Log.d(TAG, "connection newState:" + newState);
-//                mConnectState = BluetoothReader.STATE_DISCONNECTED;
                 isReaderNotClosed = true;
-                if (newState == BluetoothReader.STATE_CONNECTED) {
+                if (newState == BluetoothReader.STATE_CONNECTED && state == BluetoothReader.STATE_DISCONNECTED) {
                     if (bluetoothReaderManager != null) {
                         Log.d(TAG, "detectReader");
                         bluetoothReaderManager.detectReader(bluetoothGatt, gattCallback);
                     }
                 } else if (newState == BluetoothReader.STATE_DISCONNECTED) {
                     ready = false;
-                    BTReader.this.disconnect();
+                    mBluetoothGatt.close();
+                    mBluetoothGatt = null;
                     connectState = DISCONNECTED;
                     Log.d(TAG, "---------on detach++++++++++++");
+                    if (BTReader.this.operateDataListener != null) {
+                        BTReader.this.operateDataListener.onError(new OperateResult("Device Not support"));
+                    }
                     BTReader.this.getOnStatusChangeListener().onDetach(new ACRDevice<BluetoothDevice>(device));
-                }
-                if (state != BluetoothReader.STATE_CONNECTED && state != BluetoothReader.STATE_DISCONNECTED) {
+                } else {
                     Log.d(TAG, "connection---------------:" + state);
+                    mBluetoothGatt.close();
+                    mBluetoothGatt = null;
                     connectState = DISCONNECTED;
-                    isReaderNotClosed = false;
+                    if (BTReader.this.operateDataListener != null) {
+                        BTReader.this.operateDataListener.onError(new OperateResult("Device Not support"));
+                    }
                     BTReader.this.getOnStatusChangeListener().onDetach(new ACRDevice<BluetoothDevice>(device));
                 }
             }
@@ -200,29 +173,20 @@ public class BTReader implements ACRReader {
         bluetoothReaderManager.setOnReaderDetectionListener(new BluetoothReaderManager.OnReaderDetectionListener() {
             @Override
             public void onReaderDetection(BluetoothReader bluetoothReader) {
-                if (bluetoothReader instanceof Acr3901us1Reader) {
-                            /* The connected reader is ACR3901U-S1 reader. */
-                    Log.d(TAG, "Device Not support");
-                    if (BTReader.this.operateDataListener != null) {
-                        BTReader.this.operateDataListener.onError(new OperateResult("Device Not support"));
-                    }
-                } else if (bluetoothReader instanceof Acr1255uj1Reader) {
+                if (bluetoothReader instanceof Acr1255uj1Reader) {
                             /* The connected reader is ACR1255U-J1 reader. */
                     Log.d(TAG, "On Acr1255uj1Reader Detected.");
                     reader = (Acr1255uj1Reader) bluetoothReader;
                     setListener(reader);
                     reader.enableNotification(true);
                     return;
-                } else {
-                    Log.d(TAG, "Device Not support");
-                    if (BTReader.this.operateDataListener != null) {
-                        BTReader.this.operateDataListener.onError(new OperateResult("Device Not support"));
-                    }
                 }
-                connectState = DISCONNECTED;
-                mBluetoothGatt.disconnect();
+
+                Log.d(TAG, "Device Not support");
                 mBluetoothGatt.close();
                 mBluetoothGatt = null;
+                BTReader.this.operateDataListener.onError(new OperateResult("Device Not support"));
+                BTReader.this.getOnStatusChangeListener().onDetach(new ACRDevice<BluetoothDevice>(device));
             }
         });
 
@@ -231,9 +195,7 @@ public class BTReader implements ACRReader {
     @Override
     public void startScan(CallbackContext startScanCallbackContext) {
         if (bluetoothManager == null || mBluetoothAdapter == null || !mBluetoothAdapter.isEnabled()) {
-            if (startScanCallbackContext != null) {
-                startScanCallbackContext.error(Util.customJSON(false, "Bluetooth error, please check your bluetooth setting!"));
-            }
+            startScanCallbackContext.error(Util.customJSON(false, "Bluetooth error, please check your bluetooth setting!"));
             return;
         }
 
@@ -250,9 +212,7 @@ public class BTReader implements ACRReader {
     @Override
     public void stopScan() {
         if (bluetoothManager == null || mBluetoothAdapter == null || !mBluetoothAdapter.isEnabled()) {
-            if (this.startScanCallbackContext != null) {
-                this.startScanCallbackContext.error(Util.customJSON(false, "Bluetooth error, please check your bluetooth setting!"));
-            }
+            this.startScanCallbackContext.error(Util.customJSON(false, "Bluetooth error, please check your bluetooth setting!"));
             return;
         }
 
@@ -517,7 +477,6 @@ public class BTReader implements ACRReader {
 
     public void disconnect() {
         if (mBluetoothGatt != null) {
-            mBluetoothGatt.disconnect();
             mBluetoothGatt.close();
             mBluetoothGatt = null;
             operateDataListener.onData(new OperateResult("Disconnect Success!"));

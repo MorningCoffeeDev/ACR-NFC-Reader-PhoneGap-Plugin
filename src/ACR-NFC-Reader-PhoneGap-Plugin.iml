@@ -8,8 +8,7 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="libs" level="project" />
-    <orderEntry type="library" name="cordova-5.2.0-dev" level="project" />
     <orderEntry type="library" name="android" level="project" />
-    <orderEntry type="library" name="acsbt-1.0.0preview7" level="project" />
+    <orderEntry type="library" name="cordova-5.2.0-dev" level="project" />
   </component>
 </module>
