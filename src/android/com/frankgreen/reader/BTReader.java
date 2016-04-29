@@ -161,37 +161,8 @@ public class BTReader implements ACRReader {
                         mBluetoothGatt = null;
                     }
                     connectState = DISCONNECTED;
-                    if (BTReader.this.operateDataListener != null) {
-                        BTReader.this.operateDataListener.onError(new OperateResult("Operate failure!"));
-                    }
                     BTReader.this.getOnStatusChangeListener().onDetach(new ACRDevice<BluetoothDevice>(device));
                 }
-//                if (newState == BluetoothReader.STATE_CONNECTED && state == BluetoothReader.STATE_DISCONNECTED) {
-//                    if (bluetoothReaderManager != null) {
-//                        Log.d(TAG, "detectReader");
-//                        bluetoothReaderManager.detectReader(bluetoothGatt, gattCallback);
-//                    }
-//                } else if (newState == BluetoothReader.STATE_DISCONNECTED) {
-//                    Log.d(TAG, "Disconnect!!!!!");
-//                    BTReader.this.reader = null;
-//                    ready = false;
-//                    BTReader.this.closeGatt();
-//                    connectState = DISCONNECTED;
-//                    if (BTReader.this.operateDataListener != null) {
-//                        BTReader.this.operateDataListener.onData(new OperateResult("Reader has been disconnected!"));
-//                        BluetoothGatt
-//                    }
-//                    BTReader.this.getOnStatusChangeListener().onDetach(new ACRDevice<BluetoothDevice>(device));
-//                } else {
-//                    BTReader.this.reader = null;
-//                    BTReader.this.closeGatt();
-//                    connectState = DISCONNECTED;
-//                    Log.d(TAG, "---------on detach++++++++++++");
-//                    if (BTReader.this.operateDataListener != null) {
-//                        BTReader.this.operateDataListener.onError(new OperateResult("Device Not support"));
-//                    }
-//                    BTReader.this.getOnStatusChangeListener().onDetach(new ACRDevice<BluetoothDevice>(device));
-//                }
             }
         });
     }
