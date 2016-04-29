@@ -2,6 +2,7 @@ package com.frankgreen.task;
 
 import android.os.AsyncTask;
 
+import com.frankgreen.apdu.command.AutoStartPolling;
 import com.frankgreen.apdu.command.PICCOperatingParameter;
 import com.frankgreen.params.PICCOperatingParameterParams;
 
@@ -22,8 +23,24 @@ public class PICCOperatingParameterTask extends AsyncTask<PICCOperatingParameter
             params.getReader().raiseNotReady(params.getOnGetResultListener());
             return false;
         }
-        PICCOperatingParameter piccOperatingParameter = new PICCOperatingParameter(params);
-//        params.getReader().getReader().getBatteryLevel();
-        return piccOperatingParameter.run();
+        final PICCOperatingParameter piccOperatingParameter = new PICCOperatingParameter(params);
+        final AutoStartPolling autoStartPolling = new AutoStartPolling(params);
+        final TaskListener piccOperatingParameterListener = new TaskListener() {
+            @Override
+            public void onSuccess() {
+                autoStartPolling.run();
+            }
+
+            @Override
+            public void onFailure() {
+
+            }
+
+            @Override
+            public void onException() {
+
+            }
+        };
+        return piccOperatingParameter.run(piccOperatingParameterListener);
     }
 }

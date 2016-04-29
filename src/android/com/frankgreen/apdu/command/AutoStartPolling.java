@@ -1,28 +1,23 @@
 package com.frankgreen.apdu.command;
 
 import com.frankgreen.apdu.Result;
-import com.frankgreen.task.TaskListener;
 import com.frankgreen.params.PICCOperatingParameterParams;
 import com.frankgreen.reader.ACRReader;
 import com.frankgreen.reader.ACRReaderException;
 import com.frankgreen.reader.OnDataListener;
 
-/**
- * Created by kevin on 8/24/15.
- */
-public class PICCOperatingParameter extends Base<PICCOperatingParameterParams> implements OnDataListener {
+public class AutoStartPolling extends Base<PICCOperatingParameterParams> implements OnDataListener {
+    private static final String TAG = "AutoStartingPolling";
 
-    private static final String TAG = "PICCOperatingParameter";
-    public PICCOperatingParameter(PICCOperatingParameterParams params) {
+    public AutoStartPolling(PICCOperatingParameterParams params) {
         super(params);
     }
 
-    public boolean run(TaskListener listener) {
-        super.run(listener);
-        byte[] sendBuffer = new byte[]{(byte) 0xFF, (byte) 0x0, (byte) 0x51, this.getParams().getByteValue(), (byte) 0x0};
+    public boolean run() {
+        byte[] sendBuffer = new byte[]{(byte) 0xE0, (byte) 0x00, (byte) 0x00, (byte) 0x40, (byte) 0x01};
 
-        ACRReader acrReader = this.getParams().getReader().getReader();
-        acrReader.control(0, sendBuffer, this);
+        ACRReader reader = this.getParams().getReader().getReader();
+        reader.control(0, sendBuffer, this);
         return true;
     }
 
@@ -34,7 +29,6 @@ public class PICCOperatingParameter extends Base<PICCOperatingParameterParams> i
             result.setProcessor(this);
             this.getParams().getOnGetResultListener().onResult(result);
         }
-        runTaskListener(result.isSuccess());
         return result.isSuccess();
     }
 
