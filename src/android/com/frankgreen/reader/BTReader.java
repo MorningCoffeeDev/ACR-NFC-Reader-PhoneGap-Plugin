@@ -103,7 +103,6 @@ public class BTReader implements ACRReader {
 
         if (mBluetoothGatt != null) {
             Log.d(TAG, "Clear old gatt");
-            mBluetoothGatt.disconnect();
             mBluetoothGatt.close();
             mBluetoothGatt = null;
         }
@@ -155,15 +154,16 @@ public class BTReader implements ACRReader {
                     }
                 } else if (newState == BluetoothProfile.STATE_DISCONNECTED) {
                     BTReader.this.reader = null;
+                    Log.d(TAG, "reader is disconnected!");
 
                     if (mBluetoothGatt != null) {
                         mBluetoothGatt.close();
                         mBluetoothGatt = null;
                     }
                     connectState = DISCONNECTED;
-                    if (BTReader.this.operateDataListener != null) {
-                        BTReader.this.operateDataListener.onData(new OperateResult("Reader has been disconnected!"));
-                    }
+//                    if (BTReader.this.operateDataListener != null) {
+//                        BTReader.this.operateDataListener.onData(new OperateResult("Reader has been disconnected!"));
+//                    }
                     BTReader.this.getOnStatusChangeListener().onDetach(new ACRDevice<BluetoothDevice>(device));
                 }
 //                if (newState == BluetoothReader.STATE_CONNECTED && state == BluetoothReader.STATE_DISCONNECTED) {
@@ -571,16 +571,6 @@ public class BTReader implements ACRReader {
         Log.d(TAG, "escape Send: " + Util.ByteArrayToHexString(sendBuffer));
         reader.transmitEscapeCommand(sendBuffer);
     }
-
-//    @Override
-//    public void connect() {
-//        Log.d(TAG, "current connectState:" + connectState);
-//        if (initialized && connectState == DISCONNECTED) {
-//            connectReader();
-//        } else {
-//            return;
-//        }
-//    }
 
     @Override
     public boolean connect(String address, OperateDataListener operateDataListener) {
