@@ -159,8 +159,8 @@ ACR.connectReader = function(address, success, failure) {
   cordova.exec(success, failure, "ACRNFCReaderPhoneGapPlugin", "connectReader", [address]);
 }
 
-ACR.disconnectReader = function(success, failure) {
-  cordova.exec(success, failure, "ACRNFCReaderPhoneGapPlugin", "disconnectReader", []);
+ACR.disconnectReader = function() {
+  cordova.exec(function() {}, function() {}, "ACRNFCReaderPhoneGapPlugin", "disconnectReader", []);
 };
 
 ACR.writeData = function(block, data, password, success, failure) {

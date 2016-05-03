@@ -81,7 +81,7 @@ public interface ACRReader {
 
     public boolean connect(String address, OperateDataListener listener);
 
-    public void disconnectReader(OperateDataListener listener);
+    public void disconnectReader();
 
     public void start();
 

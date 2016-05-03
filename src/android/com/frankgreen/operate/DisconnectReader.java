@@ -16,7 +16,6 @@ public class DisconnectReader extends Base<DisconnectParams> implements OperateD
 
     @Override
     public boolean run() {
-        this.getParams().getReader().getReader().disconnectReader(this);
         return true;
     }
 

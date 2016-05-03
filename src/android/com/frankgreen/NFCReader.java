@@ -130,9 +130,13 @@ public class NFCReader {
         new ConnectTask().execute(connectParams);
     }
 
-    public void disconnect(DisconnectParams disconnectParams) {
-        disconnectParams.setReader(this);
-        new DisconnectTask().execute(disconnectParams);
+    public void disconnect(BaseParams baseParams) {
+        baseParams.setReader(this);
+        new DisconnectTask().execute();
+    }
+
+    public void disconnect() {
+        this.getReader().disconnectReader();
     }
 
     public void updatePICCOperatingParameter(OnGetResultListener onGetResultListener) {

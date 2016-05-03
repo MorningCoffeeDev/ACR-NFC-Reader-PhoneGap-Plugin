@@ -272,7 +272,7 @@ public class ACRNFCReaderPhoneGapPlugin extends CordovaPlugin {
 //            connectReader(callbackContext);
             connectReader(callbackContext, data);
         } else if (action.equalsIgnoreCase(DISCONNECT_READER)) {
-            disconnectReader(callbackContext);
+            disconnectReader();
         } else if (action.equalsIgnoreCase(START_SCAN)) {
             startScan(callbackContext);
         } else if (action.equalsIgnoreCase(STOP_SCAN)) {
@@ -347,10 +347,8 @@ public class ACRNFCReaderPhoneGapPlugin extends CordovaPlugin {
         }
     }
 
-    private void disconnectReader(final CallbackContext callbackContext) {
-        DisconnectParams disconnectParams = new DisconnectParams(callbackContext);
-        disconnectParams.setOnGetResultListener(generateResultListener(callbackContext));
-        nfcReader.disconnect(disconnectParams);
+    private void disconnectReader() {
+        nfcReader.disconnect();
     }
 
     private void startScan(final CallbackContext callbackContext) {

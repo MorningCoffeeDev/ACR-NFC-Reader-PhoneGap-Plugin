@@ -292,7 +292,7 @@ public class USBReader implements ACRReader {
     }
 
     @Override
-    public void disconnectReader(OperateDataListener listener) {
+    public void disconnectReader() {
 
     }
 

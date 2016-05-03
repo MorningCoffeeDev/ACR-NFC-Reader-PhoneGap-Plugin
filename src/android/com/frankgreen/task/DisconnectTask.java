@@ -9,10 +9,10 @@ import com.frankgreen.params.DisconnectParams;
 /**
  * Created by kevin on 16/3/25.
  */
-public class DisconnectTask extends AsyncTask<DisconnectParams, Void, Boolean> {
+public class DisconnectTask extends AsyncTask<BaseParams, Void, Boolean> {
     @Override
-    protected Boolean doInBackground(DisconnectParams... paramses) {
-        DisconnectParams params = paramses[0];
+    protected Boolean doInBackground(BaseParams... paramses) {
+        BaseParams params = paramses[0];
         if (params == null) {
             return false;
         }
@@ -20,8 +20,7 @@ public class DisconnectTask extends AsyncTask<DisconnectParams, Void, Boolean> {
 //            params.getReader().raiseNotReady(params.getOnGetResultListener());
 //            return false;
 //        }
-        DisconnectReader disconnectReader = new DisconnectReader(params);
-        disconnectReader.run();
+        params.getReader().getReader().disconnectReader();
         return true;
     }
 }

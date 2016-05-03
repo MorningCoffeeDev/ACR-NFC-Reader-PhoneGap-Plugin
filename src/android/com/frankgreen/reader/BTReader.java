@@ -162,6 +162,9 @@ public class BTReader implements ACRReader {
                     }
                     connectState = DISCONNECTED;
                     BTReader.this.getOnStatusChangeListener().onDetach(new ACRDevice<BluetoothDevice>(device));
+                    if (BTReader.this.operateDataListener != null) {
+                        BTReader.this.operateDataListener.onError(new OperateResult("Connect fail!"));
+                    }
                 }
             }
         });
@@ -477,16 +480,11 @@ public class BTReader implements ACRReader {
     }
 
     @Override
-    public void disconnectReader(OperateDataListener operateDataListener) {
-        this.operateDataListener = operateDataListener;
-        this.disconnect();
-    }
-
-    public void disconnect() {
+    public void disconnectReader() {
         if (mBluetoothGatt != null) {
             mBluetoothGatt.disconnect();
         } else {
-            operateDataListener.onError(new OperateResult("No Connected Device!"));
+            BTReader.this.getOnStatusChangeListener().onDetach(new ACRDevice<BluetoothDevice>(device));
         }
     }
 
@@ -495,8 +493,6 @@ public class BTReader implements ACRReader {
     @Override
     public void start() {
         initialized = true;
-//        connectReader();
-
     }
 
     private byte[] initMasterKey() {
