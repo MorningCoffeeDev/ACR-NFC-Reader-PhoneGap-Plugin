@@ -470,8 +470,7 @@ public class BTReader implements ACRReader {
 
     @Override
     public void getBatteryLevel() {
-        boolean b = this.reader.getBatteryLevel();
-        Log.d(TAG, "&&&&&&&get batterylevel&&&&&&&&&" + b);
+        this.reader.getBatteryLevel();
     }
 
     @Override

@@ -19,7 +19,7 @@ public class PICCOperatingParameter extends Base<PICCOperatingParameterParams> i
 
     public boolean run(TaskListener listener) {
         super.run(listener);
-        byte[] sendBuffer = new byte[]{(byte) 0xFF, (byte) 0x0, (byte) 0x51, this.getParams().getByteValue(), (byte) 0x0};
+        byte[] sendBuffer = new byte[]{(byte) 0xE0, (byte) 0x0, (byte) 0x0, (byte) 0x20, (byte) 0x01, this.getParams().getByteValue()};
 
         ACRReader acrReader = this.getParams().getReader().getReader();
         acrReader.control(0, sendBuffer, this);

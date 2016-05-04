@@ -10,6 +10,6 @@ public class PICCOperatingParameterParams extends Params {
     private byte byteValue;
 
     public byte getByteValue() {
-        return (byte) 0xe1; // just hard code. refactor in the future
+        return (byte) 0x01;
     }
 }

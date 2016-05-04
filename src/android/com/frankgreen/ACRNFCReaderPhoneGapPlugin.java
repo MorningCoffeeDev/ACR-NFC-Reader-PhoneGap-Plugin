@@ -312,12 +312,6 @@ public class ACRNFCReaderPhoneGapPlugin extends CordovaPlugin {
         nfcReader.getVersion(baseParams);
     }
 
-    private void getBatteryLevelCommand() {
-        BaseParams baseParams = new BaseParams(0);
-        Log.d("ACR", "!!!!!!!!getbat");
-        nfcReader.getBatteryLevel(baseParams);
-    }
-
     private void getBatteryLevel(final CallbackContext callbackContext) {
         BaseParams baseParams = new BaseParams(0);
         baseParams.setOnGetResultListener(generateResultListener(callbackContext));
