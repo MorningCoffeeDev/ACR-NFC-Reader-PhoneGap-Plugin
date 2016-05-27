@@ -44,16 +44,45 @@ public class ResetTask extends AsyncTask<BaseParams, Void, Boolean> {
         getVersion.setSendPlugin(false);
 
         final NFCReader reader = params.getReader();
-        final TaskListener readListener = new TaskListener() {
-
+        final TaskListener getVersionListener = new TaskListener() {
             @Override
             public void onSuccess() {
-                getVersion.run();
                 Result result = Result.buildSuccessInstance("Reset");
                 result.setMeta(params.getReader().getChipMeta());
                 if (params.getOnGetResultListener() != null) {
                     params.getOnGetResultListener().onResult(result);
                 }
+            }
+
+            @Override
+            public void onFailure() {
+            }
+
+            @Override
+            public void onException() {
+
+            }
+        };
+
+        final TaskListener readListener = new TaskListener() {
+
+            @Override
+            public void onSuccess() {
+                if (reader.getChipMeta().isMifare_C()) {
+                    getVersion.run(getVersionListener);
+                } else {
+                    Result result = Result.buildSuccessInstance("Reset");
+                    result.setMeta(params.getReader().getChipMeta());
+                    if (params.getOnGetResultListener() != null) {
+                        params.getOnGetResultListener().onResult(result);
+                    }
+                }
+//                getVersion.run();
+//                Result result = Result.buildSuccessInstance("Reset");
+//                result.setMeta(params.getReader().getChipMeta());
+//                if (params.getOnGetResultListener() != null) {
+//                    params.getOnGetResultListener().onResult(result);
+//                }
             }
 
             @Override
