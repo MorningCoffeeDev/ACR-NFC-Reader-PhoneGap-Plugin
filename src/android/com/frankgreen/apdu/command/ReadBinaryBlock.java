@@ -40,7 +40,6 @@ public class ReadBinaryBlock extends Base<ReadParams> implements OnDataListener 
         super.run(listener);
 //         FFB0000410
         byte[] sendBuffer = new byte[]{(byte) 0xFF, (byte) 0xB0, (byte) 0x0, (byte) 0x04, (byte) 0x10};
-        byte[] receiveBuffer = new byte[300];
         sendBuffer[3] = (byte) this.getParams().getBlock();
         Log.d(TAG, Util.toHexString(sendBuffer));
         nfcReader = this.getParams().getReader();

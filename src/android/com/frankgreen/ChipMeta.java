@@ -109,7 +109,7 @@ public class ChipMeta {
         return this.type != null && (this.type.equals(ATRHistorical.MIFARE_ULTRALIGHT) || this.type.equals(ATRHistorical.MIFARE_ULTRALIGHT_C));
     }
 
-    public boolean isMifare_C() {
-        return this.type != null && this.type.equals(ATRHistorical.MIFARE_ULTRALIGHT_C);
-    }
+//    public boolean isMifare_C() {
+//        return this.type != null && this.type.equals(ATRHistorical.MIFARE_ULTRALIGHT_C);
+//    }
 }

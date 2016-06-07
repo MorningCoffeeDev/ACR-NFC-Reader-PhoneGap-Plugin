@@ -2,6 +2,7 @@ package com.frankgreen.apdu.command;
 
 import android.util.Log;
 
+import com.acs.smartcard.ReaderException;
 import com.frankgreen.Util;
 import com.frankgreen.apdu.Result;
 import com.frankgreen.task.TaskListener;
@@ -75,14 +76,16 @@ public class UpdateBinaryBlock extends Base<WriteParams> implements OnDataListen
         Result result = new Result("UpdateBinaryBlock", len, bytes);
         if (result.isSuccess()) {
             result.setData(Arrays.copyOfRange(sendBuffer, 5, sendBuffer.length));
+        } else {
+            result = new Result("UpdateBinaryBlock", new ReaderException("Write data fail."));
         }
         result.setProcessor(this);
         result.setSendPlugin(true);
-        if(getStopSession() == null){
+        if (getStopSession() == null) {
             if (this.getParams().getOnGetResultListener() != null) {
                 this.getParams().getOnGetResultListener().onResult(result);
             }
-        }else{
+        } else {
             getStopSession().setSendResult(result);
         }
         runTaskListener(result.isSuccess());

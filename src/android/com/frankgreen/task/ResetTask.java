@@ -68,7 +68,7 @@ public class ResetTask extends AsyncTask<BaseParams, Void, Boolean> {
 
             @Override
             public void onSuccess() {
-                if (reader.getChipMeta().isMifare_C()) {
+                if (reader.getChipMeta().canGetVersion()) {
                     getVersion.run(getVersionListener);
                 } else {
                     Result result = Result.buildSuccessInstance("Reset");
