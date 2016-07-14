@@ -129,7 +129,7 @@ public class BTReader implements ACRReader {
             @Override
             public void onConnectionStateChange(BluetoothGatt bluetoothGatt, int state, int newState) {
                 Log.d(TAG, "onConnectionStateChange:" + String.valueOf(newState));
-                Log.d(TAG, "connection state:" + state);
+                Log.d(TAG, "Operation status:" + state);
                 Log.d(TAG, "connection newState:" + newState);
                 isReaderNotClosed = true;
                 if (state != BluetoothGatt.GATT_SUCCESS) {
@@ -137,11 +137,11 @@ public class BTReader implements ACRReader {
                     BTReader.this.getOnStatusChangeListener().onDetach(new ACRDevice<BluetoothDevice>(device));
                     if (newState == BluetoothProfile.STATE_CONNECTED) {
                         if (BTReader.this.operateDataListener != null) {
-                            BTReader.this.operateDataListener.onError(new OperateResult("Connect fail!"));
+                            BTReader.this.operateDataListener.onError(new OperateResult("Disconnect fail!"));
                         }
                     } else if (newState == BluetoothProfile.STATE_DISCONNECTED) {
                         if (BTReader.this.operateDataListener != null) {
-                            BTReader.this.operateDataListener.onError(new OperateResult("Disconnect fail!"));
+                            BTReader.this.operateDataListener.onError(new OperateResult("Connect fail!"));
                         }
                     }
                     return;
