@@ -2,8 +2,10 @@ package com.frankgreen.task;
 
 import android.os.AsyncTask;
 
+import com.frankgreen.apdu.command.Beep;
 import com.frankgreen.apdu.command.UpdateBinaryBlock;
 import com.frankgreen.apdu.command.card.StopSession;
+import com.frankgreen.params.BaseParams;
 import com.frankgreen.params.WriteParams;
 
 /**
@@ -40,7 +42,26 @@ public class WriteTask extends AsyncTask<WriteParams, Void, Boolean> {
             });
             task.run();
         } else {
-            return update.run();
+            BaseParams baseParams = new BaseParams(params.getSlotNumber());
+            baseParams.setReader(params.getReader());
+            final Beep beep = new Beep(baseParams);
+            TaskListener readListener = new TaskListener() {
+                @Override
+                public void onSuccess() {
+                    beep.run();
+                }
+
+                @Override
+                public void onFailure() {
+                    beep.run();
+                }
+
+                @Override
+                public void onException() {
+
+                }
+            };
+            return update.run(readListener);
         }
         return false;
     }

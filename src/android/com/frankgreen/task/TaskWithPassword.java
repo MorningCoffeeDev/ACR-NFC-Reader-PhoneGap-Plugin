@@ -5,9 +5,11 @@ import com.acs.smartcard.ReaderException;
 import com.frankgreen.NFCReader;
 import com.frankgreen.apdu.OnGetResultListener;
 import com.frankgreen.apdu.Result;
+import com.frankgreen.apdu.command.Beep;
 import com.frankgreen.apdu.command.card.NTagAuth;
 import com.frankgreen.apdu.command.card.StartSession;
 import com.frankgreen.apdu.command.card.StopSession;
+import com.frankgreen.params.BaseParams;
 import com.frankgreen.params.InitNTAGParams;
 
 /**
@@ -94,11 +96,30 @@ public class TaskWithPassword {
             final StartSession startSession = new StartSession(initNTAGParams);
             final NTagAuth nTagAuth = new NTagAuth(initNTAGParams);
             final StopSession stopSession = new StopSession(initNTAGParams);
+            BaseParams params = new BaseParams(slotNumber);
+            params.setReader(reader);
+            final Beep beep = new Beep(params);
+
+            final TaskListener beepListener = new TaskListener() {
+                @Override
+                public void onSuccess() {
+                    beep.run();
+                }
+
+                @Override
+                public void onFailure() {
+                    beep.run();
+                }
+
+                @Override
+                public void onException() {
+                }
+            };
 
             final TaskListener callbackListener = new AbstractTaskListener(stopSession) {
                 @Override
                 public void onSuccess() {
-                    stopSession.run();
+                    stopSession.run(beepListener);
                 }
             };
 

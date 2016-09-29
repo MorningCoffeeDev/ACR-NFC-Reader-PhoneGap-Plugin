@@ -50,6 +50,8 @@
     <source-file src="src/android/com/frankgreen/apdu/command/GetReceivedData.java" target-dir="src/com/frankgreen/apdu/command" />
     <source-file src="src/android/com/frankgreen/apdu/command/GetLedStatus.java" target-dir="src/com/frankgreen/apdu/command" />
     <source-file src="src/android/com/frankgreen/apdu/command/AutoStartPolling.java" target-dir="src/com/frankgreen/apdu/command" />
+    <source-file src="src/android/com/frankgreen/apdu/command/BuzzerOff.java" target-dir="src/com/frankgreen/apdu/command" />
+    <source-file src="src/android/com/frankgreen/apdu/command/Beep.java" target-dir="src/com/frankgreen/apdu/command" />
 
     <!--params-->
     <source-file src="src/android/com/frankgreen/params/Params.java" target-dir="src/com/frankgreen/params" />

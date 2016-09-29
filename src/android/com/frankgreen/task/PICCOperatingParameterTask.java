@@ -3,6 +3,7 @@ package com.frankgreen.task;
 import android.os.AsyncTask;
 
 import com.frankgreen.apdu.command.AutoStartPolling;
+import com.frankgreen.apdu.command.BuzzerOff;
 import com.frankgreen.apdu.command.PICCOperatingParameter;
 import com.frankgreen.params.PICCOperatingParameterParams;
 
@@ -25,10 +26,28 @@ public class PICCOperatingParameterTask extends AsyncTask<PICCOperatingParameter
         }
         final PICCOperatingParameter piccOperatingParameter = new PICCOperatingParameter(params);
         final AutoStartPolling autoStartPolling = new AutoStartPolling(params);
-        final TaskListener piccOperatingParameterListener = new TaskListener() {
+        final BuzzerOff buzzerOff = new BuzzerOff(params);
+        final TaskListener buzzerOffListener = new TaskListener() {
             @Override
             public void onSuccess() {
                 autoStartPolling.run();
+            }
+
+            @Override
+            public void onFailure() {
+
+            }
+
+            @Override
+            public void onException() {
+
+            }
+        };
+
+        final TaskListener piccOperatingParameterListener = new TaskListener() {
+            @Override
+            public void onSuccess() {
+                buzzerOff.run(buzzerOffListener);
             }
 
             @Override

@@ -7,15 +7,16 @@ import com.frankgreen.reader.ACRReaderException;
 import com.frankgreen.reader.OnDataListener;
 import com.frankgreen.task.TaskListener;
 
-public class AutoStartPolling extends Base<PICCOperatingParameterParams> implements OnDataListener {
-    private static final String TAG = "AutoStartingPolling";
+public class BuzzerOff extends Base<PICCOperatingParameterParams> implements OnDataListener {
+    private final String TAG = "BuzzerOff";
 
-    public AutoStartPolling(PICCOperatingParameterParams params) {
+    public BuzzerOff(PICCOperatingParameterParams params) {
         super(params);
     }
 
-    public boolean run() {
-        byte[] sendBuffer = new byte[]{(byte) 0xE0, (byte) 0x00, (byte) 0x00, (byte) 0x40, (byte) 0x01};
+    public boolean run(TaskListener taskListener) {
+        super.run(taskListener);
+        byte[] sendBuffer = new byte[]{(byte) 0xE0, (byte) 0x00, (byte) 0x00, (byte) 0x21, (byte) 0x01, (byte) 0x87};
 
         ACRReader reader = this.getParams().getReader().getReader();
         reader.control(0, sendBuffer, this);
@@ -30,6 +31,7 @@ public class AutoStartPolling extends Base<PICCOperatingParameterParams> impleme
             result.setProcessor(this);
             this.getParams().getOnGetResultListener().onResult(result);
         }
+        runTaskListener(result.isSuccess());
         return result.isSuccess();
     }
 

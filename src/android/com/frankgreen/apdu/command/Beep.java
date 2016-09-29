@@ -1,21 +1,21 @@
 package com.frankgreen.apdu.command;
 
 import com.frankgreen.apdu.Result;
-import com.frankgreen.params.PICCOperatingParameterParams;
+import com.frankgreen.params.BaseParams;
 import com.frankgreen.reader.ACRReader;
 import com.frankgreen.reader.ACRReaderException;
 import com.frankgreen.reader.OnDataListener;
 import com.frankgreen.task.TaskListener;
 
-public class AutoStartPolling extends Base<PICCOperatingParameterParams> implements OnDataListener {
-    private static final String TAG = "AutoStartingPolling";
+public class Beep extends Base<BaseParams> implements OnDataListener {
+    private final String TAG = "Beep";
 
-    public AutoStartPolling(PICCOperatingParameterParams params) {
+    public Beep(BaseParams params) {
         super(params);
     }
 
-    public boolean run() {
-        byte[] sendBuffer = new byte[]{(byte) 0xE0, (byte) 0x00, (byte) 0x00, (byte) 0x40, (byte) 0x01};
+    public boolean run(TaskListener taskListener) {
+        byte[] sendBuffer = new byte[]{(byte) 0xE0, (byte) 0x00, (byte) 0x00, (byte) 0x28, (byte) 0x01, (byte) 0x50};
 
         ACRReader reader = this.getParams().getReader().getReader();
         reader.control(0, sendBuffer, this);

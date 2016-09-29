@@ -19,6 +19,7 @@ public class StopSession extends CardCommand {
     }
 
     public synchronized boolean run(TaskListener listener) {
+        super.run(listener);
         byte[] sendBuffer = new byte[]{(byte) 0xFF, (byte) 0xC2, (byte) 0x0, (byte) 0x0, (byte) 0x02, (byte) 0x82, (byte) 0x00};
         this.getParams().getReader().clearSessionStartedAt();
         return transmit(sendBuffer);
@@ -32,13 +33,7 @@ public class StopSession extends CardCommand {
         if (this.getParams().getOnGetResultListener() != null) {
             this.getParams().getOnGetResultListener().onResult(result);
         }
-//        try {
-//            Thread.sleep(100);
-//        } catch (InterruptedException e) {
-//            e.printStackTrace();
-//        }
         if(this.sendResult != null) {
-           // sendResult.setSendPlugin(true);
             if (this.getParams().getOnGetResultListener() != null) {
                 this.getParams().getOnGetResultListener().onResult(sendResult);
             }

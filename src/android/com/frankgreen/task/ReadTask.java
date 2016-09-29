@@ -3,6 +3,7 @@ package com.frankgreen.task;
 import android.os.AsyncTask;
 import com.frankgreen.apdu.command.*;
 import com.frankgreen.apdu.command.card.StopSession;
+import com.frankgreen.params.BaseParams;
 import com.frankgreen.params.ReadParams;
 
 /**
@@ -41,7 +42,26 @@ public class ReadTask extends AsyncTask<ReadParams, Void, Boolean> {
 
             task.run();
         } else {
-            return read.run();
+            BaseParams baseParams = new BaseParams(params.getSlotNumber());
+            baseParams.setReader(params.getReader());
+            final Beep beep = new Beep(baseParams);
+            TaskListener readListener = new TaskListener() {
+                @Override
+                public void onSuccess() {
+                    beep.run();
+                }
+
+                @Override
+                public void onFailure() {
+                    beep.run();
+                }
+
+                @Override
+                public void onException() {
+
+                }
+            };
+            return read.run(readListener);
         }
         return false;
     }
