@@ -14,7 +14,8 @@ public class AutoStartPolling extends Base<PICCOperatingParameterParams> impleme
         super(params);
     }
 
-    public boolean run() {
+    public boolean run(TaskListener taskListener) {
+        super.run(taskListener);
         byte[] sendBuffer = new byte[]{(byte) 0xE0, (byte) 0x00, (byte) 0x00, (byte) 0x40, (byte) 0x01};
 
         ACRReader reader = this.getParams().getReader().getReader();
@@ -30,6 +31,7 @@ public class AutoStartPolling extends Base<PICCOperatingParameterParams> impleme
             result.setProcessor(this);
             this.getParams().getOnGetResultListener().onResult(result);
         }
+        runTaskListener(result.isSuccess());
         return result.isSuccess();
     }
 

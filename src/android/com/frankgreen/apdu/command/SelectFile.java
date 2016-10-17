@@ -27,6 +27,7 @@ public class SelectFile extends Base<SelectFileParams> implements OnDataListener
 
     public boolean run(TaskListener listener) {
 //        00 A4 04 00 02 F0 01
+        super.run(listener);
         byte[] header = new byte[]{(byte) 0x00, (byte) 0xA4, (byte) 0x04, (byte) 0x00, (byte) 0x00};
         byte[] aid = Util.HexStringToByteArray(this.getParams().getAid());
         header[4] = (byte) (aid.length);
@@ -45,6 +46,7 @@ public class SelectFile extends Base<SelectFileParams> implements OnDataListener
             result.setProcessor(this);
             this.getParams().getOnGetResultListener().onResult(result);
         }
+        runTaskListener(result.isSuccess());
         return result.isSuccess();
     }
 
