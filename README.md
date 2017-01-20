@@ -29,12 +29,12 @@ __Example__
   }
 ```
 
-#### ACR.addTagIdListener
+#### ACR.addTagListener
 
 Registers an event listener for Reader
 
 ```javascript
-  ACR.addTagIdListener(success,failure);
+  ACR.addTagListener(success,failure);
 ```
 
 __Parameters__
@@ -45,7 +45,7 @@ __Parameters__
 __Example__
 
 ```javascript
-  ACR.addTagIdListener(
+  ACR.addTagListener(
       function(result){
         alert("UID: " + JSON.stringify(result));
       },
