@@ -1,3 +1,6 @@
+# DEPRECARTION NOTICE
+Please note, we have not used this plugin for many years now and, as such, it is likely that it doesn't work with modern ACR units or Cordova. We will keep the repo online for inspiration but we are unable to provide any support.
+
 ### create a new plugin
 ```bash
 plugman create --name ACR-NFC-Reader-PhoneGap-Plugin --plugin_id com.frankgreen --plugin_version 0.0.1
